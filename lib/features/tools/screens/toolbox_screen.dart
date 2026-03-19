@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/providers/shell_provider.dart';
+import 'package:tutodecode/core/providers/shell_provider.dart';
 
 class ToolboxScreen extends StatefulWidget {
   const ToolboxScreen({super.key});

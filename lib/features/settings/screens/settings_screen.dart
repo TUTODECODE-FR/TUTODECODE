@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/providers/settings_provider.dart';
-import '../../../features/courses/providers/courses_provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/responsive/responsive.dart';
-import '../../../features/ghost_ai/service/ollama_service.dart';
+import 'package:tutodecode/core/providers/settings_provider.dart';
+import 'package:tutodecode/features/courses/providers/courses_provider.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/responsive/responsive.dart';
+import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -54,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNetworkSection(settings),
+                _buildNetworkSection(settings, courses),
                 const SizedBox(height: TdcSpacing.lg),
                 _buildAISection(settings),
                 const SizedBox(height: TdcSpacing.lg),
@@ -98,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildNetworkSection(SettingsProvider settings) {
+  Widget _buildNetworkSection(SettingsProvider settings, CoursesProvider courses) {
     return _buildSection(
       title: 'Gestion de la Transparence Réseau',
       icon: Icons.lan,

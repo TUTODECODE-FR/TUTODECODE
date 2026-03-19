@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../service/ollama_service.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/responsive/responsive.dart';
-import '../../../core/services/storage_service.dart';
-import '../../../core/security/ollama_host.dart';
+import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/responsive/responsive.dart';
+import 'package:tutodecode/core/services/storage_service.dart';
+import 'package:tutodecode/core/security/ollama_host.dart';
 
 class AIConfigScreen extends StatefulWidget {
   const AIConfigScreen({super.key});

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import '../../../core/services/storage_service.dart';
+import 'package:tutodecode/core/services/storage_service.dart';
 
 const List<Map<String, String>> kRecommendedModels = [
   {'id': 'phi3',      'label': 'Phi-3 Mini',    'desc': 'Microsoft — ultra rapide, 2.3 GB',  'size': '2.3 GB'},

@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/responsive/responsive.dart';
-import '../../core/providers/shell_provider.dart';
-import '../../core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/responsive/responsive.dart';
+import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 
 // ─── Laboratoire Interactif — Refactorisé pour le Shell Persistant ────────────────
 class LabScreen extends StatefulWidget {

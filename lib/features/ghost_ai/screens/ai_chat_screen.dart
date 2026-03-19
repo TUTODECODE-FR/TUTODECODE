@@ -2,13 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../service/ollama_service.dart';
-import '../../../courses/service/rag_service.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/premium_ui.dart';
-import '../../../core/responsive/responsive.dart';
-import '../../../core/providers/shell_provider.dart';
-import '../../../core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
+import 'package:tutodecode/features/courses/service/rag_service.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/theme/premium_ui.dart';
+import 'package:tutodecode/core/responsive/responsive.dart';
+import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // ─── Prompt système ──────────────────────────────────────────────────────────

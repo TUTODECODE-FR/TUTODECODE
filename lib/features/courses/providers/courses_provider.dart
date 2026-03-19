@@ -2,9 +2,9 @@
 // Single source of truth for all course state.
 import 'package:flutter/material.dart';
 import '../data/course_repository.dart';
-import '../../../core/services/storage_service.dart';
-import '../../../core/services/module_service.dart';
-import '../../../core/services/github_service.dart';
+import 'package:tutodecode/core/services/storage_service.dart';
+import 'package:tutodecode/core/services/module_service.dart';
+import 'package:tutodecode/core/services/github_service.dart';
 
 class CoursesProvider with ChangeNotifier {
   final StorageService _storage = StorageService();

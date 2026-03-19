@@ -1,6 +1,7 @@
 name: Build Multi-Platform Release
 
-permissions: write-all
+permissions:
+  contents: write
 
 on:
   push:
@@ -24,6 +25,7 @@ jobs:
       - name: Compilation APK
         run: flutter build apk --release --obfuscate --split-debug-info=./obfuscation_info
       - name: Uploader sur la Release
+        if: github.repository == 'TUTODECODE-FR/TUTODECODE'
         uses: softprops/action-gh-release@v1
         with:
           files: build/app/outputs/flutter-apk/app-release.apk
@@ -43,6 +45,7 @@ jobs:
       - name: Archive TAR.GZ
         run: tar -czvf TUTODECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
       - name: Uploader sur la Release
+        if: github.repository == 'TUTODECODE-FR/TUTODECODE'
         uses: softprops/action-gh-release@v1
         with:
           files: TUTODECODE-Linux.tar.gz
@@ -60,6 +63,7 @@ jobs:
       - name: Créer le ZIP de l'application
         run: cd build/macos/Build/Products/Release && zip -r ../../../../../TUTODECODE-macOS.zip tutodecode.app
       - name: Uploader sur la Release
+        if: github.repository == 'TUTODECODE-FR/TUTODECODE'
         uses: softprops/action-gh-release@v1
         with:
           files: TUTODECODE-macOS.zip
@@ -80,6 +84,7 @@ jobs:
           cp -r build/ios/iphoneos/Runner.app Payload/
           zip -qr TUTODECODE-iOS.ipa Payload
       - name: Uploader sur la Release
+        if: github.repository == 'TUTODECODE-FR/TUTODECODE'
         uses: softprops/action-gh-release@v1
         with:
           files: TUTODECODE-iOS.ipa
@@ -102,7 +107,7 @@ jobs:
           name: TUTODECODE-Windows
           path: TUTODECODE-Windows.zip
       - name: Uploader sur la Release
+        if: github.repository == 'TUTODECODE-FR/TUTODECODE' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: TUTODECODE-Windows.zip

@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/atom-one-dark.dart';
-import '../../providers/courses_provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/responsive/responsive.dart';
-import '../../../core/providers/shell_provider.dart';
-import '../../../core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/features/courses/providers/courses_provider.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/responsive/responsive.dart';
+import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import '../widgets/qcm_widget.dart';
 
 class ChapterScreen extends StatefulWidget {

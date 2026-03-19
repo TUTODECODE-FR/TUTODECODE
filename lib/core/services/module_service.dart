@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import '../../features/courses/data/course_repository.dart';
+import 'package:tutodecode/features/courses/data/course_repository.dart';
 
 class ModuleService {
   static const String _moduleFolder = 'TUTODECODE_Modules';

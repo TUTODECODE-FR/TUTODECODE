@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/providers/shell_provider.dart';
-import '../../../../core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 
 class IPCalcScreen extends StatefulWidget {
   const IPCalcScreen({super.key});

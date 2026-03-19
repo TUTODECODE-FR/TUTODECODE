@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/course_repository.dart';
-import '../../../core/theme/app_theme.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
 
 class QcmWidget extends StatefulWidget {
   final List<QuizQuestion> questions;

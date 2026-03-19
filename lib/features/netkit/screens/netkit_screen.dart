@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/responsive/responsive.dart';
-import '../../../core/widgets/tdc_widgets.dart';
-import '../../../core/providers/shell_provider.dart';
-import '../../../courses/screens/cheat_sheet_screen.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/responsive/responsive.dart';
+import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/features/courses/screens/cheat_sheet_screen.dart';
 import 'dart:convert';
 
 class NetKitScreen extends StatefulWidget {

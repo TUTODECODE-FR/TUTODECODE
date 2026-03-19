@@ -2,7 +2,14 @@
 
 > **"Le savoir ne devrait jamais dépendre d'une connexion."**
 
-TUTODECODE est une plateforme pédagogique et technique conçue pour les professionnels de l'IT, les étudiants et les passionnés de cybersécurité. L'application est **100% Offline**, **Privacy-First** et propulsée par une **IA locale**.
+
+[![Dernière Release](https://img.shields.io/github/v/release/TUTODECODE-FR/TUTODECODE?label=Derni%C3%A8re%20Version&color=6366F1)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
+[![Build Status](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml/badge.svg)](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml)
+
+### 📥 Téléchargements par plateforme
+| [**Android (APK)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | [**Windows (ZIP)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | [**macOS (ZIP)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | [**Linux (TAR)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) |
+| :---: | :---: | :---: | :---: |
+| ![Android](https://img.shields.io/badge/-Android-3DDC84?style=flat-square&logo=android&logoColor=white) | ![Windows](https://img.shields.io/badge/-Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | ![macOS](https://img.shields.io/badge/-macOS-000000?style=flat-square&logo=apple&logoColor=white) | ![Linux](https://img.shields.io/badge/-Linux-FCC624?style=flat-square&logo=linux&logoColor=black) |
 
 ---
 

@@ -259,7 +259,7 @@ class TdcEmptyState extends StatelessWidget {
 // TdcPageWrapper — Wrapper desktop avec largeur max et centrage
 // Usage: Wrap your page content with this for proper desktop layout
 // ─────────────────────────────────────────────────────────────
-class TdcScreenWrapper extends StatelessWidget {
+class TdcPageWrapper extends StatelessWidget {
   final Widget child;
   final double maxWidth;
   final EdgeInsetsGeometry? padding;

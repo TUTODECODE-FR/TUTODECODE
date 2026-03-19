@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/tdc_widgets.dart';
-import '../../../core/providers/shell_provider.dart';
+import 'package:tutodecode/core/theme/app_theme.dart';
+import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/core/providers/shell_provider.dart';
 
 class GpoEntry {
   final String title;
