@@ -14,7 +14,6 @@ if (keyPropertiesFile.exists()) {
     keyProperties.load(FileInputStream(keyPropertiesFile))
 }
 
-
 android {
     namespace = "com.tutodecode.app"
     compileSdk = flutter.compileSdkVersion
@@ -39,7 +38,6 @@ android {
 
     // ── Signing configs ───────────────────────────────────────────────────
     signingConfigs {
-        // Config release (keystore depuis key.properties)
         if (keyPropertiesFile.exists()) {
             create("release") {
                 keyAlias     = keyProperties["keyAlias"].toString()
@@ -51,36 +49,22 @@ android {
     }
 
     buildTypes {
-        // Debug : clé debug Flutter (inchangé)
         debug {
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable  = true
         }
-        // Release : notre keystore de production
         release {
             signingConfig = if (keyPropertiesFile.exists()) {
                 signingConfigs.getByName("release")
             } else {
                 signingConfigs.getByName("debug")
             }
-            // ACTIVÉ: Réduction massive de la taille du code et des ressources (R8)
             isMinifyEnabled   = true
             isShrinkResources = true
         }
     }
-
-    // [DÉSACTIVÉ POUR RÉDUIRE LE POIDS]
-    // Conserver les symboles de debug fait exploser la taille de l'APK à +400Mo.
-    // Laissez désactivé, surtout pour la compilation sur GitHub Actions.
-    /*
-    packaging {
-        jniLibs {
-            keepDebugSymbols += listOf("**/*.so")
-        }
-    }
-    */
 }
 
 flutter {
-    source = "../.."
+    // This block is often managed automatically by Flutter
 }
