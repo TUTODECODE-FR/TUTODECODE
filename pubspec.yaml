@@ -1,0 +1,65 @@
+name: tutodecode
+description: "TUTODECODE - Platforme d'apprentissage locale"
+publish_to: 'none'
+version: 1.0.2+1
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  provider: ^6.0.5
+  shared_preferences: ^2.0.15
+  flutter_markdown: ^0.7.5
+  flutter_highlight: ^0.7.0
+  http: ^1.2.0
+  flutter_animate: ^4.5.2
+  glass_kit: ^4.0.2
+  flutter_blurhash: ^0.9.1
+  animations: ^2.1.1
+  google_fonts: ^8.0.2
+  path_provider: ^2.1.2
+
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/courses.json
+    - assets/cheat_sheets.json
+    - assets/netkit_cheat_sheets.json
+    - assets/manifest.json
+    - assets/logo.png
+    - assets/fonts/
+    - assets/icons/
+    - assets/splash/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+    image_path: "assets/logo.png"
+  windows:
+    generate: true
+    image_path: "assets/logo.png"
+  macos:
+    generate: true
+    image_path: "assets/logo.png"
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#12121A"
+  adaptive_icon_foreground: "assets/logo.png"
+
+flutter_native_splash:
+  color: "#12121A"
+  image: "assets/logo.png"
+  android: true
+  ios: true
+  fullscreen: true

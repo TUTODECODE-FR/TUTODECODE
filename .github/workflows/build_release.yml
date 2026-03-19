@@ -1,0 +1,108 @@
+name: Build Multi-Platform Release
+
+permissions: write-all
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build_android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v3
+        with: { distribution: 'zulu', java-version: '17' }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '3.41.4', channel: 'stable' }
+      - run: flutter pub get
+      - name: Compilation APK
+        run: flutter build apk --release --obfuscate --split-debug-info=./obfuscation_info
+      - name: Uploader sur la Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk
+
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installation dépendances Linux
+        run: sudo apt-get update -y && sudo apt-get install -y clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '3.41.4', channel: 'stable' }
+      - run: flutter pub get
+      - name: Compilation Linux
+        run: flutter build linux --release
+      - name: Archive TAR.GZ
+        run: tar -czvf TUTODECODE-Linux.tar.gz -C build/linux/x64/release/bundle/ .
+      - name: Uploader sur la Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: TUTODECODE-Linux.tar.gz
+
+  build_macos:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '3.41.4', channel: 'stable' }
+      - run: flutter pub get
+      - name: Compilation macOS
+        run: flutter build macos --release
+      - name: Créer le ZIP de l'application
+        run: cd build/macos/Build/Products/Release && zip -r ../../../../../TUTODECODE-macOS.zip tutodecode.app
+      - name: Uploader sur la Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: TUTODECODE-macOS.zip
+
+  build_ios:
+    name: Build iOS (IPA)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '3.41.4', channel: 'stable' }
+      - run: flutter pub get
+      - name: Compilation iOS
+        run: flutter build ios --release --no-codesign
+      - name: Package IPA
+        run: |
+          mkdir Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -qr TUTODECODE-iOS.ipa Payload
+      - name: Uploader sur la Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: TUTODECODE-iOS.ipa
+
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '3.41.4', channel: 'stable' }
+      - run: flutter pub get
+      - name: Compilation Windows
+        run: flutter build windows --release
+      - name: Archive ZIP
+        run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath TUTODECODE-Windows.zip
+      - name: Uploader l'artefact ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: TUTODECODE-Windows
+          path: TUTODECODE-Windows.zip
+      - name: Uploader sur la Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: TUTODECODE-Windows.zip

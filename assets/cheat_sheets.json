@@ -1,0 +1,144 @@
+[
+  {
+    "command": "ipconfig /flushdns",
+    "description": "Vider le cache DNS",
+    "category": "WINDOWS",
+    "detailedExplanation": "Efface le cache de résolution du client DNS. Utile quand un site ne se charge plus après un changement d'IP ou de DNS.",
+    "options": ["/flushdns : Vide le cache", "/displaydns : Affiche le cache actuel"],
+    "examples": ["ipconfig /flushdns"],
+    "dangerLevel": 1
+  },
+  {
+    "command": "sfc /scannow",
+    "description": "Réparer les fichiers système",
+    "category": "WINDOWS",
+    "detailedExplanation": "Analyse l'intégralité des fichiers système protégés et remplace les versions corrompues par des versions Microsoft saines.",
+    "dangerLevel": 2
+  },
+  {
+    "command": "DISM /Online /Cleanup-Image /RestoreHealth",
+    "description": "Réparer l'image Windows",
+    "category": "WINDOWS",
+    "detailedExplanation": "Utilise Windows Update pour fournir les fichiers nécessaires à la réparation des corruptions de l'image système.",
+    "dangerLevel": 2
+  },
+  {
+    "command": "gpupdate /force",
+    "description": "Forcer les GPO",
+    "category": "WINDOWS",
+    "detailedExplanation": "Force la mise à jour immédiate des stratégies de groupe (Group Policy) sur l'ordinateur local.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "chkdsk /f /r",
+    "description": "Vérifier/Réparer le disque",
+    "category": "WINDOWS",
+    "detailedExplanation": "Vérifie l'intégrité du système de fichiers et répare les secteurs défectueux. Nécessite souvent un redémarrage.",
+    "dangerLevel": 3
+  },
+  {
+    "command": "netstat -ano",
+    "description": "Lister les ports et PIDs",
+    "category": "RÉSEAU",
+    "detailedExplanation": "Affiche toutes les connexions actives, ports d'écoute et l'ID du processus (PID) associé.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "journalctl -xe",
+    "description": "Logs système (systemd)",
+    "category": "LINUX",
+    "detailedExplanation": "Affiche les dernières entrées du journal système de Linux avec des explications sur les erreurs.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "systemctl restart [service]",
+    "description": "Redémarrer un service",
+    "category": "LINUX",
+    "detailedExplanation": "Redémarre proprement un service système (ex: apache, ssh, docker).",
+    "dangerLevel": 2
+  },
+  {
+    "command": "df -h",
+    "description": "Espace disque (lisible)",
+    "category": "LINUX",
+    "detailedExplanation": "Affiche l'espace disque utilisé et disponible sur tous les systèmes de fichiers montés en format lisible (Go, Mo).",
+    "dangerLevel": 1
+  },
+  {
+    "command": "docker system prune -a",
+    "description": "Nettoyage complet Docker",
+    "category": "DOCKER",
+    "detailedExplanation": "Supprime tous les conteneurs arrêtés, les réseaux inutilisés, les images sans conteneur et les caches de build.",
+    "dangerLevel": 3
+  },
+  {
+    "command": "git log --oneline --graph --all",
+    "description": "Historique Git visuel",
+    "category": "GIT",
+    "detailedExplanation": "Affiche une vue condensée et graphique de toutes les branches et de l'historique des commits.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "git checkout -b [nom-branche]",
+    "description": "Créer et basculer sur une branche",
+    "category": "GIT",
+    "detailedExplanation": "Crée une nouvelle branche et bascule immédiatement dessus.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "nmap -sV -p 1-1000 [IP]",
+    "description": "Scan de ports standard",
+    "category": "SÉCURITÉ",
+    "detailedExplanation": "Scanne les 1000 ports les plus courants et tente de détecter la version des services actifs.",
+    "dangerLevel": 2
+  },
+  {
+    "command": "curl -I [url]",
+    "description": "Headers HTTP uniquement",
+    "category": "RÉSEAU",
+    "detailedExplanation": "Récupère uniquement les en-têtes de réponse du serveur (utile pour débugger les redirections ou les types MIME).",
+    "dangerLevel": 1
+  },
+  {
+    "command": "lsblk",
+    "description": "Lister les périphériques blocs",
+    "category": "LINUX",
+    "detailedExplanation": "Affiche une vue arborescente de tous les disques et partitions connectés au système.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "ssh-keygen -t ed25519",
+    "description": "Générer clé SSH sécure",
+    "category": "RÉSEAU",
+    "detailedExplanation": "Génère une paire de clés SSH utilisant l'algorithme Ed25519 (plus court et plus sûr que RSA).",
+    "dangerLevel": 1
+  },
+  {
+    "command": "docker logs --tail 50 -f [id]",
+    "description": "Suivre logs container",
+    "category": "DOCKER",
+    "detailedExplanation": "Affiche les 50 dernières lignes de logs et suit les nouvelles lignes en temps réel.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "wmic bios get serialnumber",
+    "description": "S/N du BIOS",
+    "category": "WINDOWS",
+    "detailedExplanation": "Récupère le numéro de série matériel enregistré dans le BIOS/UEFI de la machine.",
+    "dangerLevel": 1
+  },
+  {
+    "command": "sudo purge",
+    "description": "Vider la RAM inactive",
+    "category": "MAC",
+    "detailedExplanation": "Force macOS à vider ses caches de disque et de RAM inactive pour libérer de la mémoire physique.",
+    "dangerLevel": 2
+  },
+  {
+    "command": "lsof -i :80",
+    "description": "Processus sur le port 80",
+    "category": "RÉSEAU",
+    "detailedExplanation": "Liste les processus Linux/macOS utilisant actuellement le port réseau 80.",
+    "dangerLevel": 1
+  }
+]
