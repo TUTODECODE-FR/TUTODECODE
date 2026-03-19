@@ -7,7 +7,6 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// ── Charger key.properties ────────────────────────────────────────────────
 val keyPropertiesFile = rootProject.file("key.properties")
 val keyProperties = Properties()
 if (keyPropertiesFile.exists()) {
@@ -25,7 +24,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -36,7 +35,6 @@ android {
         versionName = flutter.versionName
     }
 
-    // ── Signing configs ───────────────────────────────────────────────────
     signingConfigs {
         if (keyPropertiesFile.exists()) {
             create("release") {
@@ -59,12 +57,13 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
-            isMinifyEnabled   = true
-            isShrinkResources = true
+            // For troubleshooting, let's disable minification temporarily
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
 
 flutter {
-    // This block is often managed automatically by Flutter
+    source = "../.."
 }

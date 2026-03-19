@@ -23,7 +23,7 @@ jobs:
         with: { flutter-version: '3.41.4', channel: 'stable' }
       - run: flutter pub get
       - name: Compilation APK
-        run: flutter build apk --release --obfuscate --split-debug-info=./obfuscation_info
+        run: flutter build apk --release
       - name: Uploader l'artefact APK
         uses: actions/upload-artifact@v4
         with:
