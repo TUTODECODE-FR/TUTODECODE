@@ -24,6 +24,9 @@ jobs:
       - run: flutter pub get
       - name: Compilation APK
         run: flutter build apk --release
+      - name: "Diagnostic: Recherche de l'APK"
+        if: always()
+        run: find . -name "*.apk"
       - name: Uploader l'artefact APK
         uses: actions/upload-artifact@v4
         with:
