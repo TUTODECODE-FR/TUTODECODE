@@ -68,9 +68,27 @@ jobs:
         run: |
           # Création du fichier local.properties pour aider Gradle a trouver le SDK
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
-          flutter build apk --release --verbose
+          
+          # On lance le build. On ignore l'erreur d'Exit Code car Flutter Tool 
+          # peut échouer à trouver l'APK alors que Gradle l'a bien généré.
+          flutter build apk --release --verbose || echo "Flutter tool reported an error, checking for generated APK anyway..."
+          
           # Diagnostic: Lister tous les APK générés au cas où le chemin a changé
-          find build/app/outputs -name "*.apk"
+          echo "Recherche des APKs générés..."
+          find build -name "*.apk"
+          
+          # Tentative de récupération de l'APK pour l'artifact upload
+          # On cherche l'APK de release principal
+          APK_PATH=$(find build/app/outputs -name "*release.apk" -o -name "app-release.apk" | head -n 1)
+          
+          if [ -n "$APK_PATH" ]; then
+            echo "APK trouvé à : $APK_PATH"
+            mkdir -p build/app/outputs/flutter-apk
+            cp "$APK_PATH" build/app/outputs/flutter-apk/app-release.apk
+          else
+            echo "ERREUR: Aucun APK de release n'a été trouvé."
+            exit 1
+          fi
           # S'assurer que le fichier est bien là où on l'attend pour l'upload
           if [ ! -f build/app/outputs/flutter-apk/app-release.apk ]; then
             echo "APK non trouvé au chemin standard, recherche alternative..."
