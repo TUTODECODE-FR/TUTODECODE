@@ -1,101 +1,114 @@
-# <img src="assets/logo.png" width="48" height="48" valign="middle" /> TUTODECODE — Écosystème IT & Cybersécurité "All-in-One"
+<p align="center">
+  <img src="assets/banner.png" alt="TUTODECODE Banner" width="100%">
+</p>
 
-> **"Le savoir ne devrait jamais dépendre d'une connexion."**
+# 🚀 TUTODECODE — Écosystème IT & Cybersécurité "All-in-One"
 
+<p align="center">
+  <a href="https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest">
+    <img src="https://img.shields.io/github/v/release/TUTODECODE-FR/TUTODECODE?style=for-the-badge&color=6366F1&label=VERSION" alt="Version">
+  </a>
+  <a href="https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/TUTODECODE-FR/TUTODECODE/build_release.yml?branch=main&style=for-the-badge&label=BUILD" alt="Build Status">
+  </a>
+  <a href="#license">
+    <img src="https://img.shields.io/github/license/TUTODECODE-FR/TUTODECODE?style=for-the-badge&color=blue" alt="License">
+  </a>
+  <img src="https://img.shields.io/github/repo-size/TUTODECODE-FR/TUTODECODE?style=for-the-badge" alt="Repo Size">
+</p>
 
-[![Dernière Release](https://img.shields.io/github/v/release/TUTODECODE-FR/TUTODECODE?label=Derni%C3%A8re%20Version&color=6366F1)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
-[![Build Status](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml/badge.svg)](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml)
+> **"Parce que le savoir ne devrait jamais dépendre d'une connexion Internet."**
 
-### 📥 Téléchargements (v1.0.3 Stable)
-
-| Plateforme | Lien de Téléchargement |
-| :--- | :--- |
-| **Android** | [![Android](https://img.shields.io/badge/Obtenir_l'APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Android.apk) |
-| **Windows** | [![Windows](https://img.shields.io/badge/Télécharger_ZIP-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Windows.zip) |
-| **macOS** | [![macOS](https://img.shields.io/badge/Pack_Application-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-macOS.zip) |
-| **Linux** | [![Linux](https://img.shields.io/badge/Archive_TAR.GZ-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Linux.tar.gz) |
-
----
-
-## ⚡ Nouveautés de la v1.0.3
-
-Cette version marque le passage à l'**automatisation complète** et à la **stabilité multi-plateforme**.
-
-*   **Ghost AI Evolution** : Intégration optimisée avec Ollama pour une IA 100% locale.
-*   **Système de Modules** : Possibilité d'importer vos propres cours au format JSON/Markdown.
-*   **Builds Automatisés** : Déploiement CI/CD via GitHub Actions pour Android, Windows, macOS, Linux et iOS.
-*   **Refonte des Paramètres** : Une interface plus claire pour configurer votre environnement d'apprentissage.
-
-> **Note sur la version 1.0.3** : Nous avons sauté les versions 1.0.1 et 1.0.2 pour marquer le passage d'une phase de tests internes (résolution des erreurs de compilation multi-plateformes) à une version de production stable et automatisée.
+TUTODECODE est une plateforme d'apprentissage technique décentralisée, conçue pour les professionnels de l'IT, les étudiants en cybersécurité et les administrateurs système travaillant dans des environnements isolés (zones blanches, datacenters sécurisés).
 
 ---
 
-## 🎯 Mission & Philosophie
+### 📥 Téléchargements Immédiats (v1.0.3 Stable)
 
-Dans un monde hyper-connecté, TUTODECODE redonne le contrôle à l'utilisateur :
-
-*   **Souveraineté Numérique** : Aucune dépendance au Cloud. Tout tourne sur votre machine.
-*   **Confidentialité Absolue** : Pas de tracking, pas de compte utilisateur, pas de fuite de données.
-*   **Accessibilité Totale** : Indispensable en zone blanche, en datacenter sécurisé ou en déplacement.
-*   **Éthique Open Source** : Projet porté par l'Association TUTODECODE sous licence AGPL v3.
-
----
-
-## 🚀 Fonctionnalités Maîtresses
-
-### 👻 Ghost AI (IA Locale)
-Intégration native avec **Ollama** pour exécuter des LLM en local. Votre assistant technique privé pour le code, le debug et l'administration système, sans envoyer un seul octet sur Internet.
-
-### 🎓 L'Académie (11+ Modules)
-Un catalogue complet de formations structurées :
-*   **Systèmes** : Linux (Bases, Bash), Docker, Kubernetes (Avancé).
-*   **Développement** : Python, JS ES6+, TypeScript, Node.js & API REST.
-*   **Réseaux & Sécurité** : Modèle OSI, TCP/IP, DNS, OWASP Top 10, Injections SQL.
-*   **Web & Outils** : HTML5/CSS3 Moderne, Git & GitHub Professionnel.
-
-### 🛠️ NetKit & Laboratoire
-*   **Diagnostics** : Port Checker, DNS Lookup, System Info et calculateur d'IP.
-*   **Simulations Visuelles** : Ping ICMP, Handshake TCP, et simulateur d'injection SQL pour l'entraînement à la sécurité offensive.
-
-### 📚 Bibliothèque Technique
-*   **Cheat Sheets** : Mémos pour Windows, Mac, Linux, Git, Docker.
-*   **Scripts Ready-to-use** : Bibliothèques Bash, Batch et PowerShell.
-*   **Hardware Lab** : Codes bips BIOS et guides de survie matérielle.
+| Plateforme | Téléchargement | Statut |
+| :--- | :--- | :--- |
+| ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | [**Obtenir l'APK**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Android.apk) | `Stable` |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | [**Télécharger ZIP**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Windows.zip) | `Portable` |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | [**Pack Application**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-macOS.zip) | `Intel/Silicon` |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**Archive TAR.GZ**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Linux.tar.gz) | `Universel` |
 
 ---
 
-## 🛠️ Spécifications Techniques
+## 🔥 Pourquoi TUTODECODE ?
 
-| Composant | Technologie |
-| :--- | :--- |
-| **Framework** | Flutter (Multi-plateforme : macOS, Windows, Linux, Android) |
-| **Stockage** | Local uniquement (Fichiers locaux / SharedPreferences) |
-| **IA** | Compatible Ollama API (Localhost) |
-| **Sécurité** | Isolation réseau des modules IA et désactivation du trafic cleartext |
-
----
-
-## 🤝 Contribution & Gouvernance
-
-Le projet est géré par l'**Association TUTODECODE**. Nous encourageons les contributions de la communauté, mais nous imposons une rigueur stricte pour garantir la sécurité des utilisateurs :
-
-1.  **Forkez** le projet pour vos besoins personnels.
-2.  **Soumettez** vos améliorations via une Pull Request.
-3.  **Audit & Validation** : Aucune modification n'est fusionnée sur la branche principale sans un audit de sécurité par l'Association (vérification de l'absence de tracking ou de failles).
-4.  **Propriété** : Les versions officielles sont publiées uniquement par l'Association.
-
----
-
-## ⚖️ Licence
-
-Ce projet est sous licence **AGPL v3**.
-Vous êtes libre d'utiliser, de modifier et de partager le code. Si vous modifiez le logiciel et le rendez accessible via un réseau, vous devez partager vos modifications sous la même licence.
+<table border="0">
+  <tr>
+    <td width="33%" align="center">
+      <h3>🛡️ Souveraineté</h3>
+      <p>Aucune dépendance au Cloud. Vos données et vos cours restent sur votre disque dur physique.</p>
+    </td>
+    <td width="33%" align="center">
+      <h3>🔐 Confidentialité</h3>
+      <p>Pas de compte, pas de tracking, pas de telemetry. Idéal pour les configurations "Air-Gapped".</p>
+    </td>
+    <td width="33%" align="center">
+      <h3>✨ Premium UX</h3>
+      <p>Une interface fluide, moderne et animée conçue avec Flutter pour une immersion totale.</p>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 🏛️ À propos de l'Association
+## 👻 Ghost AI — L'Intelligence Locale
 
-TUTODECODE est une association loi 1901 (France).  
+TUTODECODE intègre **Ghost AI**, un assistant technique intelligent qui communique nativement avec **Ollama**.
+*   **Debug & Code** en local sans exposition de vos fichiers sources.
+*   **Documentation Dynamique** basée sur vos modules chargés.
+*   **Zéro Latence** réseau, 100% de disponibilité.
+
+---
+
+## 🏛️ L'Académie & Hardware Lab
+
+Explorez plus de **11 modules académiques** couvrant les fondamentaux et l'expertise IT :
+
+*   🖥️ **Systèmes** : Maîtrise de Linux (Bash, Kernel) et Windows Server.
+*   🐳 **Cloud & Infra** : Docker, Kubernetes, Ansible et gestion des micro-services.
+*   💻 **Développement** : Python 3, JavaScript Avancé (ES6+), TypeScript, Node.js.
+*   🛡️ **Cybersécurité** : Réseaux (TCP/IP, modèle OSI), OWASP, Injections SQL et Sécurité Offensive.
+*   ⌨️ **Cheat Sheets** : Mémos instantanés pour Git, Markdown, Docker et Commandes système.
+
+---
+
+## 🛠️ Stack Technologique & Sécurité
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
+  <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart">
+  <img src="https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white" alt="Markdown">
+  <img src="https://img.shields.io/badge/Ollama-black?style=for-the-badge&logo=ai&logoColor=white" alt="Ollama">
+</p>
+
+*   **Isolation Réseau** : Le logiciel est conçu pour fonctionner sans accès `cleartext` HTTPS externe sauf vers localhost (Ollama).
+*   **Architecture Modulaire** : Importation de cours dynamiques via des fichiers JSON/MD sécurisés.
+*   **Gouvernance** : Audit de sécurité strict pour chaque Pull Request afin de préserver l'absence de traçage.
+
+---
+
+## 🤝 Contribuer au Projet
+
+Le projet est porté par l'**Association TUTODECODE**. Nous accueillons vos feedbacks et améliorations :
+1.  **Forkez** le repo.
+2.  **Expérimentez** vos changements.
+3.  **Proposez** une Pull Request (Audit interne requis avant fusion).
+
+---
+
+## 📜 Licence & Gouvernance
+
+Distribué sous licence **AGPL v3**. Voir le fichier [LICENSE](./LICENSE) pour plus de détails.
+Porté par l'**Association TUTODECODE** (Loi 1901, France).
+
 **Contact** : [contact@tutodecode.org](mailto:contact@tutodecode.org)  
+**Site Web** : [www.tutodecode.org](https://www.tutodecode.org)
 
-Le projet est soutenu par ses membres et ses donateurs pour promouvoir l'éducation au numérique et la protection de la vie privée.
+---
+<p align="center">
+  <i>Développé avec ❤️ par la communauté des bâtisseurs du web libre.</i>
+</p>
