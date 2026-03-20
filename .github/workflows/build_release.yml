@@ -107,7 +107,8 @@ jobs:
   release:
     name: Create GitHub Release
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    # On autorise la release même si un build a échoué (tant qu'on est sur un tag)
+    if: always() && (github.ref_type == 'tag' || startsWith(github.ref, 'refs/tags/v')) && (needs.build.result == 'success' || needs.build.result == 'failure')
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
@@ -116,16 +117,17 @@ jobs:
           path: artifacts
           pattern: build-*
           merge-multiple: true
+        continue-on-error: true
 
       - name: Rename and Move Artifacts
         run: |
-          mkdir release_assets
-          # On renomme pour avoir des noms propres dans la release
-          mv artifacts/app-release.apk release_assets/TUTODECODE-Android.apk || true
-          mv artifacts/TUTODECODE-Windows.zip release_assets/TUTODECODE-Windows.zip || true
-          mv artifacts/TUTODECODE-macOS.zip release_assets/TUTODECODE-macOS.zip || true
-          mv artifacts/TUTODECODE-Linux.tar.gz release_assets/TUTODECODE-Linux.tar.gz || true
-          mv artifacts/TUTODECODE-iOS.ipa release_assets/TUTODECODE-iOS.ipa || true
+          mkdir release_assets || true
+          # On déplace les fichiers présents, les erreurs (|| true) évitent de stopper le script
+          [ -f artifacts/app-release.apk ] && mv artifacts/app-release.apk release_assets/TUTODECODE-Android.apk || true
+          [ -f artifacts/TUTODECODE-Windows.zip ] && mv artifacts/TUTODECODE-Windows.zip release_assets/TUTODECODE-Windows.zip || true
+          [ -f artifacts/TUTODECODE-macOS.zip ] && mv artifacts/TUTODECODE-macOS.zip release_assets/TUTODECODE-macOS.zip || true
+          [ -f artifacts/TUTODECODE-Linux.tar.gz ] && mv artifacts/TUTODECODE-Linux.tar.gz release_assets/TUTODECODE-Linux.tar.gz || true
+          [ -f artifacts/TUTODECODE-iOS.ipa ] && mv artifacts/TUTODECODE-iOS.ipa release_assets/TUTODECODE-iOS.ipa || true
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -134,5 +136,7 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
+          fail_on_unmatched_files: false
+
 
 
