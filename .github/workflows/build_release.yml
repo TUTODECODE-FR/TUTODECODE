@@ -66,33 +66,40 @@ jobs:
       - name: Build Android
         if: matrix.platform == 'android'
         run: |
-          # Création du fichier local.properties pour aider Gradle a trouver le SDK
+          # Nettoyage préalable pour garantir un environnement propre
+          flutter clean
+          
+          # Création du fichier local.properties
           echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
           
-          # On lance le build. On ignore l'erreur d'Exit Code car Flutter Tool 
-          # peut échouer à trouver l'APK alors que Gradle l'a bien généré.
-          flutter build apk --release --verbose || echo "Flutter tool reported an error, checking for generated APK anyway..."
+          # On tente le build Flutter standard
+          flutter build apk --release --verbose || echo "Flutter tool reported an error, trying to recover manually..."
           
-          # Diagnostic: Lister tous les APK générés au cas où le chemin a changé
-          echo "Recherche des APKs générés..."
-          find build -name "*.apk"
+          # Création du répertoire de destination pour l'upload
+          mkdir -p build/app/outputs/flutter-apk
           
-          # Tentative de récupération de l'APK pour l'artifact upload
-          # On cherche l'APK de release principal
-          APK_PATH=$(find build/app/outputs -name "*release.apk" -o -name "app-release.apk" | head -n 1)
+          # Recherche et copie de l'APK (Flutter Tool path standard)
+          find build/app/outputs -name "*release.apk" -exec cp {} build/app/outputs/flutter-apk/app-release.apk \;
           
-          if [ -n "$APK_PATH" ]; then
-            echo "APK trouvé à : $APK_PATH"
-            mkdir -p build/app/outputs/flutter-apk
-            cp "$APK_PATH" build/app/outputs/flutter-apk/app-release.apk
-          else
-            echo "ERREUR: Aucun APK de release n'a été trouvé."
-            exit 1
-          fi
-          # S'assurer que le fichier est bien là où on l'attend pour l'upload
+          # Si toujours pas d'APK, on tente un build Gradle direct (le mode le plus robuste)
           if [ ! -f build/app/outputs/flutter-apk/app-release.apk ]; then
-            echo "APK non trouvé au chemin standard, recherche alternative..."
-            cp $(find build -name "*.apk" | head -n 1) build/app/outputs/flutter-apk/app-release.apk || true
+            echo "Aucun APK trouvé via Flutter. Tentative de build Gradle direct..."
+            cd android
+            chmod +x gradlew
+            ./gradlew assembleRelease --no-daemon || echo "Gradle build failed too."
+            cd ..
+            # On cherche l'APK généré par Gradle
+            find android/app/build/outputs/apk/release -name "*.apk" -exec cp {} build/app/outputs/flutter-apk/app-release.apk \;
+          fi
+          
+          # Vérification finale
+          if [ -f build/app/outputs/flutter-apk/app-release.apk ]; then
+            echo "✅ APK de release capturé avec succès."
+          else
+            echo "❌ ERREUR: Impossible de générer ou de localiser l'APK."
+            # Diagnostic: Lister tous les fichiers APK potentiels dans tout le projet
+            find . -name "*.apk" || true
+            exit 1
           fi
 
       - name: Build Windows
