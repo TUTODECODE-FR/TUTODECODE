@@ -6,10 +6,14 @@
 [![Dernière Release](https://img.shields.io/github/v/release/TUTODECODE-FR/TUTODECODE?label=Derni%C3%A8re%20Version&color=6366F1)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest)
 [![Build Status](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml/badge.svg)](https://github.com/TUTODECODE-FR/TUTODECODE/actions/workflows/build_release.yml)
 
-### 📥 Téléchargements par plateforme
-| [**Android (APK)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | [**Windows (ZIP)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | [**macOS (ZIP)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | [**Linux (TAR)**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) |
-| :---: | :---: | :---: | :---: |
-| ![Android](https://img.shields.io/badge/-Android-3DDC84?style=flat-square&logo=android&logoColor=white) | ![Windows](https://img.shields.io/badge/-Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | ![macOS](https://img.shields.io/badge/-macOS-000000?style=flat-square&logo=apple&logoColor=white) | ![Linux](https://img.shields.io/badge/-Linux-FCC624?style=flat-square&logo=linux&logoColor=black) |
+### 📥 Téléchargements (v1.0.3 Stable)
+
+| Plateforme | Lien de Téléchargement |
+| :--- | :--- |
+| **Android** | [![Android](https://img.shields.io/badge/Obtenir_l'APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Android.apk) |
+| **Windows** | [![Windows](https://img.shields.io/badge/Télécharger_ZIP-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Windows.zip) |
+| **macOS** | [![macOS](https://img.shields.io/badge/Pack_Application-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-macOS.zip) |
+| **Linux** | [![Linux](https://img.shields.io/badge/Archive_TAR.GZ-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Linux.tar.gz) |
 
 ---
 
