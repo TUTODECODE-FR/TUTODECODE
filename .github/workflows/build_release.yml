@@ -60,7 +60,15 @@ jobs:
 
       - name: Build Android
         if: matrix.platform == 'android'
-        run: flutter build apk --release
+        run: |
+          flutter build apk --release --verbose
+          # Diagnostic: Lister tous les APK générés au cas où le chemin a changé
+          find build/app/outputs -name "*.apk"
+          # S'assurer que le fichier est bien là où on l'attend pour l'upload
+          if [ ! -f build/app/outputs/flutter-apk/app-release.apk ]; then
+            echo "APK non trouvé au chemin standard, recherche alternative..."
+            cp $(find build -name "*.apk" | head -n 1) build/app/outputs/flutter-apk/app-release.apk || true
+          fi
 
       - name: Build Windows
         if: matrix.platform == 'windows'
@@ -88,6 +96,7 @@ jobs:
           mkdir Payload
           cp -r build/ios/iphoneos/Runner.app Payload/
           zip -qr TUTODECODE-iOS.ipa Payload
+
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

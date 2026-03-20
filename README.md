@@ -13,6 +13,19 @@
 
 ---
 
+## ⚡ Nouveautés de la v1.0.3
+
+Cette version marque le passage à l'**automatisation complète** et à la **stabilité multi-plateforme**.
+
+*   **Ghost AI Evolution** : Intégration optimisée avec Ollama pour une IA 100% locale.
+*   **Système de Modules** : Possibilité d'importer vos propres cours au format JSON/Markdown.
+*   **Builds Automatisés** : Déploiement CI/CD via GitHub Actions pour Android, Windows, macOS, Linux et iOS.
+*   **Refonte des Paramètres** : Une interface plus claire pour configurer votre environnement d'apprentissage.
+
+> **Note sur la version 1.0.3** : Nous avons sauté les versions 1.0.1 et 1.0.2 pour marquer le passage d'une phase de tests internes (résolution des erreurs de compilation multi-plateformes) à une version de production stable et automatisée.
+
+---
+
 ## 🎯 Mission & Philosophie
 
 Dans un monde hyper-connecté, TUTODECODE redonne le contrôle à l'utilisateur :
