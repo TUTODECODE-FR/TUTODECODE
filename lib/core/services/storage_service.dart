@@ -1,18 +1,23 @@
 // Core service for local persistence (SharedPreferences).
 // All features import from here — single source of truth.
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../security/ollama_host.dart';
 
 // IMPORTANT : SharedPreferences est utilisé ici pour des préférences non-sensibles.
 // Pour des secrets (mots de passe, clés d'API), utilisez flutter_secure_storage.
 class StorageService {
   static const _completedKey = 'completed_chapters';
-  static const _ollamaHostKey = 'ollama_host';
+  static const _legacyOllamaHostKey = 'ollama_host';
+  static const _secureOllamaHostKey = 'secure_ollama_host';
 
   // Network Transparency
   static const _offlineModeKey = 'offline_mode';
+  static const _zeroNetworkModeKey = 'zero_network_mode';
   static const _securityUpdatesKey = 'security_updates';
   static const _contentUpdatesKey = 'content_updates';
+  static const _securityLogsKey = 'security_logs';
 
   // Ghost AI
   static const _ollamaModelKey = 'ollama_model';
@@ -22,6 +27,18 @@ class StorageService {
   static const _terminalFontSizeKey = 'terminal_font_size';
   static const _terminalThemeKey = 'terminal_theme';
   static const _appThemeKey = 'app_theme';
+
+  // Backup/Snapshots
+  static const _secureSnapshotKeyKey = 'secure_snapshot_key_b64';
+
+  // Search
+  static const _favoritesKey = 'search_favorites';
+  static const _historyKey = 'search_history';
+
+  // Multi-tools permissions
+  static const _toolPermissionsKey = 'tool_permissions_v1';
+
+  static const FlutterSecureStorage _secure = FlutterSecureStorage();
 
   Future<void> saveCompleted(List<String> completed) async {
     final prefs = await SharedPreferences.getInstance();
@@ -35,7 +52,15 @@ class StorageService {
 
   Future<String> getOllamaHost() async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_ollamaHostKey) ?? OllamaHost.defaultBaseUrl;
+    var raw = await _secure.read(key: _secureOllamaHostKey);
+    if (raw == null || raw.isEmpty) {
+      raw = prefs.getString(_legacyOllamaHostKey) ?? OllamaHost.defaultBaseUrl;
+      // Best-effort migration to secure storage.
+      try {
+        await _secure.write(key: _secureOllamaHostKey, value: raw);
+        await prefs.remove(_legacyOllamaHostKey);
+      } catch (_) {}
+    }
     try {
       return OllamaHost.normalize(raw);
     } catch (_) {
@@ -46,9 +71,8 @@ class StorageService {
   }
 
   Future<void> saveOllamaHost(String host) async {
-    final prefs = await SharedPreferences.getInstance();
     final normalized = OllamaHost.normalize(host);
-    await prefs.setString(_ollamaHostKey, normalized);
+    await _secure.write(key: _secureOllamaHostKey, value: normalized);
   }
 
   // --- Generic Getters/Setters ---
@@ -88,6 +112,9 @@ class StorageService {
   Future<bool> getOfflineMode() => getBool(_offlineModeKey, defaultValue: false);
   Future<void> setOfflineMode(bool value) => setBool(_offlineModeKey, value);
 
+  Future<bool> getZeroNetworkMode() => getBool(_zeroNetworkModeKey, defaultValue: false);
+  Future<void> setZeroNetworkMode(bool value) => setBool(_zeroNetworkModeKey, value);
+
   Future<bool> getSecurityUpdates() => getBool(_securityUpdatesKey, defaultValue: true);
   Future<void> setSecurityUpdates(bool value) => setBool(_securityUpdatesKey, value);
 
@@ -109,6 +136,80 @@ class StorageService {
   Future<String> getAppTheme() => getString(_appThemeKey, defaultValue: 'System');
   Future<void> setAppTheme(String value) => setString(_appThemeKey, value);
 
+  // --- Security Logs & Telemetry ---
+
+  Future<void> addSecurityLog(String message) async {
+    final prefs = await SharedPreferences.getInstance();
+    final logs = prefs.getStringList(_securityLogsKey) ?? [];
+    final timestamp = DateTime.now().toUtc().toIso8601String();
+    logs.insert(0, '[$timestamp] $message');
+    if (logs.length > 50) logs.removeLast(); // Limit to 50 logs
+    await prefs.setStringList(_securityLogsKey, logs);
+  }
+
+  Future<List<String>> getSecurityLogs() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(_securityLogsKey) ?? [];
+  }
+
+  // --- Search Favorites/History ---
+
+  Future<List<String>> getSearchFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(_favoritesKey) ?? [];
+  }
+
+  Future<void> setSearchFavorites(List<String> ids) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_favoritesKey, ids);
+  }
+
+  Future<List<String>> getSearchHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(_historyKey) ?? [];
+  }
+
+  Future<void> pushSearchHistory(String query, {int max = 20}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final list = (prefs.getStringList(_historyKey) ?? []).where((q) => q.trim().isNotEmpty).toList();
+    final normalized = query.trim();
+    if (normalized.isEmpty) return;
+    list.removeWhere((q) => q == normalized);
+    list.insert(0, normalized);
+    if (list.length > max) list.removeRange(max, list.length);
+    await prefs.setStringList(_historyKey, list);
+  }
+
+  Future<void> clearSearchHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_historyKey);
+  }
+
+  // --- Multi-tools permissions ---
+
+  Future<Map<String, bool>> getToolPermissions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_toolPermissionsKey);
+    if (raw == null || raw.isEmpty) return {};
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return {};
+      return decoded.map((k, v) => MapEntry(k.toString(), v == true));
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<void> setToolPermissions(Map<String, bool> perms) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_toolPermissionsKey, jsonEncode(perms));
+  }
+
+  // --- Snapshot key (device-local) ---
+
+  Future<String?> getSnapshotKeyB64() => _secure.read(key: _secureSnapshotKeyKey);
+  Future<void> setSnapshotKeyB64(String value) => _secure.write(key: _secureSnapshotKeyKey, value: value);
+
   // --- Reset & Cleanup ---
 
   Future<void> clearChatHistory() async {
@@ -127,4 +228,20 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_completedKey);
   }
+
+  // AI Tutor Additions
+  Future<Map<String, dynamic>> loadAiSettings() async {
+    final url = await getOllamaHost();
+    final model = await getOllamaModel();
+    return {'ollamaUrl': url, 'selectedModel': model};
+  }
+
+  Future<void> saveAiSettings(Map<String, String> settings) async {
+    if (settings['ollamaUrl'] != null) await saveOllamaHost(settings['ollamaUrl']!);
+    if (settings['selectedModel'] != null) await setOllamaModel(settings['selectedModel']!);
+  }
+
+  Future<List<dynamic>> loadTutorSessions() async { return []; }
+  Future<void> saveTutorSessions(List<dynamic> sessions) async {}
+  Future<void> saveUserProgress(Map<String, dynamic> progress) async {}
 }

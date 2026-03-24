@@ -14,6 +14,8 @@ import '../features/courses/providers/courses_provider.dart';
 import '../features/ghost_ai/service/ollama_service.dart';
 import '../core/providers/shell_provider.dart';
 import '../core/navigation/nav_keys.dart';
+import '../core/providers/search_provider.dart';
+import '../core/providers/settings_provider.dart';
 
 class AppShell extends StatefulWidget {
   final Widget child;
@@ -52,6 +54,7 @@ class _AppShellState extends State<AppShell> {
     const _NavItem(Icons.settings,     'Paramètres',   '/settings'),
     const _NavItem(Icons.map,          'Roadmap',      '/roadmap'),
     const _NavItem(Icons.science,      'Laboratoire',  '/lab'),
+    const _NavItem(Icons.wifi_tethering, 'Ghost Link', '/ghost-link'),
   ];
 
   // ── Petites icônes de statut IA ───────────────────────────
@@ -129,26 +132,26 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ShellProvider, CoursesProvider>(
-      builder: (context, shell, courses, _) {
+    return Consumer3<ShellProvider, CoursesProvider, SettingsProvider>(
+      builder: (context, shell, courses, settings, _) {
         return ResponsiveBuilder(
           builder: (ctx, type) {
-            if (type.isDesktop) return _buildDesktop(ctx, shell);
-            if (type.isTablet) return _buildTablet(ctx, shell);
-            return _buildMobile(ctx, shell);
+            if (type.isDesktop) return _buildDesktop(ctx, shell, settings);
+            if (type.isTablet) return _buildTablet(ctx, shell, settings);
+            return _buildMobile(ctx, shell, settings);
           },
         );
       },
     );
   }
 
-  Widget _buildDesktop(BuildContext context, ShellProvider shell) {
+  Widget _buildDesktop(BuildContext context, ShellProvider shell, SettingsProvider settings) {
     return Scaffold(
       backgroundColor: TdcColors.bg,
       body: SafeArea(
         child: Column(
           children: [
-            _buildDesktopHeader(context, shell),
+            _buildDesktopHeader(context, shell, settings),
             Expanded(
               child: Row(
                 children: [
@@ -163,7 +166,7 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  Widget _buildDesktopHeader(BuildContext context, ShellProvider shell) {
+  Widget _buildDesktopHeader(BuildContext context, ShellProvider shell, SettingsProvider settings) {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -185,6 +188,7 @@ class _AppShellState extends State<AppShell> {
           const Spacer(),
           _buildGlobalSearchTrigger(context),
           const SizedBox(width: 16),
+          if (settings.zeroNetworkMode) _networkOffChip(),
           if (shell.actions != null) ...shell.actions!,
         ],
       ),
@@ -230,13 +234,20 @@ class _AppShellState extends State<AppShell> {
   }
 
   void _showGlobalSearch(BuildContext context) {
+    final search = context.read<SearchProvider>();
+    if (!search.ready) {
+      final courses = context.read<CoursesProvider>();
+      search.init(courses);
+    }
+    
+    final ctx = AppNavigator.key.currentContext ?? context;
     showDialog(
-      context: context,
+      context: ctx,
       builder: (context) => _GlobalSearchDialog(navItems: _navItems),
     );
   }
 
-  Widget _buildTablet(BuildContext context, ShellProvider shell) {
+  Widget _buildTablet(BuildContext context, ShellProvider shell, SettingsProvider settings) {
     return Scaffold(
       backgroundColor: TdcColors.bg,
       drawer: Drawer(
@@ -244,12 +255,12 @@ class _AppShellState extends State<AppShell> {
         width: 260,
         child: SafeArea(child: _buildSidebar(context, width: 260, insideDrawer: true, activeRoute: shell.activeRoute)),
       ),
-      appBar: _buildAppBar(context, shell),
-      body: widget.child,
+      appBar: _buildAppBar(context, shell, showMenuButton: true),
+      body: SafeArea(child: widget.child),
     );
   }
 
-  Widget _buildMobile(BuildContext context, ShellProvider shell) {
+  Widget _buildMobile(BuildContext context, ShellProvider shell, SettingsProvider settings) {
     final mobileItems = _navItems.take(4).toList();
     final activeIndex = mobileItems.indexWhere((i) => i.route == shell.activeRoute);
 
@@ -260,22 +271,21 @@ class _AppShellState extends State<AppShell> {
         child: SafeArea(child: _buildSidebar(context, width: double.infinity, insideDrawer: true, activeRoute: shell.activeRoute)),
       ),
       appBar: _buildAppBar(context, shell),
-      body: widget.child,
+      body: SafeArea(child: widget.child),
       bottomNavigationBar: _buildBottomNav(context, mobileItems, activeIndex, shell.activeRoute),
-      floatingActionButton: FloatingActionButton(
-        mini: true,
-        onPressed: () => AppNavigator.pushNamed('/ai'),
-        backgroundColor: const Color(0xFF2D2060),
-        child: const Icon(Icons.smart_toy, color: TdcColors.warning, size: 20),
-      ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, ShellProvider shell) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, ShellProvider shell, {bool showMenuButton = false}) {
     return AppBar(
       backgroundColor: TdcColors.surface,
       elevation: 0,
       surfaceTintColor: Colors.transparent,
+      leading: showMenuButton ? IconButton(
+        icon: const Icon(Icons.menu, color: TdcColors.textPrimary),
+        onPressed: () => Scaffold.of(context).openDrawer(),
+        tooltip: 'Menu',
+      ) : null,
       title: Row(children: [
         if (shell.showBackButton)
           IconButton(
@@ -298,22 +308,47 @@ class _AppShellState extends State<AppShell> {
         ),
       ]),
       actions: [
-        if (shell.actions != null) ...shell.actions!,
-        GestureDetector(
-          onTap: () => AppNavigator.pushNamed('/ai-config'),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(children: [
-              Icon(Icons.memory, size: 16, color: _aiStatus?.running == true ? TdcColors.success : TdcColors.textMuted),
-              const SizedBox(width: 4),
-              _aiDot(),
-            ]),
-          ),
+        IconButton(
+          icon: const Icon(Icons.search, color: TdcColors.textPrimary),
+          onPressed: () => _showGlobalSearch(context),
+          tooltip: 'Rechercher',
         ),
+        if (shell.actions != null) ...shell.actions!,
+        if (context.read<SettingsProvider>().zeroNetworkMode) _networkOffAction(),
+        const SizedBox(width: 8),
       ],
       bottom: const PreferredSize(
         preferredSize: Size.fromHeight(1),
         child: Divider(height: 1, color: TdcColors.border),
+      ),
+    );
+  }
+
+  Widget _networkOffChip() {
+    return Container(
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: TdcColors.danger.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: TdcColors.danger.withOpacity(0.35)),
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.wifi_off, size: 14, color: TdcColors.danger),
+          SizedBox(width: 6),
+          Text('Réseau désactivé', style: TextStyle(color: TdcColors.danger, fontSize: 12, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _networkOffAction() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Tooltip(
+        message: 'Mode Zéro Réseau activé',
+        child: const Icon(Icons.wifi_off, color: TdcColors.danger),
       ),
     );
   }
@@ -333,7 +368,13 @@ class _AppShellState extends State<AppShell> {
             return Expanded(
               child: InkWell(
                 onTap: () {
-                  if (!isActive) AppNavigator.pushNamed(item.route);
+                  if (activeRoute != item.route) {
+                    if (item.route == '/') {
+                      AppNavigator.state?.popUntil((route) => route.isFirst);
+                    } else {
+                      AppNavigator.state?.pushNamedAndRemoveUntil(item.route, (route) => route.isFirst);
+                    }
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -483,9 +524,18 @@ class _AppShellState extends State<AppShell> {
     return _HoverNavItem(
       item: item,
       isActive: isActive,
+      insideDrawer: insideDrawer,
       onTap: () {
-        if (insideDrawer) Navigator.pop(context);
-        if (!isActive) AppNavigator.pushNamed(item.route);
+        if (insideDrawer && Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        if (activeRoute != item.route) {
+          if (item.route == '/') {
+            AppNavigator.pushReplacementNamed('/');
+          } else {
+            AppNavigator.pushNamed(item.route);
+          }
+        }
       },
     );
   }
@@ -502,9 +552,10 @@ class _NavItem {
 class _HoverNavItem extends StatefulWidget {
   final _NavItem item;
   final bool isActive;
+  final bool insideDrawer;
   final VoidCallback onTap;
 
-  const _HoverNavItem({required this.item, required this.isActive, required this.onTap});
+  const _HoverNavItem({required this.item, required this.isActive, this.insideDrawer = false, required this.onTap});
 
   @override
   State<_HoverNavItem> createState() => _HoverNavItemState();
@@ -519,59 +570,64 @@ class _HoverNavItemState extends State<_HoverNavItem> {
     return Tooltip(
       message: widget.item.label,
       waitDuration: const Duration(milliseconds: 800),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() => _hovered = true),
-        onExit: (_) => setState(() => _hovered = false),
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            curve: Curves.easeOut,
-            margin: const EdgeInsets.symmetric(horizontal: TdcSpacing.sm, vertical: 2),
-            padding: const EdgeInsets.symmetric(horizontal: TdcSpacing.md, vertical: TdcSpacing.sm + 2),
-            decoration: BoxDecoration(
-              color: isActive
-                  ? TdcColors.accent
-                  : _hovered
-                       ? TdcColors.surfaceHover
-                      : Colors.transparent,
-              borderRadius: TdcRadius.sm,
-              border: Border.all(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: TdcSpacing.sm, vertical: 2),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => setState(() => _hovered = true),
+          onExit: (_) => setState(() => _hovered = false),
+          child: GestureDetector(
+            onTap: widget.onTap,
+            behavior: HitTestBehavior.opaque,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              decoration: BoxDecoration(
                 color: isActive
-                    ? Colors.transparent
+                    ? TdcColors.accent
                     : _hovered
-                        ? TdcColors.border
+                        ? TdcColors.surfaceHover
                         : Colors.transparent,
+                borderRadius: TdcRadius.sm,
+                border: Border.all(
+                  color: isActive
+                      ? Colors.transparent
+                      : _hovered
+                          ? TdcColors.border
+                          : Colors.transparent,
+                ),
               ),
-            ),
-            child: Row(children: [
-              Icon(
-                widget.item.icon,
-                size: 18,
-                color: isActive
-                    ? Colors.white
-                    : _hovered
-                        ? TdcColors.textPrimary
-                        : TdcColors.textSecondary,
-              ),
-              const SizedBox(width: TdcSpacing.sm),
-              Expanded(
-                child: Text(
-                  widget.item.label,
-                  style: TextStyle(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: TdcSpacing.md, vertical: TdcSpacing.sm + 2),
+                child: Row(children: [
+                  Icon(
+                    widget.item.icon,
+                    size: 18,
                     color: isActive
                         ? Colors.white
                         : _hovered
                             ? TdcColors.textPrimary
                             : TdcColors.textSecondary,
-                    fontSize: 14,
-                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                   ),
-                ),
+                  const SizedBox(width: TdcSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      widget.item.label,
+                      style: TextStyle(
+                        color: isActive
+                            ? Colors.white
+                            : _hovered
+                                ? TdcColors.textPrimary
+                                : TdcColors.textSecondary,
+                        fontSize: 14,
+                        fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  if (widget.item.trailing != null) widget.item.trailing!,
+                ]),
               ),
-              if (widget.item.trailing != null) widget.item.trailing!,
-            ]),
+            ),
           ),
         ),
       ),
@@ -590,27 +646,18 @@ class _GlobalSearchDialog extends StatefulWidget {
 class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
   String _query = '';
   
-  // Simulation de données de commandes (doit correspondre à cheat_sheet_screen.dart)
-  final _commands = [
-    {'cmd': 'ipconfig /flushdns', 'desc': 'Vider le cache DNS'},
-    {'cmd': 'sfc /scannow', 'desc': 'Réparer les fichiers système'},
-    {'cmd': 'gpupdate /force', 'desc': 'Forcer les GPO'},
-    {'cmd': 'sudo purge', 'desc': 'Vider la RAM (Mac)'},
-    {'cmd': 'journalctl -xe', 'desc': 'Logs Linux'},
-    {'cmd': 'docker system prune', 'desc': 'Nettoyage Docker'},
-    {'cmd': 'nmap -sV', 'desc': 'Scan de ports'},
-  ];
+// Removed hardcoded _commands
 
   @override
   Widget build(BuildContext context) {
+    final search = context.watch<SearchProvider>();
+    final courses = context.read<CoursesProvider>();
+
     final filteredPages = widget.navItems
         .where((i) => i.label.toLowerCase().contains(_query.toLowerCase()))
         .toList();
     
-    final filteredCmds = _commands
-        .where((c) => c['cmd']!.toLowerCase().contains(_query.toLowerCase()) || 
-                     c['desc']!.toLowerCase().contains(_query.toLowerCase()))
-        .toList();
+    final docs = (_query.isNotEmpty && search.ready) ? search.search(_query) : const <SearchResult>[];
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -644,6 +691,28 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    if (_query.isEmpty && search.favorites.isNotEmpty) ...[
+                      _sectionHeader('FAVORIS'),
+                      ...search.favorites.take(8).map((id) {
+                        final doc = search.docById(id);
+                        if (doc == null) return const SizedBox.shrink();
+                        return _buildDocRow(
+                          context,
+                          SearchResult(doc: doc, score: 1.0, favorite: true),
+                          courses,
+                          search,
+                        );
+                      }),
+                    ],
+                    if (_query.isEmpty && search.history.isNotEmpty) ...[
+                      _sectionHeader('HISTORIQUE'),
+                      ...search.history.take(8).map((q) => _buildResultRow(
+                        icon: Icons.history,
+                        title: q,
+                        subtitle: 'Rechercher',
+                        onTap: () => setState(() => _query = q),
+                      )),
+                    ],
                     if (_query.isNotEmpty && filteredPages.isNotEmpty) ...[
                       _sectionHeader('PAGES'),
                       ...filteredPages.map((item) => _buildResultRow(
@@ -656,19 +725,11 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
                         },
                       )),
                     ],
-                    if (_query.isNotEmpty && filteredCmds.isNotEmpty) ...[
-                      _sectionHeader('COMMANDES CHEAT SHEET'),
-                      ...filteredCmds.map((c) => _buildResultRow(
-                        icon: Icons.terminal,
-                        title: c['desc']!,
-                        subtitle: c['cmd']!,
-                        onTap: () {
-                          AppNavigator.pop();
-                          AppNavigator.pushNamed('/cheat-sheets');
-                        },
-                      )),
+                    if (_query.isNotEmpty && docs.isNotEmpty) ...[
+                      _sectionHeader('RÉSULTATS'),
+                      ...docs.map((r) => _buildDocRow(context, r, courses, search)),
                     ],
-                    if (_query.isNotEmpty && filteredPages.isEmpty && filteredCmds.isEmpty)
+                    if (_query.isNotEmpty && filteredPages.isEmpty && docs.isEmpty)
                       const Padding(padding: EdgeInsets.all(32), child: Text('Aucun résultat trouvé', style: TextStyle(color: TdcColors.textMuted))),
                   ],
                 ),
@@ -698,6 +759,46 @@ class _GlobalSearchDialogState extends State<_GlobalSearchDialog> {
       title: Text(title, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14)),
       subtitle: Text(subtitle, style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildDocRow(BuildContext context, SearchResult r, CoursesProvider courses, SearchProvider search) {
+    final kind = r.doc.kind;
+    final icon = kind == SearchDocKind.chapter
+        ? Icons.menu_book
+        : (kind == SearchDocKind.course ? Icons.collections_bookmark : Icons.terminal);
+
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: TdcRadius.sm),
+        child: Icon(icon, size: 16, color: TdcColors.textSecondary),
+      ),
+      title: Text(r.doc.title, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14)),
+      subtitle: Text(kind.toUpperCase(), style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+      trailing: IconButton(
+        tooltip: r.favorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+        icon: Icon(r.favorite ? Icons.star : Icons.star_border, color: r.favorite ? TdcColors.warning : TdcColors.textMuted, size: 18),
+        onPressed: () => search.toggleFavorite(r.doc.id),
+      ),
+      onTap: () {
+        AppNavigator.pop();
+        final route = r.doc.nav['route'] as String?;
+        if (route == '/chapter') {
+          final courseId = r.doc.nav['courseId'];
+          final chapterId = r.doc.nav['chapterId'];
+          if (courseId != null) {
+            final course = courses.courses.firstWhere((c) => c.id == courseId, orElse: () => courses.courses.first);
+            final chId = chapterId ?? (course.chapters.isNotEmpty ? course.chapters.first.id : '');
+            if (chId.isNotEmpty) courses.selectChapter(course.id, chId);
+          }
+          AppNavigator.pushNamed('/chapter');
+          return;
+        }
+        if (route != null) {
+          AppNavigator.pushNamed(route, arguments: r.doc.nav);
+        }
+      },
     );
   }
 }

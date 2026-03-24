@@ -6,14 +6,21 @@
 // ============================================================
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../courses/providers/courses_provider.dart';
 import '../../courses/data/course_repository.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
+import 'package:tutodecode/core/widgets/tdc_motion.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../ghost_ai/service/ollama_service.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
+import 'package:tutodecode/core/providers/settings_provider.dart';
+import 'package:tutodecode/core/services/github_service.dart';
+import 'package:tutodecode/core/services/snapshot_service.dart';
+import 'package:tutodecode/core/providers/search_provider.dart';
+import 'package:tutodecode/core/services/asset_integrity_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -22,6 +29,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   OllamaStatus? _aiStatus;
+  bool _startupCourseUpdatePrompted = false;
+  final SnapshotService _snapshots = SnapshotService();
+  bool _integrityChecked = false;
+
+  bool get isSmall => MediaQuery.of(context).size.width < 360;
 
   @override
   void initState() {
@@ -34,12 +46,87 @@ class _HomeScreenState extends State<HomeScreen> {
         showBackButton: false,
         actions: [],
       );
+      _snapshots.maybeCreateDailySnapshot();
+      _maybeVerifyAssets();
+      _maybePromptCourseUpdates();
     });
+  }
+
+  Future<void> _maybeVerifyAssets() async {
+    if (_integrityChecked) return;
+    _integrityChecked = true;
+    final settings = context.read<SettingsProvider>();
+    if (!settings.securityUpdates) return;
+    try {
+      final mismatched = await AssetIntegrityService().verify();
+      if (!mounted) return;
+      if (mismatched.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Alerte intégrité: certains assets semblent modifiés.'),
+            backgroundColor: TdcColors.danger,
+          ),
+        );
+      }
+    } catch (_) {}
   }
 
   Future<void> _checkAI() async {
     final s = await OllamaService.checkStatus();
     if (mounted) setState(() => _aiStatus = s);
+  }
+
+  Future<void> _maybePromptCourseUpdates() async {
+    if (_startupCourseUpdatePrompted) return;
+    _startupCourseUpdatePrompted = true;
+
+    final settings = context.read<SettingsProvider>();
+    if (settings.offlineMode) return;
+    if (settings.zeroNetworkMode) return;
+    if (!settings.contentUpdates) return;
+
+    final connectivity = await Connectivity().checkConnectivity();
+    if (connectivity.contains(ConnectivityResult.none)) return;
+
+    final courses = context.read<CoursesProvider>();
+    if (courses.startupUpdateCheckDone) return;
+
+    final count = await courses.checkForUpdatesAvailable(markStartupDone: true);
+    if (!mounted) return;
+    if (count <= 0) return;
+
+    final updates = await courses.listAvailableUpdates();
+    if (!mounted) return;
+    if (updates.isEmpty) return;
+
+    final shouldDownload = await showDialog<bool>(
+      context: context,
+      builder: (context) => _CourseUpdatesDialog(
+        updates: updates,
+        onShowDiff: (fileName) => context.read<CoursesProvider>().diffUpdate(fileName),
+      ),
+    );
+
+    if (shouldDownload != true || !mounted) return;
+
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(const SnackBar(content: Text('Téléchargement des modules de cours...')));
+    final downloaded = await courses.checkForUpdates();
+    scaffold.hideCurrentSnackBar();
+    if (!mounted) return;
+    if (downloaded > 0) {
+      scaffold.showSnackBar(SnackBar(
+        content: Text('$downloaded module(s) de cours téléchargé(s).'),
+        backgroundColor: TdcColors.success,
+      ));
+    } else if (courses.errorMessage != null) {
+      scaffold.showSnackBar(SnackBar(
+        content: Text(courses.errorMessage!),
+        backgroundColor: TdcColors.danger,
+      ));
+    } else {
+      scaffold.showSnackBar(const SnackBar(content: Text('Aucune mise à jour téléchargée.')));
+    }
   }
 
   @override
@@ -48,8 +135,33 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!prov.loaded) {
         return Container(
           color: TdcColors.bg,
-          child: const Center(child: CircularProgressIndicator(color: TdcColors.accent)),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(color: TdcColors.accent, strokeWidth: 2.5),
+                )
+                    .animate(onPlay: (c) => c.repeat())
+                    .shimmer(duration: 1400.ms, color: TdcColors.accent.withValues(alpha: 0.35)),
+                const SizedBox(height: 20),
+                Text(
+                  'Chargement…',
+                  style: TextStyle(color: TdcColors.textMuted, fontSize: 13, letterSpacing: 0.8),
+                ).animate().fadeIn(delay: 200.ms),
+              ],
+            ),
+          ),
         );
+      }
+
+      final search = context.watch<SearchProvider>();
+      if (!search.ready) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) context.read<SearchProvider>().init(prov);
+        });
       }
 
       return ResponsiveBuilder(
@@ -169,24 +281,61 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMainHeader(BuildContext context, CoursesProvider prov) {
-    return Row(
-      children: [
-        Image.asset('assets/logo.png', width: TdcAdaptive.icon(context, 48), height: TdcAdaptive.icon(context, 48)),
-        SizedBox(width: TdcAdaptive.space(context, TdcSpacing.md)),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Bienvenue sur TutoDeCode',
-                  style: TextStyle(color: TdcColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
-              const SizedBox(height: 4),
-              const Text('Continuez votre apprentissage informatique local et sécurisé.',
-                  style: TextStyle(color: TdcColors.textSecondary, fontSize: 14)),
-            ],
-          ),
+    final logo = ClipRRect(
+      borderRadius: TdcRadius.md,
+      child: Image.asset('assets/logo.png', width: TdcAdaptive.icon(context, 52), height: TdcAdaptive.icon(context, 52)),
+    ).tdcBreath(period: const Duration(milliseconds: 2400));
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.lg)),
+      decoration: BoxDecoration(
+        borderRadius: TdcRadius.xl,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            TdcColors.surface,
+            TdcColors.surface.withValues(alpha: 0.85),
+            const Color(0xFF1E1B4B).withValues(alpha: 0.35),
+          ],
         ),
-      ],
-    );
+        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 28, offset: const Offset(0, 16))],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          logo,
+          SizedBox(width: TdcAdaptive.space(context, TdcSpacing.md)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Prêt à creuser ?',
+                  style: TextStyle(
+                    color: TdcColors.textPrimary,
+                    fontSize: TdcAdaptive.space(context, 26),
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.6,
+                    height: 1.15,
+                  ),
+                )
+                    .animate()
+                    .fadeIn(duration: 500.ms, curve: Curves.easeOut)
+                    .slideX(begin: -0.02, end: 0, duration: 500.ms, curve: Curves.easeOutCubic),
+                SizedBox(height: TdcAdaptive.space(context, 8)),
+                Text(
+                  'Tout en local, à ton rythme — des modules concrets, zéro ambiance fac.',
+                  style: TextStyle(color: TdcColors.textSecondary, fontSize: TdcText.body(context), height: 1.45),
+                ).animate(delay: 120.ms).fadeIn(duration: 550.ms).slideY(begin: 0.04, end: 0),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 450.ms).scale(begin: const Offset(0.97, 0.97), duration: 550.ms, curve: Curves.easeOutCubic);
   }
 
   Widget _buildMobileHeader(BuildContext context, CoursesProvider prov) {
@@ -282,9 +431,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       itemCount: courses.length,
       itemBuilder: (context, i) => _buildCourseCard(context, courses[i], i, prov, crossAxisCount == 1)
-          .animate(delay: Duration(milliseconds: 100 + (i * 50)))
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
+          .animate(delay: Duration(milliseconds: 80 + (i * 42)))
+          .fadeIn(duration: 450.ms, curve: Curves.easeOutCubic)
+          .slideY(begin: 0.12, end: 0, duration: 480.ms, curve: Curves.easeOutCubic)
+          .scale(begin: const Offset(0.92, 0.92), duration: 480.ms, curve: Curves.easeOutBack),
     );
   }
 
@@ -296,15 +446,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final icon = _courseIcon(course);
     final iconColor = _courseIconColor(course);
 
-    return TdcFadeSlide(
-      delay: Duration(milliseconds: 50 * index),
-      child: TdcCard(
-        onTap: () => _openCourseSheet(context, course, prov),
-        padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.md)),
-        child: horizontal
-            ? _buildHorizontalCard(context, course, icon, iconColor, color, done, total, progress)
-            : _buildVerticalCard(context, course, icon, iconColor, color, done, total, progress),
-      ),
+    return TdcCard(
+      onTap: () => _openCourseSheet(context, course, prov),
+      padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.md)),
+      child: horizontal
+          ? _buildHorizontalCard(context, course, icon, iconColor, color, done, total, progress)
+          : _buildVerticalCard(context, course, icon, iconColor, color, done, total, progress),
     );
   }
 
@@ -410,9 +557,9 @@ class _HomeScreenState extends State<HomeScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          crossAxisSpacing: TdcAdaptive.space(context, TdcSpacing.sm),
-          mainAxisSpacing: TdcAdaptive.space(context, TdcSpacing.sm),
-          childAspectRatio: 2.8,
+          crossAxisSpacing: TdcAdaptive.space(context, 8),
+          mainAxisSpacing: TdcAdaptive.space(context, 8),
+          childAspectRatio: isSmall ? 2.5 : 2.8,
           children: actions.map((t) => _buildToolButton(context, t)).toList(),
         ),
       ],
@@ -571,6 +718,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildToolButton(BuildContext context, _ToolItem tool) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -578,7 +726,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: TdcRadius.md,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.all(TdcAdaptive.padding(context, TdcSpacing.md)),
+          padding: EdgeInsets.all(TdcAdaptive.padding(context, isMobile ? 8 : TdcSpacing.md)),
           decoration: BoxDecoration(
             color: TdcColors.surface,
             borderRadius: TdcRadius.md,
@@ -587,20 +735,26 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: Row(children: [
             Container(
-              width: TdcAdaptive.icon(context, 44), 
-              height: TdcAdaptive.icon(context, 44),
+              width: TdcAdaptive.icon(context, isMobile ? 32 : 44), 
+              height: TdcAdaptive.icon(context, isMobile ? 32 : 44),
               decoration: BoxDecoration(color: tool.color.withValues(alpha: 0.12), borderRadius: TdcRadius.sm, border: Border.all(color: tool.color.withValues(alpha: 0.2))),
-              child: Icon(tool.icon, color: tool.color, size: TdcAdaptive.icon(context, 22)),
+              child: Icon(tool.icon, color: tool.color, size: TdcAdaptive.icon(context, isMobile ? 16 : 22)),
             ),
-            SizedBox(width: TdcAdaptive.space(context, TdcSpacing.md)),
+            SizedBox(width: TdcAdaptive.space(context, isMobile ? 8 : TdcSpacing.md)),
             Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(tool.label, style: TextStyle(color: TdcColors.textPrimary, fontSize: TdcText.body(context), fontWeight: FontWeight.bold)),
-                const SizedBox(height: 2),
-                Text(tool.sub, style: TextStyle(color: TdcColors.textMuted, fontSize: TdcText.caption(context)), maxLines: 1, overflow: TextOverflow.ellipsis),
-              ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(tool.label, style: TextStyle(color: TdcColors.textPrimary, fontSize: TdcText.body(context), fontWeight: FontWeight.bold), maxLines: 1),
+                  if (!isMobile) ...[
+                    const SizedBox(height: 2),
+                    Text(tool.sub, style: TextStyle(color: TdcColors.textMuted, fontSize: TdcText.caption(context)), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ],
+                ],
+              ),
             ),
-            Icon(Icons.chevron_right, color: TdcColors.textMuted.withValues(alpha: 0.5), size: TdcAdaptive.icon(context, 18)),
+            Icon(Icons.chevron_right, color: TdcColors.textMuted.withValues(alpha: 0.5), size: TdcAdaptive.icon(context, 16)),
           ]),
         ),
       ),
@@ -680,6 +834,136 @@ class _HomeScreenState extends State<HomeScreen> {
     if (cat.contains('cloud') || title.contains('kubernetes')) return const Color(0xFF06B6D4);
     if (cat.contains('ai') || cat.contains('ia')) return const Color(0xFFA855F7);
     return TdcColors.accent;
+  }
+}
+
+class _CourseUpdatesDialog extends StatefulWidget {
+  final List<ModuleUpdateInfo> updates;
+  final Future<ModuleDiff?> Function(String fileName) onShowDiff;
+
+  const _CourseUpdatesDialog({
+    required this.updates,
+    required this.onShowDiff,
+  });
+
+  @override
+  State<_CourseUpdatesDialog> createState() => _CourseUpdatesDialogState();
+}
+
+class _CourseUpdatesDialogState extends State<_CourseUpdatesDialog> {
+  String? _diffLoadingFor;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: TdcColors.surface,
+      title: const Text('Mises à jour des cours', style: TextStyle(color: TdcColors.textPrimary)),
+      content: SizedBox(
+        width: 560,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Des modules de cours sont disponibles depuis le dépôt officiel.\n'
+              'Transparence: vérification en lecture seule sur GitHub (${GithubService.officialRepoUrl}). Aucune donnée personnelle n’est envoyée.',
+              style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13, height: 1.3),
+            ),
+            const SizedBox(height: 12),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: widget.updates.length,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (context, i) {
+                  final u = widget.updates[i];
+                  final isNew = (u.localSha == null || u.localSha!.isEmpty);
+                  final sizeLabel = u.remoteSize != null ? '${(u.remoteSize! / 1024).toStringAsFixed(1)} KB' : '—';
+                  return ListTile(
+                    dense: true,
+                    title: Text(
+                      u.fileName,
+                      style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13),
+                    ),
+                    subtitle: Text(
+                      '${isNew ? 'Nouveau' : 'Màj'} • Taille: $sizeLabel',
+                      style: const TextStyle(color: TdcColors.textMuted, fontSize: 11),
+                    ),
+                    trailing: TextButton(
+                      onPressed: _diffLoadingFor == null
+                          ? () async {
+                              setState(() => _diffLoadingFor = u.fileName);
+                              final diff = await widget.onShowDiff(u.fileName);
+                              if (!mounted) return;
+                              setState(() => _diffLoadingFor = null);
+                              if (diff == null) return;
+                              await showDialog<void>(
+                                context: context,
+                                builder: (context) => _ModuleDiffDialog(diff: diff),
+                              );
+                            }
+                          : null,
+                      child: (_diffLoadingFor == u.fileName)
+                          ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Text('Voir diff'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Plus tard')),
+        ElevatedButton.icon(
+          onPressed: () => Navigator.pop(context, true),
+          icon: const Icon(Icons.download, size: 18),
+          label: const Text('Télécharger'),
+        ),
+      ],
+    );
+  }
+}
+
+class _ModuleDiffDialog extends StatelessWidget {
+  final ModuleDiff diff;
+  const _ModuleDiffDialog({required this.diff});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: TdcColors.surface,
+      title: const Text('Aperçu des changements', style: TextStyle(color: TdcColors.textPrimary)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(diff.fileName, style: const TextStyle(color: TdcColors.accent, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          _row('Titre', diff.localTitle ?? '—', diff.remoteTitle ?? '—'),
+          _row('Chapitres', diff.localChapters?.toString() ?? '—', diff.remoteChapters?.toString() ?? '—'),
+          _row('ID', diff.localId ?? '—', diff.remoteId ?? '—'),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer')),
+      ],
+    );
+  }
+
+  Widget _row(String label, String local, String remote) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 80, child: Text(label, style: const TextStyle(color: TdcColors.textMuted, fontSize: 12))),
+          Expanded(child: Text(local, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12))),
+          const SizedBox(width: 12),
+          Expanded(child: Text(remote, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600))),
+        ],
+      ),
+    );
   }
 }
 

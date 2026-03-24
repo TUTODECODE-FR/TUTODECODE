@@ -32,9 +32,17 @@ class OllamaChunk {
 class OllamaService {
   static Future<String> get _base async => await StorageService().getOllamaHost();
 
+  static Future<void> _ensureAllowed() async {
+    final storage = StorageService();
+    if (await storage.getZeroNetworkMode()) {
+      throw Exception('Réseau désactivé (mode zéro réseau)');
+    }
+  }
+
   // Vérifie si Ollama tourne
   static Future<OllamaStatus> checkStatus() async {
     try {
+      await _ensureAllowed();
       final baseUrl = await _base;
       // Timeout plus long pour les réseaux distants/VPN
       final res = await http.get(Uri.parse('$baseUrl/api/version'))
@@ -85,6 +93,7 @@ class OllamaService {
     String system = '',
     String? context,
   }) async* {
+    await _ensureAllowed();
     final msgs = <Map<String, String>>[];
     String fullSystem = system;
     if (context != null && context.isNotEmpty) {

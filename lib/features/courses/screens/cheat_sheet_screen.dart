@@ -10,6 +10,8 @@ import 'package:tutodecode/features/courses/data/cheat_sheet_repository.dart';
 class CheatSheetEntry {
   final String command, description, category;
   final String? detailedExplanation;
+  final String? iconName;
+  final String? colorHex;
   final List<String>? options, examples, tableHeaders;
   final List<List<String>>? tableData;
   final int dangerLevel;
@@ -19,6 +21,8 @@ class CheatSheetEntry {
     required this.description,
     required this.category,
     this.detailedExplanation,
+    this.iconName,
+    this.colorHex,
     this.options,
     this.examples,
     this.tableHeaders,
@@ -32,6 +36,8 @@ class CheatSheetEntry {
       description: m['description'] ?? '',
       category: m['category'] ?? '',
       detailedExplanation: m['detailedExplanation'],
+      iconName: m['iconName'],
+      colorHex: m['colorHex'],
       options: m['options'] != null ? List<String>.from(m['options']) : null,
       examples: m['examples'] != null ? List<String>.from(m['examples']) : null,
       tableHeaders: m['tableHeaders'] != null ? List<String>.from(m['tableHeaders']) : null,
@@ -72,7 +78,22 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
         _entries = data;
         _loading = false;
       });
+      _handleArguments();
     }
+  }
+
+  void _handleArguments() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null && args.containsKey('command')) {
+        setState(() {
+          _filter = args['command'] as String;
+          if (args.containsKey('category')) {
+            _selectedCategory = args['category'] as String;
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -132,7 +153,7 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: ['TOUT', 'WINDOWS', 'MAC', 'LINUX', 'DOCKER', 'RÉSEAU', 'GIT', 'SÉCURITÉ'].map((cat) {
+              children: ['TOUT', 'Red Team', 'Blue Team', 'Admin Sys', 'Cloud', 'SÉCURITÉ', 'LINUX', 'WINDOWS', 'DOCKER', 'RÉSEAU', 'GIT'].map((cat) {
                 final isSel = _selectedCategory == cat;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -163,10 +184,10 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: _getColor(e.category).withOpacity(0.1),
+                color: _getColor(e).withOpacity(0.1),
                 borderRadius: TdcRadius.md,
               ),
-              child: Icon(_getIcon(e.category), color: _getColor(e.category), size: 20),
+              child: Icon(_getIcon(e), color: _getColor(e), size: 20),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -205,8 +226,14 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
     );
   }
 
-  Color _getColor(String cat) {
-    switch (cat) {
+  Color _getColor(CheatSheetEntry e) {
+    if (e.colorHex != null && e.colorHex!.isNotEmpty) {
+      final hex = e.colorHex!.replaceAll('#', '');
+      try {
+        return Color(int.parse('FF$hex', radix: 16));
+      } catch (_) {}
+    }
+    switch (e.category) {
       case 'WINDOWS': return const Color(0xFF00A4EF);
       case 'MAC': return const Color(0xFF999999);
       case 'LINUX': return const Color(0xFFFCC624);
@@ -218,8 +245,23 @@ class _CheatSheetScreenState extends State<CheatSheetScreen> {
     }
   }
 
-  IconData _getIcon(String cat) {
-    switch (cat) {
+  IconData _getIcon(CheatSheetEntry e) {
+    if (e.iconName != null && e.iconName!.isNotEmpty) {
+      switch (e.iconName) {
+        case 'security': return Icons.security;
+        case 'terminal': return Icons.terminal;
+        case 'cloud': return Icons.cloud;
+        case 'dns': return Icons.dns;
+        case 'lock': return Icons.lock;
+        case 'api': return Icons.api;
+        case 'bug_report': return Icons.bug_report;
+        case 'admin_panel_settings': return Icons.admin_panel_settings;
+        case 'storage': return Icons.storage;
+        case 'network': return Icons.network_check;
+        case 'search': return Icons.search;
+      }
+    }
+    switch (e.category) {
       case 'WINDOWS': return Icons.window;
       case 'MAC': return Icons.apple;
       case 'LINUX': return Icons.terminal;

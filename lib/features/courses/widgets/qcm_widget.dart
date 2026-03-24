@@ -16,16 +16,24 @@ class _QcmWidgetState extends State<QcmWidget> {
   int _current = 0;
   int _score = 0;
   int? _selected;
+  bool _validated = false;
   bool _finished = false;
 
+  void _validate() {
+    setState(() {
+      _validated = true;
+      if (_selected == widget.questions[_current].correctIndex) {
+        _score++;
+      }
+    });
+  }
+
   void _next() {
-    if (_selected == widget.questions[_current].correctIndex) {
-      _score++;
-    }
     if (_current < widget.questions.length - 1) {
       setState(() {
         _current++;
         _selected = null;
+        _validated = false;
       });
     } else {
       setState(() {
@@ -77,6 +85,7 @@ class _QcmWidgetState extends State<QcmWidget> {
                     _current = 0;
                     _score = 0;
                     _selected = null;
+                    _validated = false;
                     _finished = false;
                   }),
                   icon: const Icon(Icons.refresh),
@@ -153,20 +162,44 @@ class _QcmWidgetState extends State<QcmWidget> {
           const SizedBox(height: 28),
           ...List.generate(q.choices.length, (i) {
             final isSelected = _selected == i;
+            final isCorrect = i == q.correctIndex;
+            
+            Color bgColor = isSelected ? TdcColors.accent.withOpacity(0.08) : TdcColors.surfaceAlt;
+            Color borderColor = isSelected ? TdcColors.accent : TdcColors.border;
+            Color iconColor = isSelected ? TdcColors.accent : TdcColors.textMuted;
+            Widget? icon = isSelected ? const Center(child: Icon(Icons.check, size: 14, color: Colors.white)) : null;
+
+            if (_validated) {
+              if (isCorrect) {
+                bgColor = TdcColors.success.withOpacity(0.1);
+                borderColor = TdcColors.success;
+                iconColor = TdcColors.success;
+                icon = const Center(child: Icon(Icons.check, size: 14, color: Colors.white));
+              } else if (isSelected && !isCorrect) {
+                bgColor = TdcColors.danger.withOpacity(0.1);
+                borderColor = TdcColors.danger;
+                iconColor = TdcColors.danger;
+                icon = const Center(child: Icon(Icons.close, size: 14, color: Colors.white));
+              } else {
+                bgColor = TdcColors.surfaceAlt.withOpacity(0.5);
+                borderColor = TdcColors.border.withOpacity(0.5);
+              }
+            }
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: InkWell(
-                onTap: () => setState(() => _selected = i),
+                onTap: _validated ? null : () => setState(() => _selected = i),
                 borderRadius: TdcRadius.md,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                   decoration: BoxDecoration(
-                    color: isSelected ? TdcColors.accent.withOpacity(0.08) : TdcColors.surfaceAlt,
+                    color: bgColor,
                     borderRadius: TdcRadius.md,
                     border: Border.all(
-                      color: isSelected ? TdcColors.accent : TdcColors.border,
-                      width: isSelected ? 2 : 1,
+                      color: borderColor,
+                      width: isSelected || (_validated && isCorrect) ? 2 : 1,
                     ),
                   ),
                   child: Row(
@@ -178,23 +211,23 @@ class _QcmWidgetState extends State<QcmWidget> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected ? TdcColors.accent : TdcColors.textMuted, 
+                            color: iconColor, 
                             width: 2,
                           ),
-                          color: isSelected ? TdcColors.accent : Colors.transparent,
+                          color: (isSelected || (_validated && isCorrect)) ? iconColor : Colors.transparent,
                         ),
-                        child: isSelected
-                            ? const Center(child: Icon(Icons.check, size: 14, color: Colors.white))
-                            : null,
+                        child: icon,
                       ),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Text(
                           q.choices[i],
                           style: TextStyle(
-                            color: isSelected ? TdcColors.textPrimary : TdcColors.textSecondary,
+                            color: _validated 
+                                ? (isCorrect || (isSelected && !isCorrect) ? TdcColors.textPrimary : TdcColors.textSecondary.withOpacity(0.5))
+                                : (isSelected ? TdcColors.textPrimary : TdcColors.textSecondary),
                             fontSize: 15,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected || (_validated && isCorrect) ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -204,11 +237,35 @@ class _QcmWidgetState extends State<QcmWidget> {
               ),
             );
           }),
+          if (_validated && q.explanation != null && q.explanation!.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: TdcColors.accent.withOpacity(0.1),
+                borderRadius: TdcRadius.md,
+                border: Border.all(color: TdcColors.accent.withOpacity(0.3)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.lightbulb_outline, color: TdcColors.accent, size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      q.explanation!,
+                      style: const TextStyle(color: TdcColors.textPrimary, fontSize: 14, height: 1.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _selected != null ? _next : null,
+              onPressed: _selected != null ? (_validated ? _next : _validate) : null,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(borderRadius: TdcRadius.md),
@@ -216,7 +273,9 @@ class _QcmWidgetState extends State<QcmWidget> {
                 shadowColor: TdcColors.accent.withOpacity(0.4),
               ),
               child: Text(
-                _current < widget.questions.length - 1 ? 'QUESTION SUIVANTE' : 'VOIR MON RÉSULTAT',
+                _validated 
+                    ? (_current < widget.questions.length - 1 ? 'QUESTION SUIVANTE' : 'VOIR MON RÉSULTAT')
+                    : 'VALIDER MA RÉPONSE',
                 style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
               ),
             ),

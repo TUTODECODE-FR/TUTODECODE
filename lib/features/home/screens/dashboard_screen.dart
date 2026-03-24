@@ -7,6 +7,7 @@ import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/core/providers/shell_provider.dart';
 import 'package:tutodecode/core/widgets/tdc_widgets.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
+import 'package:tutodecode/features/ghost_link/service/ghost_link_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -88,7 +89,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Column(children: [
                     _section('États des Services', [
                       _service('Ollama API', _aiStatus?.running ?? false),
-                      _service('Ghost Link Server', true),
+                      Consumer<GhostLinkService>(
+                        builder: (context, gl, _) => InkWell(
+                          onTap: () => Navigator.pushNamed(context, '/ghost-link'),
+                          child: Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(children: [
+                            Container(width: 6, height: 6, decoration: BoxDecoration(shape: BoxShape.circle, color: gl.isRunning ? TdcColors.success : TdcColors.textMuted)),
+                            const SizedBox(width: 12),
+                            Expanded(child: Text('Ghost Link', style: const TextStyle(color: TdcColors.textSecondary, fontSize: 13))),
+                            Text(gl.isRunning ? '${gl.peers.length} pair(s)' : 'Inactif',
+                              style: TextStyle(color: gl.isRunning ? TdcColors.success : TdcColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.chevron_right, size: 12, color: TdcColors.textMuted),
+                          ])),
+                        ),
+                      ),
                       _service('Local Storage', true),
                     ]),
                     const SizedBox(height: 16),

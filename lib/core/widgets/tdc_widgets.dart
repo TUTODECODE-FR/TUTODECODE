@@ -1,15 +1,15 @@
 // ============================================================
 // tdc_widgets.dart — Composants UI réutilisables TutoDeCode
-// Hover states, curseurs, animations macOS-ready
+// Hover, animations, motion
 // ============================================================
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
+import 'tdc_motion.dart';
 
 // ─────────────────────────────────────────────────────────────
-// TdcCard — Carte avec hover state animé
-// Usage: TdcCard(onTap: () {}, child: ...)
+// TdcCard — Carte avec hover, scale au clic, ombre dynamique
 // ─────────────────────────────────────────────────────────────
 class TdcCard extends StatefulWidget {
   final Widget child;
@@ -33,6 +33,7 @@ class TdcCard extends StatefulWidget {
 
 class _TdcCardState extends State<TdcCard> {
   bool _hovered = false;
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,27 +42,44 @@ class _TdcCardState extends State<TdcCard> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) => setState(() => _pressed = false),
+        onTapCancel: () => setState(() => _pressed = false),
         onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOut,
-          padding: widget.padding ?? const EdgeInsets.all(TdcSpacing.lg),
-          decoration: BoxDecoration(
-            color: _hovered && widget.onTap != null
-                ? TdcColors.surfaceHover
-                : TdcColors.surface,
-            borderRadius: BorderRadius.all(Radius.circular(widget.borderRadius)),
-            border: Border.all(
-              color: _hovered && widget.showHoverBorder && widget.onTap != null
-                  ? TdcColors.accent.withValues(alpha: 0.5)
-                  : TdcColors.border,
-              width: _hovered && widget.onTap != null ? 1.5 : 1,
+        child: AnimatedScale(
+          scale: _pressed ? 0.985 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOutCubic,
+          child: AnimatedSlide(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOutCubic,
+            offset: Offset(0, _hovered && widget.onTap != null ? -0.02 : 0),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              padding: widget.padding ?? const EdgeInsets.all(TdcSpacing.lg),
+              decoration: BoxDecoration(
+                color: _hovered && widget.onTap != null ? TdcColors.surfaceHover : TdcColors.surface,
+                borderRadius: BorderRadius.all(Radius.circular(widget.borderRadius)),
+                border: Border.all(
+                  color: _hovered && widget.showHoverBorder && widget.onTap != null
+                      ? TdcColors.accent.withValues(alpha: 0.55)
+                      : TdcColors.border.withValues(alpha: 0.65),
+                  width: _hovered && widget.onTap != null ? 1.5 : 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: _hovered ? 0.45 : 0.32),
+                    blurRadius: _hovered ? 28 : 18,
+                    offset: const Offset(0, 12),
+                  ),
+                  if (_hovered && widget.onTap != null)
+                    BoxShadow(color: TdcColors.accent.withValues(alpha: 0.12), blurRadius: 22, spreadRadius: -2),
+                ],
+              ),
+              child: widget.child,
             ),
-            boxShadow: _hovered && widget.onTap != null
-                ? [BoxShadow(color: TdcColors.accent.withValues(alpha: 0.08), blurRadius: 16, spreadRadius: 0)]
-                : null,
           ),
-          child: widget.child,
         ),
       ),
     );
@@ -69,7 +87,7 @@ class _TdcCardState extends State<TdcCard> {
 }
 
 // ─────────────────────────────────────────────────────────────
-// TdcSectionTitle — En-tête de section uniformisé
+// TdcSectionTitle — Titre de section avec pastille animée
 // ─────────────────────────────────────────────────────────────
 class TdcSectionTitle extends StatelessWidget {
   final String text;
@@ -80,24 +98,35 @@ class TdcSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dot = Container(
+      width: 9,
+      height: 9,
+      margin: const EdgeInsets.only(right: 12),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          colors: [Color(0xFF22D3EE), Color(0xFFB026FF)],
+        ),
+        boxShadow: [BoxShadow(color: TdcColors.accent.withValues(alpha: 0.5), blurRadius: 10)],
+      ),
+    ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+          duration: 1800.ms,
+          begin: const Offset(1, 1),
+          end: const Offset(1.15, 1.15),
+          curve: Curves.easeInOut,
+        );
+
     return Row(
       children: [
-        Container(
-          width: 3,
-          height: 18,
-          margin: const EdgeInsets.only(right: 10),
-          decoration: BoxDecoration(
-            color: TdcColors.accent,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
+        dot,
         Expanded(
           child: Text(
             text,
             style: TextStyle(
               color: TdcColors.textPrimary,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               fontSize: fontSize ?? 17,
+              letterSpacing: -0.35,
             ),
           ),
         ),
@@ -170,9 +199,7 @@ class TdcInfoRow extends StatelessWidget {
             child: MouseRegion(
               cursor: copyable ? SystemMouseCursors.click : MouseCursor.defer,
               child: GestureDetector(
-                onTap: copyable ? () {
-                  // Copy handled externally
-                } : null,
+                onTap: copyable ? () {} : null,
                 child: Text(
                   value,
                   style: const TextStyle(
@@ -193,8 +220,7 @@ class TdcInfoRow extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────
-// TdcFadeSlide — Animation d'entrée fade + slide vers le haut
-// Usage: TdcFadeSlide(delay: 100ms, child: MyWidget())
+// TdcFadeSlide — Entrée fade + slide + léger scale
 // ─────────────────────────────────────────────────────────────
 class TdcFadeSlide extends StatelessWidget {
   final Widget child;
@@ -212,8 +238,9 @@ class TdcFadeSlide extends StatelessWidget {
   Widget build(BuildContext context) {
     return child
         .animate(delay: delay)
-        .fadeIn(duration: const Duration(milliseconds: 350), curve: Curves.easeOut)
-        .slideY(begin: offsetY / 100, end: 0, duration: const Duration(milliseconds: 350), curve: Curves.easeOut);
+        .fadeIn(duration: 380.ms, curve: Curves.easeOutCubic)
+        .slideY(begin: offsetY / 100, end: 0, duration: 380.ms, curve: Curves.easeOutCubic)
+        .scale(begin: const Offset(0.96, 0.96), duration: 400.ms, curve: Curves.easeOutCubic);
   }
 }
 
@@ -241,7 +268,7 @@ class TdcEmptyState extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 32, color: TdcColors.textMuted),
-          ),
+          ).tdcFloatY(amount: 4, period: 3500.ms),
           const SizedBox(height: 16),
           Text(title, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 16, fontWeight: FontWeight.bold)),
           if (subtitle != null) ...[
@@ -256,8 +283,7 @@ class TdcEmptyState extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────
-// TdcPageWrapper — Wrapper desktop avec largeur max et centrage
-// Usage: Wrap your page content with this for proper desktop layout
+// TdcPageWrapper — Largeur max + fond animé
 // ─────────────────────────────────────────────────────────────
 class TdcPageWrapper extends StatelessWidget {
   final Widget child;
@@ -273,12 +299,14 @@ class TdcPageWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: Padding(
-          padding: padding ?? const EdgeInsets.all(TdcSpacing.xl),
-          child: child,
+    return TdcAnimatedPageScrim(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Padding(
+            padding: padding ?? const EdgeInsets.all(TdcSpacing.xl),
+            child: child,
+          ),
         ),
       ),
     );
@@ -286,7 +314,7 @@ class TdcPageWrapper extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────
-// TdcKeyboardShortcut — Affiche un tag de raccourci clavier
+// TdcKeyboardShortcut — Tag raccourci clavier
 // ─────────────────────────────────────────────────────────────
 class TdcKeyboardShortcut extends StatelessWidget {
   final String keys;

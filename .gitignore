@@ -1,13 +1,12 @@
 # Flutter/Dart
 .dart_tool/
-.build/
+**/build/
 .packages
 .pub/
 .pub-cache/
-/build/
 /ios/Flutter/Flutter.framework
 /ios/Flutter/Flutter.podspec
-/ios/Pods/
+**/ios/Pods/
 
 # Visual Studio Code
 .vscode/

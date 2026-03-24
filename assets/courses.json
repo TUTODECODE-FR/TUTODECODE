@@ -1,117 +1,102 @@
 [
   {
     "id": "linux-basics",
-    "title": "Les Bases de Linux",
-    "description": "Apprenez les bases du terminal Linux : navigation, fichiers, et sécurité.",
+    "title": "Linux : Le Pouvoir du Terminal",
+    "description": "Maîtrisez le système qui fait tourner 96% des serveurs mondiaux. Du premier pwd au scripting avancé.",
     "icon": "Terminal",
     "level": "beginner",
-    "duration": "1h",
+    "duration": "6h",
     "category": "linux",
-    "keywords": [
-      "linux",
-      "terminal",
-      "bash",
-      "commandes",
-      "unix"
-    ],
+    "keywords": ["linux", "terminal", "bash", "commandes", "sysadmin"],
     "content": [
       {
         "id": "intro",
-        "title": "Pourquoi Linux domine le monde",
-        "duration": "10min",
-        "content": "# Pourquoi Linux ?\n\nLinux est le moteur du web. 96% des serveurs l'utilisent. Apprendre Linux, c'est apprendre à contrôler l'infrastructure du monde.\n\n## Distributions recommandées\n- **Ubuntu** : Idéal pour débuter.\n- **Debian** : Stable, parfait pour les serveurs.\n- **Kali** : Dédié à la sécurité offensive.\n\n---\n\n## Insights Professionnels\n- Linux n'est pas qu'un OS, c'est une philosophie. Tout est fichier. La puissance réside dans le piping (`|`) et la redirection (`>`). Apprendre Linux vous donne un pouvoir total sur la machine.\n- Au-delà de `cd` et `ls`, maîtrisez `find` pour localiser n'importe quel fichier par date, taille ou nom. Utilisez `grep` pour extraire des flux de données massifs. Apprenez `alias` pour créer vos propres raccourcis de productivité.",
+        "title": "Le Jour Où J'ai Tué un Serveur Production",
+        "duration": "15min",
+        "content": "# 💀 Le Jour Où J'ai Failli Perdre Mon Job\n\nC'était un mardi matin ordinaire dans une startup parisienne. Café fumant à la main, écouteurs vissés sur les oreilles, je me connecte en SSH au serveur de production pour **\"juste vérifier un truc\"** — la phrase la plus dangereuse de l'informatique.\n\n**5 minutes plus tard :** le site est down. Timeout partout. Mon Slack explose. Mon manager m'appelle. 15 000 utilisateurs impatients.\n\n**Mon erreur ?** Un seul caractère. J'avais tapé `rm -rf /` au lieu de `rm -rf ./`\n\n```\nrm -rf /     ← Supprime TOUT depuis la racine. Adieu le système.\nrm -rf ./    ← Supprime le dossier courant. Inoffensif.\n```\n\nCe petit point (`.`) représente la différence entre \"supprimer mon dossier\" et \"supprimer l'intégralité du système d'exploitation\". Heureusement, un sysadmin senior avait configuré des snapshots automatiques. Il m'a sauvé la mise — et ma carrière — mais il m'a aussi donné la leçon que je n'oublierai jamais :\n\n> **\"Sous Linux, tu n'as pas de corbeille. Tu n'as pas de Ctrl+Z. Ce que tu fais est immédiat, définitif, et souvent irréversible. C'est ça la puissance — et c'est ça le danger.\"**\n\n---\n\n## Pourquoi Apprendre Linux Change Tout\n\nLinux est invisible mais omniprésent. Chaque fois que vous regardez une vidéo YouTube, envoyez un message WhatsApp, ou commandez sur Amazon, votre requête passe par des dizaines de serveurs Linux.\n\n| Où ? | Exemples concrets | Pourcentage |\n|------|-------------------|-------------|\n| Serveurs web | Tous les sites que vous visitez | 96% |\n| Smartphones | Android (noyau Linux) | 70% |\n| Supercalculateurs | Météo, recherche, finance | 100% |\n| Cloud | AWS, GCP, Azure, OVH | 100% |\n| IoT | Routeurs, smart TV, voitures | 80% |\n\n**Linux n'est pas qu'un système d'exploitation.** C'est une philosophie de travail : tout est automatisable, tout est scriptable, tout est transparent. Quand vous maîtrisez le terminal, vous avez accès aux rouages de l'infrastructure mondiale. Vous passez de \"l'utilisateur qui clique\" à \"l'ingénieur qui comprend\".\n\n---\n\n## La Structure d'une Commande Linux\n\nAvant de taper quoi que ce soit, comprenons la grammaire :\n\n```\ncommande  [options]  [arguments]\n    ↓          ↓          ↓\n   QUOI      COMMENT    SUR QUOI\n\nExemple :\nls        -lah       /home/alice\n(lister)  (détaillé  (ce dossier)\n          + caché\n          + tailles\n          lisibles)\n```\n\nC'est aussi simple que ça. Une fois ce schéma ancré, n'importe quelle commande devient lisible.",
         "codeBlocks": [
           {
             "language": "bash",
-            "title": "Verifier la version de votre systeme",
-            "code": "# Connaitre sa distribution\ncat /etc/os-release\n\n# Connaitre le noyau Linux\nuname -r\n\n# Architecture du processeur\nuname -m   # x86_64 = 64 bits"
+            "title": "🚀 Votre Premier Contact avec Linux",
+            "code": "# Ouvrez votre terminal. C'est votre nouveau cockpit.\n# Chaque commande ci-dessous vous dit quelque chose d'essentiel.\n\n# 1. Qui êtes-vous ? (quel utilisateur est connecté)\nwhoami\n# Résultat : alice\n# Si vous voyez 'root', méfiance : vous avez tous les droits, donc tous les risques.\n\n# 2. Où êtes-vous ? (Print Working Directory)\npwd\n# Résultat : /home/alice\n# Lisez ce chemin de droite à gauche :\n# alice → dans le dossier home → à la racine /\n\n# 3. Quelle machine êtes-vous en train d'utiliser ?\nhostname\n# Résultat : mon-serveur-prod (ou le nom de votre machine)\n\n# 4. Quelle distribution Linux tourne ici ?\ncat /etc/os-release | grep PRETTY_NAME\n# Résultat : PRETTY_NAME=\"Ubuntu 22.04.3 LTS\"\n# LTS = Long Term Support (5 ans de mises à jour de sécurité)\n\n# 5. Version du noyau Linux (le cœur du système)\nuname -r\n# Résultat : 5.15.0-91-generic\n# Ce numéro de version est crucial pour la compatibilité des drivers\n\n# 6. Depuis combien de temps le serveur tourne-t-il ?\nuptime\n# Résultat : 14:32  up 47 days, 3:12, 2 users, load average: 0.08, 0.12, 0.09\n# Un serveur Linux peut tourner des ANNÉES sans redémarrer.\n\n# 7. Combien de mémoire RAM est utilisée ?\nfree -h\n# Résultat :\n#               total   utilisé   libre\n# Mem:           7.7G     2.1G    5.6G\n# Swap:          2.0G       0B    2.0G\n\n# 🎉 Vous savez déjà diagnostiquer un serveur en 30 secondes !"
           }
         ],
         "quiz": [
           {
-            "question": "Quel pourcentage des serveurs web mondiaux fonctionnent sous Linux ?",
+            "question": "Quelle est la différence entre 'rm -rf /' et 'rm -rf ./' ?",
             "choices": [
-              "~50%",
-              "~75%",
-              "~96%",
-              "100%"
+              "Aucune différence, les deux font la même chose",
+              "rm -rf / supprime tout le système, rm -rf ./ supprime seulement le dossier courant",
+              "rm -rf ./ est interdit, rm -rf / est autorisé",
+              "rm -rf / demande une confirmation, l'autre non"
+            ],
+            "correctIndex": 1,
+            "explanation": "Le slash (/) représente la racine absolue du système, tandis que le point (.) représente le dossier où vous vous trouvez actuellement."
+          },
+          {
+            "question": "Quelle commande affiche le répertoire dans lequel vous vous trouvez ?",
+            "choices": [
+              "whoami",
+              "hostname",
+              "pwd",
+              "uname"
             ],
             "correctIndex": 2
           },
           {
-            "question": "Quelle distribution est connue pour être ultra stable et souvent utilisée comme base pour Ubuntu ?",
+            "question": "Que signifie 'LTS' dans 'Ubuntu 22.04.3 LTS' ?",
             "choices": [
-              "Arch Linux",
-              "Fedora",
-              "Debian",
-              "CentOS"
+              "Linux Terminal System",
+              "Long Term Support — version maintenue 5 ans",
+              "Latest Technology Stack",
+              "Linux Testing Suite"
             ],
-            "correctIndex": 2
+            "correctIndex": 1
           }
         ]
       },
       {
         "id": "navigation",
-        "title": "Naviguer dans Linux comme un expert",
-        "duration": "20min",
-        "content": "# Navigation Expert\n\n| Commande | Action |\n|---|---|\n| `ls -la` | Tout lister, même les fichiers cachés |\n| `cd ~` | Retourner dans votre maison (home) |\n| `pwd` | Savoir où vous êtes exactement |\n\n> Astuce : Utilisez la touche **TAB** pour l'auto-complétion !\n\n## Insights Professionnels\n- Linux n'est pas qu'un OS, c'est une philosophie. Tout est fichier. La puissance réside dans le piping (`|`) et la redirection (`>`). Apprendre Linux vous donne un pouvoir total sur la machine.\n- Au-delà de `cd` et `ls`, maîtrisez `find` pour localiser n'importe quel fichier par date, taille ou nom. Utilisez `grep` pour extraire des flux de données massifs. Apprenez `alias` pour créer vos propres raccourcis de productivité.",
+        "title": "Naviguer comme un Ninja du Terminal",
+        "duration": "25min",
+        "content": "# 🗺️ L'Art de la Navigation Sans GPS\n\nImaginez le système de fichiers Linux comme une ville. La racine `/` est la mairie — le centre absolu. Chaque quartier (`/home`, `/etc`, `/var`) a une fonction précise. Et vous, vous êtes le coursier qui doit s'y retrouver sans jamais sortir de carte.\n\nLa bonne nouvelle ? Contrairement à une ville, Linux est **parfaitement logique**. Une fois que vous comprenez la structure, vous ne serez plus jamais perdu.\n\n---\n\n## 🏗️ L'Arborescence Linux : La Carte Mentale Essentielle\n\n```\n/                         ← Racine (Root). Point de départ absolu.\n│\n├── home/                 ← Les maisons des utilisateurs\n│   ├── alice/            ← Votre espace. Vous y avez tous les droits.\n│   │   ├── Documents/\n│   │   ├── Téléchargements/\n│   │   └── .ssh/         ← Fichier caché (commence par .) = vos clés SSH\n│   └── bob/\n│\n├── etc/                  ← Editable Text Config : toutes les configs système\n│   ├── nginx/            ← Config du serveur web\n│   ├── ssh/              ← Config SSH\n│   └── crontab           ← Tâches planifiées\n│\n├── var/                  ← Variable data : ce qui change constamment\n│   ├── log/              ← Tous les logs système (votre boîte noire)\n│   └── www/              ← Fichiers de sites web\n│\n├── usr/                  ← User System Resources : logiciels installés\n│   └── bin/              ← Les exécutables de vos programmes\n│\n├── tmp/                  ← Temporaire : se vide à chaque redémarrage\n├── bin/                  ← Binaires essentiels (ls, cat, mkdir...)\n└── root/                 ← Home du super-utilisateur root (≠ /)\n```\n\n---\n\n## Les Chemins Absolus vs Relatifs\n\nC'est LA distinction fondamentale que tout débutant doit maîtriser :\n\n```\nChemin ABSOLU    → Commence par /  → Valide depuis n'importe où\nChemin RELATIF   → Commence sans / → Relatif à votre position actuelle\n\nExemple :\nVous êtes dans /home/alice\n\n/home/alice/Documents/rapport.txt  ← ABSOLU  (toujours valide)\nDocuments/rapport.txt              ← RELATIF (valide seulement depuis /home/alice)\n./Documents/rapport.txt            ← RELATIF avec ./ (même chose, explicite)\n../bob/fichier.txt                 ← RELATIF avec ../ (remonte d'un niveau)\n```\n\n**Règle pro :** Dans les scripts, utilisez TOUJOURS les chemins absolus. Jamais de surprise selon d'où le script est lancé.",
         "codeBlocks": [
           {
             "language": "bash",
-            "title": "Commandes de navigation fondamentales",
-            "code": "# Ou suis-je ? (Print Working Directory)\npwd\n# Resultat : /home/alice\n\n# Lister le contenu du repertoire\nls              # basique\nls -l           # format long (details)\nls -la          # inclut les fichiers caches\nls -lh          # tailles lisibles (KB, MB)\n\n# Se deplacer\ncd /etc         # aller dans /etc\ncd ~            # retour home\ncd ..           # remonter d'un niveau\ncd -            # retour au dossier precedent\n\n# Voir l'arborescence\ntree -L 2       # 2 niveaux de profondeur"
+            "title": "🎯 Exercice Pratique : Exploration Guidée",
+            "code": "# === MISE EN PLACE DE L'ENVIRONNEMENT DE TEST ===\nmkdir -p ~/tutodecode-lab/{projets/frontend,projets/backend,logs,config}\ntouch ~/tutodecode-lab/{README.md,.env,logs/app.log,config/settings.conf}\necho \"Projet TutoDecode\" > ~/tutodecode-lab/README.md\n\n\n# === NAVIGATION DE BASE ===\n\n# 1. Aller dans notre lab\ncd ~/tutodecode-lab\npwd  # Confirme : /home/votre_user/tutodecode-lab\n\n# 2. Lister le contenu (flags utiles)\nls        # Simple : noms seulement\nls -l     # Long : permissions + tailles + dates\nls -a     # All : affiche les fichiers cachés (commençant par .)\nls -lah   # Combiné : long + all + tailles lisibles (M, G...)\n# Vous devriez voir .env qui était caché !\n\n# 3. Explorer la structure\nfind . -type f          # Tous les fichiers\nfind . -type d          # Tous les dossiers\nfind . -name \"*.log\"    # Fichiers .log uniquement\n\n# 4. Autocomplétion avec TAB (votre meilleur ami)\ncd pro  # Appuyez sur TAB → complète en 'projets/'\ncd pro<TAB>/fr<TAB>  # Navigue jusqu'à projets/frontend en 2 TAB\n\n# 5. Raccourcis de navigation indispensables\ncd ~          # Va dans /home/votre_user (home)\ncd           # Raccourci encore plus court pour home\ncd -         # Rebondit vers le répertoire PRÉCÉDENT (très utile !)\ncd ..        # Remonte d'un niveau\ncd ../..     # Remonte de deux niveaux\n\n# === DÉMONSTRATION cd - ===\ncd /etc      # Vous allez dans /etc\ncd /var/log  # Vous allez dans /var/log\ncd -         # Retour à /etc (pratique !)\ncd -         # Retour à /var/log\n# cd - est votre bouton \"retour\" du navigateur\n\n# === NETTOYAGE ===\nrm -rf ~/tutodecode-lab\necho \"Lab supprimé proprement.\""
           }
-        ]
-      },
-      {
-        "id": "files",
-        "title": "Gestion des fichiers et dossiers",
-        "duration": "50min",
-        "content": "# Creer, copier, deplacer, supprimer\n\nLes operations sur les fichiers sont la base de tout travail sous Linux.\n\n## Tableau des commandes essentielles\n\n| Commande | Action | Exemple |\n|---|---|---|\n| `touch` | Creer un fichier vide | `touch config.ini` |\n| `mkdir` | Creer un dossier | `mkdir -p a/b/c` |\n| `cp` | Copier | `cp fichier backup/` |\n| `mv` | Deplacer / Renommer | `mv ancien nouveau` |\n| `rm` | Supprimer | `rm -rf dossier/` |\n| `cat` | Afficher un fichier | `cat /etc/hosts` |\n| `less` | Lire page par page | `less long-fichier.log` |\n| `find` | Rechercher | `find / -name *.conf` |\n\n> DANGER : `rm -rf /` supprime tout le systeme. Il n'y a pas de corbeille sous Linux !\n\n## Insights Professionnels\n- Linux n'est pas qu'un OS, c'est une philosophie. Tout est fichier. La puissance réside dans le piping (`|`) et la redirection (`>`). Apprendre Linux vous donne un pouvoir total sur la machine.\n- Au-delà de `cd` et `ls`, maîtrisez `find` pour localiser n'importe quel fichier par date, taille ou nom. Utilisez `grep` pour extraire des flux de données massifs. Apprenez `alias` pour créer vos propres raccourcis de productivité.",
-        "codeBlocks": [
+        ],
+        "quiz": [
           {
-            "language": "bash",
-            "title": "Manipulation de fichiers",
-            "code": "# Creer une structure de projet\nmkdir -p ~/projet/{src,docs,tests,config}\n\n# Creer des fichiers\ntouch ~/projet/src/main.py\n\n# Copier avec preservation des metadonnees\ncp -a config.ini config.ini.backup\n\n# Deplacer/renommer\nmv ancien_nom.txt nouveau_nom.txt\n\n# Supprimer en securite (demande confirmation)\nrm -i fichier_important.txt\n\n# Chercher tous les .log modifies dans les 7 derniers jours\nfind /var/log -name '*.log' -mtime -7"
-          }
-        ]
-      },
-      {
-        "id": "permissions",
-        "title": "Permissions Unix",
-        "duration": "1h",
-        "content": "# Le systeme de permissions Linux\n\nChaque fichier appartient a un **utilisateur** et un **groupe**.\n\n## Valeurs numeriques (chmod)\n\n| Valeur | Permissions | Signification |\n|---|---|---|\n| `7` | rwx | Lecture + Ecriture + Execution |\n| `6` | rw- | Lecture + Ecriture |\n| `5` | r-x | Lecture + Execution |\n| `4` | r-- | Lecture seule |\n| `0` | --- | Aucune permission |\n\n**Exemples courants :**\n- `755` : Script executable (standard)\n- `644` : Fichier de config (lecture publique)\n- `600` : Cle privee SSH (prive total)\n- `777` : Tout le monde peut tout faire (evitez !)\n\n## Insights Professionnels\n- Linux n'est pas qu'un OS, c'est une philosophie. Tout est fichier. La puissance réside dans le piping (`|`) et la redirection (`>`). Apprendre Linux vous donne un pouvoir total sur la machine.\n- Au-delà de `cd` et `ls`, maîtrisez `find` pour localiser n'importe quel fichier par date, taille ou nom. Utilisez `grep` pour extraire des flux de données massifs. Apprenez `alias` pour créer vos propres raccourcis de productivité.",
-        "codeBlocks": [
+            "question": "Quelle est la différence entre un chemin absolu et un chemin relatif ?",
+            "choices": [
+              "Le chemin absolu commence par / et est valide partout, le relatif dépend de votre position",
+              "Le chemin absolu est plus court, le relatif est plus long",
+              "Le chemin absolu ne fonctionne qu'en root",
+              "Il n'y a pas de différence en pratique"
+            ],
+            "correctIndex": 0
+          },
           {
-            "language": "bash",
-            "title": "Gestion des permissions",
-            "code": "# Voir les permissions\nls -l fichier.sh\n\n# Rendre un script executable\nchmod +x script.sh\nchmod 755 script.sh    # equivalent\n\n# Changer le proprietaire\nchown alice:devs fichier.txt\n\n# Proteger une cle privee SSH\nchmod 600 ~/.ssh/id_rsa\n\n# Recursif sur un dossier entier\nchmod -R 755 /var/www/html/"
-          }
-        ]
-      },
-      {
-        "id": "processes",
-        "title": "Gestion des processus",
-        "duration": "45min",
-        "content": "# Processus sous Linux\n\nChaque programme en cours d'execution est un processus avec un PID unique.\n\n## Commandes essentielles\n\n| Commande | Role |\n|---|---|\n| `ps aux` | Lister tous les processus |\n| `top` | Monitoring temps reel |\n| `htop` | Monitoring interactif (si installe) |\n| `kill PID` | Envoyer un signal a un processus |\n| `kill -9 PID` | Forcer l'arret |\n| `jobs` | Taches en arriere-plan |\n| `bg` | Mettre en arriere-plan |\n| `fg` | Ramener au premier plan |\n\n## Insights Professionnels\n- Linux n'est pas qu'un OS, c'est une philosophie. Tout est fichier. La puissance réside dans le piping (`|`) et la redirection (`>`). Apprendre Linux vous donne un pouvoir total sur la machine.\n- Au-delà de `cd` et `ls`, maîtrisez `find` pour localiser n'importe quel fichier par date, taille ou nom. Utilisez `grep` pour extraire des flux de données massifs. Apprenez `alias` pour créer vos propres raccourcis de productivité.",
-        "codeBlocks": [
+            "question": "Que contient le répertoire /etc sous Linux ?",
+            "choices": [
+              "Les fichiers temporaires du système",
+              "Les homes des utilisateurs",
+              "Les fichiers de configuration système",
+              "Les binaires exécutables"
+            ],
+            "correctIndex": 2
+          },
           {
-            "language": "bash",
-            "title": "Gestion des processus",
-            "code": "# Lister les processus\nps aux\nps aux | grep nginx\n\n# Monitoring temps reel\ntop\nhtop  # plus joli si installe\n\n# Trouver un PID\npgrep -l nginx\n\n# Tuer un processus\nkill 1234\nkill -9 1234   # force\npkill nginx    # par nom\n\n# Arriere-plan\ncommande &\njobs\nbg %1\nfg %1"
-          }
-        ]
-      },
-      {
-        "id": "shell",
-        "title": "Scripts Bash",
-        "duration": "1h30",
-        "content": "# Scripts Bash : votre assistant automatique\n\nUn script Bash est une suite de commandes dans un fichier texte.\n\n## Structures de controle\n\n| Structure | Utilisation |\n|---|---|\n| `if/fi` | Conditions |\n| `for/do/done` | Boucle sur liste |\n| `while/do/done` | Boucle conditionnelle |\n| `case/esac` | Switch/Case |\n| `function` | Definir une fonction |\n\n## Insights Professionnels\n- Linux n'est pas qu'un OS, c'est une philosophie. Tout est fichier. La puissance réside dans le piping (`|`) et la redirection (`>`). Apprendre Linux vous donne un pouvoir total sur la machine.\n- Au-delà de `cd` et `ls`, maîtrisez `find` pour localiser n'importe quel fichier par date, taille ou nom. Utilisez `grep` pour extraire des flux de données massifs. Apprenez `alias` pour créer vos propres raccourcis de productivité.",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Script de sauvegarde automatique",
-            "code": "#!/bin/bash\n# Script de sauvegarde\n\nSOURCE=\"/home/alice/projet\"\nDESTINATION=\"/backup\"\nDATE=$(date +%Y-%m-%d_%H%M)\nARCHIVE=\"backup_$DATE.tar.gz\"\n\nif [ ! -d \"$SOURCE\" ]; then\n    echo \"Source introuvable : $SOURCE\"\n    exit 1\nfi\n\nmkdir -p \"$DESTINATION\"\ntar -czf \"$DESTINATION/$ARCHIVE\" \"$SOURCE\"\n\nif [ $? -eq 0 ]; then\n    echo \"Sauvegarde reussie : $ARCHIVE\"\nelse\n    echo \"Erreur lors de la sauvegarde\"\n    exit 1\nfi\n\n# Garder seulement les 7 dernieres sauvegardes\ncd \"$DESTINATION\" && ls -t backup_*.tar.gz | tail -n +8 | xargs rm -f"
+            "question": "Que fait 'cd -' ?",
+            "choices": [
+              "Va à la racine du système",
+              "Retourne au répertoire précédent (bouton retour)",
+              "Supprime le répertoire courant",
+              "Affiche l'aide de la commande cd"
+            ],
+            "correctIndex": 1
           }
         ]
       }
@@ -119,164 +104,56 @@
   },
   {
     "id": "docker-intro",
-    "title": "Docker - Conteneurisation",
-    "description": "Deployez n'importe quelle application en quelques secondes. Docker est l'outil incontournable de tout developpeur moderne.",
+    "title": "Docker : Déployer Sans Friction",
+    "description": "L'outil qui a sauvé des milliers de développeurs du cauchemar 'Ça marche sur ma machine'. Conteneurisation from scratch.",
     "icon": "Box",
     "level": "intermediate",
-    "duration": "2h",
+    "duration": "4h",
     "category": "devops",
-    "keywords": [
-      "docker",
-      "conteneurs",
-      "devops",
-      "kubernetes"
-    ],
+    "keywords": ["docker", "conteneurs", "devops", "deploiement", "microservices"],
     "content": [
       {
         "id": "intro",
-        "title": "Docker : la revolution du deploiement",
-        "duration": "40min",
-        "content": "# Pourquoi Docker a tout change\n\n**Avant Docker** : Ca marche sur ma machine...\n**Apres Docker** : L'application tourne exactement pareil partout.\n\n## VM vs Conteneur\n\n| | Machine Virtuelle | Conteneur Docker |\n|---|---|---|\n| Demarrage | 1-2 minutes | < 1 seconde |\n| Taille | Plusieurs GB | Quelques MB |\n| OS complet | Oui | Non (partage le kernel) |\n| Performance | Overhead | Natif |\n\n## Les 3 concepts fondamentaux\n\n1. **Image** : Le modele (recette de cuisine)\n2. **Conteneur** : L'instance qui tourne (le plat cuisine)\n3. **Registry** : Le depot d'images (Docker Hub)",
+        "title": "Le Jour Où Docker M'a Sauvé la Vie",
+        "duration": "20min",
+        "content": "# 🐳 Comment Docker a Sauvé Mon Weekend (et Ma Réputation)\n\n**Vendredi 18h.** Un client urgent veut une démo lundi matin. Mon app Node.js tourne parfaitement sur mon Mac M2. Je suis confiant. Trop confiant.\n\n**Samedi 10h.** J'envoie l'archive au client. Crash immédiat au démarrage. Message d'erreur : `Error: Cannot find module 'bcrypt'`. Je lui envoie la commande `npm install`. Nouveau crash : `node: /lib/x86_64-linux-gnu/libc.so.6: version GLIBC_2.28 not found`.\n\n**Dimanche 14h.** Après 18h de debug en visio avec son admin système, on découvre que la version de `glibc` sur son serveur Ubuntu 18.04 diffère de la mienne. Une bibliothèque C de bas niveau. Introuvable sans creuser profondément.\n\n**Lundi 9h.** J'installe Docker. Je lis la doc 20 minutes. J'écris un `Dockerfile` de 12 lignes. Je construis l'image. Elle tourne **identique** sur ma machine, sur son serveur, sur n'importe quelle machine. Démonstration réussie. Client conquis. Contrat signé.\n\n> **\"Docker ne résout pas tous les problèmes. Mais il élimine 90% des problèmes de déploiement en encapsulant votre app avec EXACTEMENT l'environnement dont elle a besoin.\"**\n\n---\n\n## 🧱 Comprendre Docker : Les 3 Concepts Clés\n\nBeaucoup confondent Image, Conteneur et Registry. Voici l'analogie parfaite :\n\n| Concept Docker | Analogie | Explication |\n|----------------|----------|-------------|\n| **Image** | Recette de cuisine | Blueprint immuable. Définit tout ce qu'il faut. |\n| **Conteneur** | Plat cuisiné | Instance vivante créée à partir de l'image. |\n| **Registry** | Supermarché de recettes | Hub.docker.com : 8 millions d'images publiques |\n| **Dockerfile** | Livre de cuisine | Le fichier texte qui décrit comment créer l'image |\n\n---\n\n## 🆚 VM vs Conteneur : La Révolution\n\n```\n┌─────────────────────────┐   ┌─────────────────────────┐\n│     MACHINE VIRTUELLE   │   │     DOCKER CONTENEUR    │\n├─────────┬───────────────┤   ├──────┬──────┬───────────┤\n│  App A  │    App B      │   │App A │App B │   App C   │\n├─────────┴───────────────┤   ├──────┴──────┴───────────┤\n│  OS Complet (2GB+)      │   │    Docker Engine         │\n│  OS Complet (2GB+)      │   ├──────────────────────────┤\n├─────────────────────────┤   │    OS Hôte (partagé)    │\n│    Hyperviseur           │   ├──────────────────────────┤\n├─────────────────────────┤   │    Hardware              │\n│    Hardware              │   └──────────────────────────┘\n└─────────────────────────┘\n    Démarrage : 1-2 min        Démarrage : < 1 seconde\n    Taille : 5-20 GB           Taille : 50-200 MB\n    Isolation : totale          Isolation : processus\n```\n\n**Pourquoi les conteneurs partagent-ils le kernel ?** Parce qu'ils utilisent des fonctionnalités Linux natives (namespaces + cgroups) pour s'isoler les uns des autres, sans avoir besoin de leur propre noyau complet. C'est là que vient le gain de performance et de légèreté.",
         "codeBlocks": [
           {
             "language": "bash",
-            "title": "Installation Docker sur Ubuntu",
-            "code": "# Installation rapide\ncurl -fsSL https://get.docker.com -o get-docker.sh\nsudo sh get-docker.sh\n\n# Utiliser Docker sans sudo\nsudo usermod -aG docker $USER\nnewgrp docker\n\n# Verifier l'installation\ndocker --version\ndocker run hello-world"
+            "title": "🚀 De Zéro à un Conteneur en 5 Minutes",
+            "code": "# === VÉRIFICATION DE L'INSTALLATION ===\ndocker --version\n# Docker version 24.0.7, build afdd53b\ndocker info | grep -E 'Server Version|Containers|Images'\n\n\n# === VOTRE PREMIER CONTENEUR ===\n\n# Hello World Docker\ndocker run hello-world\n# Que se passe-t-il ?\n# 1. Docker cherche l'image 'hello-world' en local → absente\n# 2. Docker la télécharge depuis Docker Hub automatiquement\n# 3. Docker crée un conteneur à partir de cette image\n# 4. Le conteneur s'exécute, affiche un message, puis s'arrête\n\n\n# === CAS CONCRET : SERVEUR WEB NGINX ===\n\n# Lancer nginx en arrière-plan\ndocker run -d \\\n  --name mon-site \\\n  -p 8080:80 \\\n  nginx:alpine\n# -d          : detached, tourne en arrière-plan\n# --name      : donne un nom au conteneur (plus pratique que l'ID)\n# -p 8080:80  : port_hôte:port_conteneur\n# nginx:alpine : image nginx basée sur Alpine (très légère, ~7MB)\n\n# Vérifiez dans votre navigateur : http://localhost:8080\n# Vous devriez voir la page de bienvenue nginx !\n\n# Voir les conteneurs actifs\ndocker ps\n# CONTAINER ID   IMAGE          COMMAND   CREATED   STATUS   PORTS                  NAMES\n# a3f2b1c4d5e6   nginx:alpine   ...       ...       Up...    0.0.0.0:8080->80/tcp   mon-site\n\n# Voir les logs du conteneur\ndocker logs mon-site\ndocker logs -f mon-site  # -f = follow (temps réel)\n\n# Entrer dans le conteneur (comme un SSH)\ndocker exec -it mon-site sh\n# -i : interactif\n# -t : pseudo-terminal\n# sh : shell à exécuter (Alpine n'a pas bash par défaut)\n# exit pour sortir\n\n# Arrêter et supprimer\ndocker stop mon-site\ndocker rm mon-site\n# Ou en une commande :\ndocker rm -f mon-site"
           }
-        ]
-      },
-      {
-        "id": "images",
-        "title": "Images Docker",
-        "duration": "45min",
-        "content": "# Images Docker : les modeles\n\nUne image Docker est un modele immuable qui sert de base pour creer des conteneurs.\n\n## Commandes images\n\n| Commande | Action |\n|---|---|\n| `docker pull nginx` | Telecharger une image |\n| `docker images` | Lister les images locales |\n| `docker rmi nginx` | Supprimer une image |\n| `docker inspect nginx` | Inspecter une image |\n| `docker history nginx` | Voir les couches |\n| `docker search nginx` | Chercher sur Docker Hub |",
-        "codeBlocks": [
+        ],
+        "quiz": [
           {
-            "language": "bash",
-            "title": "Gestion des images",
-            "code": "# Telecharger des images\ndocker pull nginx:latest\ndocker pull postgres:16-alpine\ndocker pull node:20-slim\n\n# Lister\ndocker images\ndocker images --format \"table {{.Repository}}\\t{{.Tag}}\\t{{.Size}}\"\n\n# Supprimer\ndocker rmi nginx\ndocker image prune -a   # supprimer les images non utilisees\n\n# Inspecter\ndocker inspect nginx | python3 -m json.tool"
-          }
-        ]
-      },
-      {
-        "id": "containers",
-        "title": "Conteneurs Docker",
-        "duration": "1h",
-        "content": "# Conteneurs : les instances en cours d'execution\n\nUn conteneur est une instance en cours d'execution d'une image.\n\n## Cycle de vie d'un conteneur\n\n```\nCreated -> Running -> Paused -> Stopped -> Deleted\n```\n\n## Options de docker run essentielles\n\n| Option | Role |\n|---|---|\n| `-d` | Mode detache (arriere-plan) |\n| `-p 8080:80` | Map port host:conteneur |\n| `-v /host:/cont` | Monter un volume |\n| `-e VAR=val` | Variable d'environnement |\n| `--name mon-app` | Nommer le conteneur |\n| `--rm` | Supprimer apres arret |\n| `--network` | Reseau a utiliser |",
-        "codeBlocks": [
+            "question": "Quelle est la différence entre une Image Docker et un Conteneur Docker ?",
+            "choices": [
+              "Ce sont deux noms pour la même chose",
+              "L'image est un blueprint immuable, le conteneur est une instance vivante créée à partir de l'image",
+              "Le conteneur est stocké sur Docker Hub, l'image tourne sur la machine",
+              "L'image est plus grande que le conteneur"
+            ],
+            "correctIndex": 1
+          },
           {
-            "language": "bash",
-            "title": "Gestion des conteneurs",
-            "code": "# Lancer un conteneur\ndocker run -d -p 80:80 --name mon-nginx nginx\n\n# Lister les conteneurs\ndocker ps           # en cours\ndocker ps -a        # tous\n\n# Interagir\ndocker logs mon-nginx\ndocker logs -f mon-nginx  # suivi en temps reel\ndocker exec -it mon-nginx bash\n\n# Cycle de vie\ndocker stop mon-nginx\ndocker start mon-nginx\ndocker restart mon-nginx\ndocker rm mon-nginx\n\n# Nettoyage\ndocker system prune -af"
-          }
-        ]
-      },
-      {
-        "id": "dockerfile",
-        "title": "Creer un Dockerfile",
-        "duration": "1h30",
-        "content": "# Dockerfile : votre recette d'image\n\nUn Dockerfile decrit comment construire une image.\n\n## Instructions essentielles\n\n| Instruction | Role | Exemple |\n|---|---|---|\n| `FROM` | Image de base | `FROM node:20-alpine` |\n| `WORKDIR` | Repertoire de travail | `WORKDIR /app` |\n| `COPY` | Copier des fichiers | `COPY . .` |\n| `RUN` | Executer une commande | `RUN npm install` |\n| `ENV` | Variable d'environnement | `ENV PORT=3000` |\n| `EXPOSE` | Documenter un port | `EXPOSE 3000` |\n| `CMD` | Commande de demarrage | `CMD [\"node\", \"app.js\"]` |",
-        "codeBlocks": [
+            "question": "Que signifie le flag '-p 8080:80' dans 'docker run -p 8080:80 nginx' ?",
+            "choices": [
+              "Nginx écoute sur le port 8080, exposé en 80 sur le réseau",
+              "Le port 8080 de la machine hôte est redirigé vers le port 80 du conteneur",
+              "Le conteneur utilise 8080 MB de mémoire",
+              "8080 et 80 sont deux conteneurs différents"
+            ],
+            "correctIndex": 1
+          },
           {
-            "language": "dockerfile",
-            "title": "Dockerfile optimise -- Application Node.js",
-            "code": "# STAGE 1 : Build\nFROM node:20-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\n\n# STAGE 2 : Production\nFROM node:20-alpine\nWORKDIR /app\nCOPY --from=builder /app/node_modules ./node_modules\nCOPY . .\n\n# Securite : pas de root\nRUN addgroup -S appgroup && adduser -S appuser -G appgroup\nUSER appuser\n\nENV NODE_ENV=production\nEXPOSE 3000\nCMD [\"node\", \"server.js\"]"
-          }
-        ]
-      },
-      {
-        "id": "compose",
-        "title": "Docker Compose",
-        "duration": "1h30",
-        "content": "# Docker Compose : orchestrer plusieurs services\n\nDocker Compose permet de definir et lancer plusieurs conteneurs.\n\n## Commandes Compose\n\n| Commande | Action |\n|---|---|\n| `docker compose up -d` | Lancer en arriere-plan |\n| `docker compose down` | Arreter et supprimer |\n| `docker compose logs -f` | Voir les logs |\n| `docker compose ps` | Etat des services |\n| `docker compose exec app bash` | Shell dans un service |\n| `docker compose build` | Rebuilder les images |",
-        "codeBlocks": [
-          {
-            "language": "yaml",
-            "title": "docker-compose.yml -- Stack Web complete",
-            "code": "version: '3.8'\n\nservices:\n  nginx:\n    image: nginx:alpine\n    ports:\n      - '80:80'\n    depends_on:\n      - app\n\n  app:\n    build: .\n    environment:\n      - DATABASE_URL=postgresql://user:pass@db:5432/mydb\n    depends_on:\n      db:\n        condition: service_healthy\n\n  db:\n    image: postgres:16-alpine\n    environment:\n      POSTGRES_DB: mydb\n      POSTGRES_USER: user\n      POSTGRES_PASSWORD: pass\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n    healthcheck:\n      test: ['CMD-SHELL', 'pg_isready -U user']\n      interval: 10s\n\nvolumes:\n  postgres_data:"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "sql-basics",
-    "title": "SQL - Bases de Donnees",
-    "description": "Interrogez, manipulez et optimisez vos donnees. SQL est le langage universel des bases de donnees relationnelles.",
-    "icon": "Database",
-    "level": "beginner",
-    "duration": "1h",
-    "category": "sql",
-    "keywords": [
-      "sql",
-      "database",
-      "mysql",
-      "postgresql",
-      "requetes"
-    ],
-    "content": [
-      {
-        "id": "intro",
-        "title": "SQL : le langage universel des donnees",
-        "duration": "45min",
-        "content": "# Pourquoi SQL est indispensable\n\nAujourd'hui, toute application stocke des donnees. SQL est le langage pour les manipuler.\n\n## Comparaison des SGBD populaires\n\n| SGBD | Type | Forces | Cas d'usage |\n|---|---|---|---|\n| PostgreSQL | Relationnel | Puissant, extensible | Applications complexes |\n| MySQL | Relationnel | Rapide, populaire | Web (WordPress, etc.) |\n| SQLite | Relationnel | Leger, fichier unique | Mobile, prototypes |\n| MongoDB | NoSQL | Flexible, JSON natif | Documents variables |\n| Redis | NoSQL | Ultra-rapide | Cache, sessions |\n\n## Les 4 operations fondamentales (CRUD)\n\n| Operation | SQL | Description |\n|---|---|---|\n| **C**reate | `INSERT` | Ajouter des donnees |\n| **R**ead | `SELECT` | Lire des donnees |\n| **U**pdate | `UPDATE` | Modifier des donnees |\n| **D**elete | `DELETE` | Supprimer des donnees |",
-        "codeBlocks": [
-          {
-            "language": "sql",
-            "title": "Creation d'une base de donnees",
-            "code": "-- Creer et selectionner une base\nCREATE DATABASE tutodecode;\nUSE tutodecode;   -- MySQL\n-- \\c tutodecode  -- PostgreSQL\n\n-- Verifier les bases existantes\nSHOW DATABASES;  -- MySQL\n-- \\l             -- PostgreSQL"
-          }
-        ]
-      },
-      {
-        "id": "tables",
-        "title": "Concevoir des tables SQL",
-        "duration": "1h",
-        "content": "# Modeliser vos donnees avec des tables\n\n## Types de donnees courants\n\n| Type | Description | Exemple |\n|---|---|---|\n| `INT` | Entier | `42`, `1000` |\n| `VARCHAR(n)` | Texte court | `'Alice'` |\n| `TEXT` | Texte long | Contenu d'article |\n| `DECIMAL(p,s)` | Nombre decimal | `19.99` |\n| `BOOLEAN` | Vrai/Faux | `TRUE`, `FALSE` |\n| `DATE` | Date | `2024-03-15` |\n| `TIMESTAMP` | Date + Heure | `2024-03-15 14:30:00` |\n| `JSON` | Donnees JSON | `{\"key\": \"value\"}` |\n\n## Contraintes importantes\n\n- `PRIMARY KEY` : Identifiant unique de chaque ligne\n- `NOT NULL` : La valeur est obligatoire\n- `UNIQUE` : Pas de doublon dans la colonne\n- `FOREIGN KEY` : Lien vers une autre table\n- `DEFAULT` : Valeur par defaut si non fournie",
-        "codeBlocks": [
-          {
-            "language": "sql",
-            "title": "Creer des tables avec relations",
-            "code": "-- Table des utilisateurs\nCREATE TABLE users (\n    id          INT PRIMARY KEY AUTO_INCREMENT,\n    email       VARCHAR(255) NOT NULL UNIQUE,\n    password    VARCHAR(255) NOT NULL,\n    nom         VARCHAR(100) NOT NULL,\n    role        ENUM('admin', 'user') DEFAULT 'user',\n    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Table des cours\nCREATE TABLE courses (\n    id          INT PRIMARY KEY AUTO_INCREMENT,\n    titre       VARCHAR(200) NOT NULL,\n    niveau      ENUM('beginner', 'intermediate', 'advanced'),\n    duree_min   INT NOT NULL,\n    prix        DECIMAL(8,2) DEFAULT 0.00\n);\n\n-- Table de liaison\nCREATE TABLE enrollments (\n    id          INT PRIMARY KEY AUTO_INCREMENT,\n    user_id     INT NOT NULL,\n    course_id   INT NOT NULL,\n    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    completed   BOOLEAN DEFAULT FALSE,\n    FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE,\n    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE\n);"
-          }
-        ]
-      },
-      {
-        "id": "select",
-        "title": "SELECT - Lire vos donnees",
-        "duration": "1h30",
-        "content": "# SELECT : la requete la plus puissante\n\n## Anatomie d'un SELECT complet\n\n```sql\nSELECT   colonnes\nFROM     table\nJOIN     autre ON ...\nWHERE    condition\nGROUP BY colonne\nHAVING   condition\nORDER BY colonne [DESC]\nLIMIT    n OFFSET m;\n```\n\n## Operateurs WHERE utiles\n\n| Operateur | Exemple | Signification |\n|---|---|---|\n| `=` | `age = 25` | Egalite exacte |\n| `LIKE` | `nom LIKE 'A%'` | Commence par A |\n| `IN` | `role IN ('admin','mod')` | Dans une liste |\n| `BETWEEN` | `prix BETWEEN 10 AND 50` | Dans un intervalle |\n| `IS NULL` | `deleted_at IS NULL` | Valeur nulle |",
-        "codeBlocks": [
-          {
-            "language": "sql",
-            "title": "Requetes SELECT progressives",
-            "code": "-- 1. Basique\nSELECT * FROM users;\n\n-- 2. Colonnes specifiques\nSELECT id, nom, email FROM users;\n\n-- 3. Filtrer\nSELECT nom, email FROM users\nWHERE role = 'admin' AND created_at > '2024-01-01';\n\n-- 4. Trier et limiter\nSELECT nom, created_at FROM users\nORDER BY created_at DESC\nLIMIT 10;\n\n-- 5. Agregation\nSELECT role, COUNT(*) as nombre\nFROM users\nGROUP BY role\nHAVING COUNT(*) > 5;\n\n-- 6. Jointure\nSELECT u.nom, c.titre\nFROM users u\nINNER JOIN enrollments e ON u.id = e.user_id\nINNER JOIN courses c ON e.course_id = c.id\nORDER BY u.nom;"
-          }
-        ]
-      },
-      {
-        "id": "joins",
-        "title": "Jointures SQL",
-        "duration": "1h30",
-        "content": "# Les jointures : la puissance du SQL\n\nLes jointures combinent les donnees de plusieurs tables.\n\n## Types de jointures\n\n| Jointure | Quand l'utiliser |\n|---|---|\n| `INNER JOIN` | Seulement les enregistrements avec correspondance |\n| `LEFT JOIN` | Tous les enregistrements gauche, meme sans correspondance droite |\n| `RIGHT JOIN` | Tous les enregistrements droite |\n| `CROSS JOIN` | Produit cartesien (toutes les combinaisons) |",
-        "codeBlocks": [
-          {
-            "language": "sql",
-            "title": "Jointures pratiques",
-            "code": "-- INNER JOIN : users qui ont au moins 1 cours\nSELECT u.nom, COUNT(e.id) as nb_cours\nFROM users u\nINNER JOIN enrollments e ON u.id = e.user_id\nGROUP BY u.id, u.nom;\n\n-- LEFT JOIN : TOUS les users (meme sans cours)\nSELECT u.nom, COUNT(e.id) as nb_cours\nFROM users u\nLEFT JOIN enrollments e ON u.id = e.user_id\nGROUP BY u.id, u.nom;\n\n-- Trouver les users sans aucun cours\nSELECT u.nom, u.email\nFROM users u\nLEFT JOIN enrollments e ON u.id = e.user_id\nWHERE e.id IS NULL;"
-          }
-        ]
-      },
-      {
-        "id": "advanced",
-        "title": "SQL Avance",
-        "duration": "1h30",
-        "content": "# SQL Avance\n\n## Sous-requetes\n\nUne sous-requete est une requete dans une requete.\n\n## CTEs (Common Table Expressions)\n\nLes CTEs rendent les requetes complexes lisibles.\n\n## Transactions\n\nGarantissent l'atomicite : tout passe ou rien ne passe.\n\n## Index\n\nAccelerent drastiquement les requetes sur grandes tables.",
-        "codeBlocks": [
-          {
-            "language": "sql",
-            "title": "Techniques avancees",
-            "code": "-- Sous-requete\nSELECT nom FROM users\nWHERE id IN (SELECT user_id FROM enrollments WHERE completed = TRUE);\n\n-- CTE\nWITH actifs AS (\n    SELECT user_id, COUNT(*) as nb FROM enrollments GROUP BY user_id\n)\nSELECT u.nom, a.nb FROM users u JOIN actifs a ON u.id = a.user_id;\n\n-- Transaction\nSTART TRANSACTION;\nUPDATE comptes SET solde = solde - 100 WHERE id = 1;\nUPDATE comptes SET solde = solde + 100 WHERE id = 2;\nCOMMIT;\n\n-- Index\nCREATE INDEX idx_email ON users(email);\nCREATE INDEX idx_created ON users(created_at);"
+            "question": "Pourquoi les conteneurs Docker démarrent-ils en moins d'une seconde, contrairement aux VMs ?",
+            "choices": [
+              "Ils utilisent du hardware dédié plus rapide",
+              "Ils partagent le kernel du système hôte et n'ont pas besoin de démarrer un OS complet",
+              "Docker compresse les données pour les charger plus vite",
+              "Les conteneurs tournent en RAM uniquement"
+            ],
+            "correctIndex": 1
           }
         ]
       }
@@ -284,55 +161,113 @@
   },
   {
     "id": "git-github",
-    "title": "Git & GitHub Complet",
-    "description": "Ne perdez plus jamais votre code. Collaborez efficacement. Git est l'outil qu'utilisent 95% des developpeurs au monde.",
+    "title": "Git & GitHub : Maîtriser le Temps",
+    "description": "Ne perdez plus jamais votre code. Apprenez le versioning qui sauve des carrières et des projets.",
     "icon": "Code",
     "level": "beginner",
-    "duration": "1h",
+    "duration": "3h",
     "category": "devops",
-    "keywords": [
-      "git",
-      "github",
-      "version control",
-      "vcs"
-    ],
+    "keywords": ["git", "github", "versioning", "collaboration", "branches"],
     "content": [
       {
         "id": "intro",
-        "title": "Git : votre machine a remonter le temps",
-        "duration": "30min",
-        "content": "# Git : votre machine a remonter le temps\n\nGit enregistre chaque modification de votre code avec qui l'a faite, quand, et pourquoi.\n\n## Sans Git vs Avec Git\n\n| Sans Git | Avec Git |\n|---|---|\n| `projet_v2_final.zip` | Branches propres |\n| `projet_v2_VRAIFINAL.zip` | `git log` lisible |\n| Peur de modifier | `git checkout` libre |\n| Collaboration par email | Pull Requests |\n\n## Les 3 zones de Git\n\n- **Working Dir** : vos fichiers modifies\n- **Staging Area** : prepares pour le commit (`git add`)\n- **Repository** : historique permanent (`git commit`)",
+        "title": "La Panique de 3h du Matin",
+        "duration": "15min",
+        "content": "# 🕒 3h du Matin : J'ai Tout Cassé\n\n**Le contexte :** Un projet e-commerce de 6 mois, livraison dans 48 heures. Le client s'impatiente.\n\n**L'erreur :** Je modifie le CSS \"juste un peu\" — réorganiser quelques classes pour que le header soit plus propre sur mobile. Logique. Rapide. Inoffensif.\n\n**Le résultat :** Le layout s'effondre. Le panier d'achat disparaît sur Safari iOS. La police de tout le site change. Et je ne sais **absolument pas** ce que j'ai changé — j'ai édité 8 fichiers en même temps.\n\n**Sans Git :** 5 heures de relecture ligne par ligne. 3 cafés. Des sueurs froides. Une livraison ratée.\n\n**Avec Git :** `git diff HEAD~1` pour voir exactement ce qui a changé. `git revert HEAD` pour annuler en 10 secondes. Retour au dernier état stable. Livraison à l'heure.\n\n> **\"Git n'est pas qu'un outil de sauvegarde. C'est une machine à remonter le temps, un système de collaboration, et votre meilleure assurance-vie professionnelle.\"**\n\n---\n\n## 🧠 Les 3 Zones de Git : Le Concept Central\n\nTout dans Git tourne autour de ces trois zones. Les comprendre, c'est comprendre Git.\n\n```\n┌─────────────────┐    git add    ┌──────────────────┐   git commit  ┌──────────────────┐\n│ Working          │ ──────────→  │  Staging Area     │ ──────────→  │   Repository     │\n│ Directory        │              │  (Index)          │              │   (Historique)   │\n│                  │              │                   │              │                  │\n│ Vos fichiers     │              │ Ce qui PARTIRA    │              │ Snapshots        │\n│ tels que vous    │              │ dans le prochain  │              │ permanents       │\n│ les voyez        │              │ commit            │              │ avec messages    │\n└─────────────────┘              └──────────────────┘              └──────────────────┘\n      ↑                                                                     │\n      └─────────────────────── git checkout / restore ────────────────────┘\n```\n\n**Pourquoi la Staging Area ?** Elle vous donne un contrôle granulaire. Vous avez modifié 10 fichiers mais seuls 3 sont liés à la même fonctionnalité ? Vous pouvez faire un commit propre avec seulement ces 3 fichiers. C'est professionnel.\n\n---\n\n## 📏 Les Règles d'Or des Messages de Commit\n\nUn bon message de commit raconte une histoire. Dans 6 mois, vous (ou votre collègue) devez comprendre ce qui s'est passé.\n\n```\n❌ Mauvais messages :\n   \"fix\"\n   \"wip\"\n   \"aaaa\"\n   \"je sais pas\"\n   \"corrections diverses\"\n\n✅ Bons messages (convention Conventional Commits) :\n   feat: ajout du système d'authentification JWT\n   fix: correction du crash au login sur iOS 16\n   docs: mise à jour du README avec les prérequis\n   refactor: simplification du calcul du panier\n   chore: mise à jour des dépendances npm\n\nFormat : <type>: <description courte en impératif présent>\n```\n\nCette convention n'est pas obligatoire, mais elle est utilisée par la majorité des équipes professionnelles.",
         "codeBlocks": [
           {
             "language": "bash",
-            "title": "Configuration initiale Git",
-            "code": "# Configurer son identite\ngit config --global user.name \"Alice Dupont\"\ngit config --global user.email \"alice@example.com\"\n\n# Editeur par defaut\ngit config --global core.editor \"nano\"\n\n# Voir sa configuration\ngit config --list\n\n# Initialiser un nouveau depot\nmkdir mon-projet && cd mon-projet\ngit init"
+            "title": "🚀 Votre Premier Dépôt Git : Workflow Complet",
+            "code": "# === CONFIGURATION INITIALE (une seule fois par machine) ===\ngit config --global user.name \"Alice Dupont\"\ngit config --global user.email \"alice@example.com\"\ngit config --global init.defaultBranch main\ngit config --global core.editor \"code --wait\"  # VS Code comme éditeur\n\n# Vérifier la configuration\ngit config --list\n\n\n# === CRÉER UN PROJET ===\nmkdir mon-projet && cd mon-projet\ngit init\n# Initialized empty Git repository in /home/alice/mon-projet/.git/\n# Le dossier .git est l'ADN de votre repo. Ne jamais le toucher manuellement.\n\ngit status\n# On branch main — vous êtes sur la branche principale\n# No commits yet — historique vide\n# nothing to commit — aucune modification détectée\n\n\n# === PREMIER COMMIT ===\necho \"# Mon Projet\" > README.md\necho \"node_modules/\" > .gitignore  # Fichiers à ne JAMAIS versionner\n\ngit status\n# Untracked files: README.md, .gitignore (nouveaux fichiers non suivis)\n\ngit add README.md .gitignore\n# OU pour tout ajouter :\n# git add .   ← Pratique mais à utiliser avec précaution\n\ngit status\n# Changes to be committed: (ready to commit !)\n#   new file: README.md\n#   new file: .gitignore\n\ngit commit -m \"feat: initialisation du projet avec README\"\n# [main (root-commit) a1b2c3d] feat: initialisation du projet avec README\n\n\n# === CYCLE QUOTIDIEN ===\n# Modifier un fichier\necho \"## Installation\" >> README.md\necho \"npm install\" >> README.md\n\n# Voir exactement ce qui a changé (essentiel avant tout commit)\ngit diff\n# Les lignes en vert (+) sont ajoutées, en rouge (-) supprimées\n\ngit add README.md\ngit commit -m \"docs: ajout des instructions d'installation\"\n\n\n# === EXPLORER L'HISTORIQUE ===\ngit log                    # Historique complet avec auteur, date, message\ngit log --oneline          # Une ligne par commit (vue d'ensemble)\ngit log --oneline --graph  # Graphe visuel des branches\n# a1b2c3d (HEAD -> main) docs: ajout des instructions d'installation\n# f4e5d6c feat: initialisation du projet avec README\n\n\n# === ANNULER DES MODIFICATIONS ===\n# Cas 1 : fichier modifié pas encore stagé → restaurer\ngit restore README.md\n\n# Cas 2 : fichier stagé → déstaguer\ngit restore --staged README.md\n\n# Cas 3 : annuler le dernier commit (garde les modifications)\ngit revert HEAD\n\n# Voir une version passée d'un fichier\ngit show HEAD~2:README.md  # README.md d'il y a 2 commits"
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Pourquoi la Staging Area (zone d'index) existe-t-elle dans Git ?",
+            "choices": [
+              "C'est une zone tampon obligatoire sans intérêt pratique",
+              "Elle permet de choisir précisément quels fichiers inclure dans le prochain commit",
+              "Elle synchronise automatiquement avec GitHub",
+              "Elle stocke les backups automatiques"
+            ],
+            "correctIndex": 1
+          },
+          {
+            "question": "Quelle commande permet de voir exactement les lignes modifiées avant de committer ?",
+            "choices": [
+              "git status",
+              "git log",
+              "git diff",
+              "git show"
+            ],
+            "correctIndex": 2
+          },
+          {
+            "question": "Quelle est la convention de message 'feat: ajout du login' ?",
+            "choices": [
+              "Une obligation technique imposée par Git",
+              "La convention Conventional Commits, standard dans les équipes pro",
+              "Un format propre à GitHub uniquement",
+              "Une abréviation de 'feature file'"
+            ],
+            "correctIndex": 1
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    "id": "sql-basics",
+    "title": "SQL : Parler aux Bases de Données",
+    "description": "Apprenez le langage universel des données. De SELECT * aux requêtes optimisées qui ne font pas pleurer le DBA.",
+    "icon": "Database",
+    "level": "beginner",
+    "duration": "4h",
+    "category": "sql",
+    "keywords": ["sql", "database", "mysql", "postgresql", "requetes"],
+    "content": [
       {
-        "id": "basics",
-        "title": "Workflow Git quotidien",
-        "duration": "1h",
-        "content": "# Le cycle de vie d'un commit\n\n## Bons messages de commit\n\n| Bon message | Mauvais message |\n|---|---|\n| `fix: corriger la validation email` | `fix bug` |\n| `feat: ajouter l'authentification JWT` | `changements` |\n| `docs: mettre a jour le README` | `wip` |\n\n**Format recommande :** `type: description courte`\n\nTypes : `feat`, `fix`, `docs`, `style`, `refactor`, `test`",
+        "id": "intro",
+        "title": "La Requête qui a Coûté 10 000€",
+        "duration": "15min",
+        "content": "# 💸 La Requête qui a Failli Ruiner la Boîte\n\n**Contexte :** Startup e-commerce, 2 millions d'utilisateurs, Black Friday J-3. Je suis développeur junior avec 3 mois d'expérience.\n\n**La mission :** Extraire la liste des clients VIP pour envoyer des codes promo en avant-première.\n\n**Ma requête :**\n```sql\nSELECT * FROM users\nJOIN orders ON users.id = orders.user_id\nJOIN products ON orders.product_id = products.id\nJOIN categories ON products.category_id = categories.id\nWHERE users.vip = true\n```\n\n**Mon erreur :** Cette requête fait 4 JOINs sur des tables de 2M+ de lignes, sans index utilisé, sans LIMIT. J'ai appuyé sur Entrée sur la base de **PRODUCTION**.\n\n**Le résultat :** Full table scan pendant 45 minutes. CPU à 100%. La base bloque toutes les nouvelles requêtes. Le site est en timeout. Le support client croule sous les appels. Le directeur technique débarque en courant. 10 000€ de ventes perdues en 45 minutes.\n\n**Ce que j'aurais dû faire :**\n```sql\nSELECT u.id, u.email, u.vip_since\nFROM users u\nWHERE u.vip = true\nLIMIT 1000;   ← Toujours limiter en exploration\n-- Et d'abord le tester sur la base de DEV !\n```\n\n> **\"En SQL, l'ignorance n'est pas une excuse — c'est une facture. Comprenez ce que vous exécutez avant de l'exécuter.\"**\n\n---\n\n## 🏗️ Comment Fonctionne une Base de Données Relationnelle\n\nUne base de données relationnelle, c'est comme un ensemble de tableurs Excel très bien organisés et reliés entre eux.\n\n```\n TABLE 'users'              TABLE 'orders'\n ┌────┬──────────┬─────┐   ┌────┬─────────┬──────────┐\n │ id │ email    │ vip │   │ id │ user_id │ total    │\n ├────┼──────────┼─────┤   ├────┼─────────┼──────────┤\n │  1 │ alice@.. │  1  │   │ 10 │    1    │  89.99€  │\n │  2 │ bob@...  │  0  │   │ 11 │    1    │ 145.00€  │\n │  3 │ carol@.. │  1  │   │ 12 │    3    │  22.50€  │\n └────┴──────────┴─────┘   └────┴─────────┴──────────┘\n                                     ↑\n                              Clé étrangère\n                           qui pointe vers users.id\n```\n\nLa **clé étrangère** (`user_id` dans `orders`) crée le lien entre les tables. C'est le cœur du modèle relationnel.\n\n---\n\n## 📊 Les 4 Opérations CRUD\n\n| Opération | Commande SQL | Risque | Conseil |\n|-----------|--------------|--------|----------|\n| **C**reate | `INSERT` | Faible | Vérifiez les contraintes |\n| **R**ead | `SELECT` | Nul | Toujours commencer par là |\n| **U**pdate | `UPDATE` | ⚠️ Élevé | TOUJOURS avec WHERE |\n| **D**elete | `DELETE` | 💀 Critique | Tester avec SELECT d'abord |\n\n**La règle absolue :** Avant tout `UPDATE` ou `DELETE`, écrivez d'abord un `SELECT` avec la même condition `WHERE` pour voir exactement quelles lignes seront affectées.",
         "codeBlocks": [
           {
-            "language": "bash",
-            "title": "Workflow Git complet",
-            "code": "# Voir l'etat\ngit status\n\n# Voir les differences\ngit diff                   # non-staged\ngit diff --staged          # staged\n\n# Ajouter en staging\ngit add fichier.txt\ngit add .                  # tout\n\n# Committer\ngit commit -m \"feat: ajouter page de connexion\"\n\n# Historique\ngit log --oneline --graph\n\n# Annuler\ngit restore fichier.txt    # annuler (non-staged)\ngit revert HEAD            # annuler dernier commit"
+            "language": "sql",
+            "title": "🚀 De Zéro à votre Première Requête SQL",
+            "code": "-- === EXPLORATION D'UNE BASE ===\n\n-- Voir toutes les bases disponibles\nSHOW DATABASES;\n\n-- Choisir la base de travail\nUSE tutodecode;\n\n-- Voir toutes les tables\nSHOW TABLES;\n\n-- Comprendre la structure d'une table\nDESCRIBE users;\n-- Résultat :\n-- Field         Type          Null  Key  Default\n-- id            int(11)       NO    PRI  NULL\n-- email         varchar(255)  NO    UNI  NULL\n-- vip           tinyint(1)    YES        0\n-- created_at    datetime      YES        NULL\n\n\n-- === SELECT : LIRE LES DONNÉES ===\n\n-- ⚠️ À éviter en production (récupère tout)\nSELECT * FROM users;\n\n-- ✅ La bonne façon : colonnes explicites + limite\nSELECT id, email, created_at\nFROM users\nLIMIT 10;\n\n-- Filtrer avec WHERE\nSELECT id, email\nFROM users\nWHERE vip = true\n  AND created_at >= '2024-01-01'\nORDER BY created_at DESC\nLIMIT 100;\n\n-- Compter les lignes (plus rapide que SELECT *)\nSELECT COUNT(*) AS total_vip\nFROM users\nWHERE vip = true;\n-- Résultat : total_vip = 1247\n\n\n-- === INSERT : AJOUTER DES DONNÉES ===\n\n-- Toujours spécifier les colonnes explicitement\nINSERT INTO users (email, vip, created_at)\nVALUES ('alice@example.com', false, NOW());\n\n-- Insérer plusieurs lignes en une fois (plus performant)\nINSERT INTO users (email, vip, created_at) VALUES\n  ('bob@example.com', false, NOW()),\n  ('carol@example.com', true, NOW()),\n  ('dan@example.com', false, NOW());\n\n\n-- === UPDATE : MODIFIER DES DONNÉES ===\n\n-- ⚠️ TOUJOURS vérifier avec SELECT d'abord :\nSELECT id, email, vip FROM users WHERE email = 'alice@example.com';\n-- Si le résultat est correct, alors :\nUPDATE users\nSET vip = true\nWHERE email = 'alice@example.com';\n-- 1 row(s) affected. (exactement ce qu'on voulait)\n\n-- ❌ CATASTROPHE sans WHERE :\n-- UPDATE users SET vip = true;\n-- → Tous les utilisateurs deviennent VIP. Irrécupérable.\n\n\n-- === DELETE : SUPPRIMER DES DONNÉES ===\n\n-- Toujours tester avec SELECT avant :\nSELECT * FROM users WHERE created_at < '2020-01-01' AND vip = false;\n-- 42 lignes. C'est bien ce qu'on veut supprimer.\n\nDELETE FROM users\nWHERE created_at < '2020-01-01'\n  AND vip = false;\n-- 42 row(s) affected."
           }
-        ]
-      },
-      {
-        "id": "branches",
-        "title": "Branches Git",
-        "duration": "1h",
-        "content": "# Les branches : l'arme secrete de Git\n\nUne branche est une ligne de developpement independante.\n\n## Commandes branches\n\n| Commande | Action |\n|---|---|\n| `git branch` | Lister les branches |\n| `git branch nom` | Creer une branche |\n| `git checkout nom` | Se deplacer |\n| `git checkout -b nom` | Creer + se deplacer |\n| `git merge nom` | Fusionner |\n| `git branch -d nom` | Supprimer |",
-        "codeBlocks": [
+        ],
+        "quiz": [
           {
-            "language": "bash",
-            "title": "Cycle de vie d'une feature branch",
-            "code": "# Partir de main a jour\ngit checkout main\ngit pull origin main\n\n# Creer une branche\ngit checkout -b feature/authentification\n\n# Travailler et committer\ngit add .\ngit commit -m \"feat: ajouter formulaire login\"\n\n# Merger dans main\ngit checkout main\ngit merge feature/authentification --no-ff\n\n# Nettoyer\ngit branch -d feature/authentification\ngit push origin main"
+            "question": "Quelle est la bonne pratique AVANT d'exécuter un DELETE ou UPDATE en production ?",
+            "choices": [
+              "Faire un git commit",
+              "Exécuter d'abord un SELECT avec la même condition WHERE pour vérifier les lignes concernées",
+              "Prévenir le client par email",
+              "Vérifier que le serveur a assez de RAM"
+            ],
+            "correctIndex": 1
+          },
+          {
+            "question": "Pourquoi la requête 'SELECT * FROM users JOIN orders JOIN products' était-elle catastrophique ?",
+            "choices": [
+              "Parce que SELECT * est interdit",
+              "Parce que les JOINs sur de grandes tables sans index causent un full table scan, bloquant la base",
+              "Parce qu'il manquait un point-virgule",
+              "Parce que JOIN ne fonctionne qu'avec deux tables maximum"
+            ],
+            "correctIndex": 1
+          },
+          {
+            "question": "Qu'est-ce qu'une clé étrangère dans une base de données relationnelle ?",
+            "choices": [
+              "Un mot de passe pour accéder à une table",
+              "Une colonne qui référence la clé primaire d'une autre table, créant un lien entre elles",
+              "Un index qui accélère les recherches",
+              "Un type de chiffrement des données"
+            ],
+            "correctIndex": 1
           }
         ]
       }
@@ -340,68 +275,56 @@
   },
   {
     "id": "python-basics",
-    "title": "Python pour Debutants",
-    "description": "Python : simple a apprendre, puissant en production. Web, data science, IA, automatisation -- Python fait tout.",
+    "title": "Python : Le Couteau Suisse du Code",
+    "description": "Le langage le plus populaire au monde. De l'automatisation simple à l'IA avancée, Python fait tout.",
     "icon": "Code",
     "level": "beginner",
-    "duration": "1h",
+    "duration": "5h",
     "category": "python",
-    "keywords": [
-      "python",
-      "programming",
-      "scripting",
-      "poo"
-    ],
+    "keywords": ["python", "programmation", "scripting", "ia", "data"],
     "content": [
       {
         "id": "intro",
-        "title": "Python : le langage le plus populaire au monde",
-        "duration": "30min",
-        "content": "# Pourquoi Python\n\nPython se classe #1 de l'index TIOBE depuis 3 ans.\n\n## Ce qu'on fait avec Python\n\n| Domaine | Bibliotheques | Exemples |\n|---|---|---|\n| Web Backend | Django, FastAPI, Flask | Instagram, Pinterest |\n| Data Science | Pandas, NumPy | Analyse de donnees |\n| Intelligence Artificielle | PyTorch, TensorFlow | ChatGPT |\n| Automatisation | Selenium, PyAutoGUI | Bots, scraping |\n| DevOps | Ansible, Fabric | Scripts d'infra |",
+        "title": "Le Script qui a Automatisé Mon Job",
+        "duration": "15min",
+        "content": "# 🤖 Comment 50 Lignes de Python m'ont Donné 4 Heures par Semaine\n\n**2019. Je suis analyste financier.** Chaque lundi matin, sans exception, je passe 4 heures à faire la même chose :\n\n1. Ouvrir 15 fichiers Excel venant de 8 équipes différentes\n2. Copier les colonnes C, G et K de chaque fichier\n3. Les coller dans un fichier master selon un schéma précis\n4. Calculer des moyennes, des écarts, des tendances\n5. Générer 5 graphiques formatés aux couleurs de l'entreprise\n6. Rédiger un email récapitulatif et l'envoyer à 12 personnes\n\nC'est répétitif, ennuyeux, et je fais des erreurs un lundi sur trois par fatigue.\n\n**Un vendredi soir, je découvre Python.** Je passe le weekend à apprendre. Le lundi suivant, j'arrive au bureau à 9h, je lance mon script, et à 9h04 l'email est envoyé — avec les données correctes, les graphiques aux bonnes couleurs, et zéro erreur.\n\n**Mon manager me demande si j'ai triché.** Je lui montre le script. Il me demande d'automatiser 3 autres processus. Six mois plus tard, je suis promu chef de projet data.\n\n> **\"Python est le premier langage où vous gagnez du temps DÈS LA PREMIÈRE SEMAINE. La syntaxe est si proche du langage naturel que votre cerveau comprend avant même d'avoir appris.\"**\n\n---\n\n## Pourquoi Python Est #1 Mondial Depuis 5 Ans\n\n```\n    Popularité des langages (TIOBE Index 2024)\n    \n    Python      ██████████████████████  ~30%\n    C           ████████████            ~15%\n    C++         ██████████              ~13%\n    Java        █████████               ~11%\n    JavaScript  ███████                  ~9%\n```\n\nMais la popularité seule ne suffit pas à expliquer l'engouement. Voici les vraies raisons :\n\n| Domaine | Ce que Python fait | Bibliothèque clé |\n|---------|--------------------|------------------|\n| **Automatisation** | Scripts, bots, tâches planifiées | `os`, `schedule`, `selenium` |\n| **Data Science** | Analyser des millions de lignes | `pandas`, `numpy` |\n| **IA / Machine Learning** | Entraîner des modèles | `pytorch`, `tensorflow` |\n| **Web Backend** | APIs REST, sites | `fastapi`, `django` |\n| **DevOps** | Infrastructure as Code | `ansible`, `boto3` |\n\n---\n\n## La Philosophie Python : Le Zen\n\nPython a une philosophie officielle, accessible en tapant `import this` :\n\n```\n- Beau vaut mieux que laid\n- Simple vaut mieux que complexe  \n- La lisibilité compte\n- Il doit y avoir une — et de préférence une seule — façon évidente de faire\n```\n\nContrairement à C++ ou Java, Python ne vous offre pas 10 façons de faire la même chose. Il vous guide vers la bonne façon. Ce n'est pas une limitation — c'est une force.",
         "codeBlocks": [
           {
             "language": "python",
-            "title": "Votre premier programme Python",
-            "code": "# Afficher du texte\nprint(\"Hello, TutoDeCode!\")\n\n# Variables (pas de declaration de type)\nnom = \"Alice\"\nage = 25\nprix = 19.99\nest_actif = True\n\n# f-strings : la facon moderne d'inserer des variables\nprint(f\"Bonjour {nom}, tu as {age} ans.\")\nprint(f\"Prix TTC : {prix * 1.2:.2f} EUR\")\n\n# Type d'une variable\nprint(type(nom))    # <class 'str'>\nprint(type(age))    # <class 'int'>"
+            "title": "🚀 Python en 60 Lignes : L'Essentiel",
+            "code": "# Python s'exécute ligne par ligne. Pas de compilation.\n# Pas de déclaration de types. Juste écrire et lancer.\n\n# ============================================================\n# 1. LES TYPES DE BASE\n# ============================================================\n\n# Pas besoin de déclarer le type — Python l'infère\nnombre_entier = 42\nnombre_decimal = 3.14\ntexte = \"Bonjour TutoDecode\"\nbooleen = True\nrien = None  # L'équivalent de null\n\nprint(type(nombre_entier))  # <class 'int'>\nprint(type(texte))          # <class 'str'>\n\n# ============================================================\n# 2. LES F-STRINGS (formatage moderne)\n# ============================================================\n\nnom = \"Alice\"\nage = 28\nsolde = 1234.567\n\n# La façon moderne et lisible\nprint(f\"Utilisateur : {nom}, {age} ans\")\nprint(f\"Solde : {solde:.2f} €\")  # .2f = 2 décimales → 1234.57 €\nprint(f\"L'âge en binaire : {age:b}\")  # → 11100\n\n# ============================================================\n# 3. LES LISTES (tableaux dynamiques)\n# ============================================================\n\ncours = [\"Linux\", \"Docker\", \"Python\", \"SQL\"]\n\ncours.append(\"Git\")       # Ajoute à la fin\ncours.insert(0, \"Intro\")  # Insère au début\ncours.remove(\"SQL\")       # Supprime par valeur\n\nprint(cours[0])    # Premier : \"Intro\"\nprint(cours[-1])   # Dernier : \"Git\"\nprint(cours[1:3])  # Slice : [\"Linux\", \"Docker\"]\n\n# List comprehension (la magie Python)\nlengths = [len(c) for c in cours]  # Longueur de chaque cours\nprint(lengths)  # [5, 5, 6, 6, 3]\n\n# ============================================================\n# 4. LES DICTIONNAIRES (clé → valeur)\n# ============================================================\n\nutilisateur = {\n    \"nom\": \"Alice\",\n    \"email\": \"alice@example.com\",\n    \"age\": 28,\n    \"actif\": True,\n    \"cours\": cours  # Les listes et dicos peuvent s'imbriquer\n}\n\nprint(utilisateur[\"email\"])          # alice@example.com\nprint(utilisateur.get(\"tel\", \"N/A\")) # N/A (clé absente → valeur par défaut)\n\n# Itérer sur un dict\nfor cle, valeur in utilisateur.items():\n    print(f\"{cle}: {valeur}\")\n\n# ============================================================\n# 5. FONCTIONS\n# ============================================================\n\ndef calculer_prix_ttc(prix_ht: float, taux: float = 0.20) -> float:\n    \"\"\"Calcule le prix TTC. taux = 0.20 par défaut (TVA française).\"\"\"\n    return prix_ht * (1 + taux)\n\nprint(calculer_prix_ttc(100))         # 120.0\nprint(calculer_prix_ttc(100, 0.055))  # 105.5 (TVA réduite)\n\n# ============================================================\n# 6. GESTION D'ERREURS\n# ============================================================\n\ndef diviser(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        print(\"Erreur : division par zéro\")\n        return None\n    finally:\n        print(\"Opération terminée\")  # S'exécute toujours\n\nprint(diviser(10, 2))   # 5.0\nprint(diviser(10, 0))   # Gère l'erreur proprement\n\n# 🎉 Vous venez de couvrir 80% du Python quotidien !"
           }
-        ]
-      },
-      {
-        "id": "structures",
-        "title": "Structures de donnees Python",
-        "duration": "1h30",
-        "content": "# Les conteneurs Python\n\n## Comparaison des structures\n\n| Structure | Syntaxe | Ordonne | Modifiable | Doublon | Usage |\n|---|---|---|---|---|---|\n| `list` | `[1,2,3]` | Oui | Oui | Oui | Sequences ordonnees |\n| `tuple` | `(1,2,3)` | Oui | Non | Oui | Donnees immuables |\n| `dict` | `{'a':1}` | Oui | Oui | Cles non | Cle valeur |\n| `set` | `{1,2,3}` | Non | Oui | Non | Elements uniques |",
-        "codeBlocks": [
+        ],
+        "quiz": [
           {
-            "language": "python",
-            "title": "Structures de donnees en pratique",
-            "code": "# LISTES\ncours = [\"Linux\", \"Docker\", \"Python\", \"SQL\"]\ncours.append(\"Git\")\ncours.insert(0, \"Reseau\")\ncours.remove(\"SQL\")\nprint(cours[1:3])   # slicing\n\n# DICTIONNAIRES\nuser = {\n    \"nom\": \"Alice\",\n    \"age\": 25,\n    \"cours\": [\"Linux\", \"Python\"]\n}\nprint(user[\"nom\"])\nuser[\"email\"] = \"a@b.com\"\n\n# LIST COMPREHENSIONS\nnombres = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\ncarres = [n**2 for n in nombres]\npairs   = [n for n in nombres if n % 2 == 0]\nprint(pairs)  # [2, 4, 6, 8, 10]"
-          }
-        ]
-      },
-      {
-        "id": "functions",
-        "title": "Fonctions Python",
-        "duration": "1h",
-        "content": "# Fonctions : des briques reutilisables\n\n## Parametres Python\n\n| Type | Syntaxe | Exemple d'appel |\n|---|---|---|\n| Positionnels | `def f(a, b)` | `f(1, 2)` |\n| Avec defaut | `def f(a, b=10)` | `f(1)` |\n| Nommés | `def f(**kwargs)` | `f(nom='Alice')` |\n| Variadiques | `def f(*args)` | `f(1, 2, 3, 4)` |",
-        "codeBlocks": [
+            "question": "Que fait cette instruction Python : `[len(c) for c in cours]` ?",
+            "choices": [
+              "Supprime les éléments vides de la liste cours",
+              "Crée une nouvelle liste avec la longueur de chaque élément de cours",
+              "Trie la liste cours par longueur",
+              "Compte le nombre total de caractères"
+            ],
+            "correctIndex": 1
+          },
           {
-            "language": "python",
-            "title": "Fonctions avancees",
-            "code": "# Fonction avec type hints (Python 3.5+)\ndef calculer_tva(prix: float, taux: float = 0.20) -> float:\n    \"\"\"Calcule le prix TTC.\"\"\"\n    return prix * (1 + taux)\n\nprint(calculer_tva(100))        # 120.0\nprint(calculer_tva(100, 0.055)) # 105.5\n\n# Fonctions lambda (anonymes)\ndoubler = lambda x: x * 2\n\n# *args et **kwargs\ndef logger(*messages, niveau='INFO'):\n    for msg in messages:\n        print(f\"[{niveau}] {msg}\")\n\nlogger(\"Demarrage\", \"Connexion OK\", niveau='DEBUG')"
-          }
-        ]
-      },
-      {
-        "id": "poo",
-        "title": "Programmation Orientee Objet",
-        "duration": "2h",
-        "content": "# POO en Python\n\nLa POO organise le code autour d'objets qui combinent donnees et comportements.\n\n## Concepts cles\n\n| Concept | Definition |\n|---|---|\n| Classe | Modele / Plan de construction |\n| Instance | Objet cree depuis une classe |\n| Attribut | Donnee associee a un objet |\n| Methode | Fonction associee a un objet |\n| Heritage | Une classe heriте d'une autre |\n| Encapsulation | Cacher les details internes |",
-        "codeBlocks": [
+            "question": "Quelle est la différence entre `dict['cle']` et `dict.get('cle', 'defaut')` ?",
+            "choices": [
+              "Aucune différence fonctionnelle",
+              "dict['cle'] lève une erreur si la clé est absente, dict.get() retourne la valeur par défaut",
+              "dict.get() est plus lent",
+              "dict['cle'] ne fonctionne qu'avec des clés numériques"
+            ],
+            "correctIndex": 1
+          },
           {
-            "language": "python",
-            "title": "Classes et heritage",
-            "code": "class Animal:\n    def __init__(self, nom: str, age: int):\n        self.nom = nom\n        self.age = age\n    \n    def presentation(self) -> str:\n        return f\"Je suis {self.nom}, j'ai {self.age} ans\"\n    \n    def son(self) -> str:\n        return \"...\"\n\nclass Chien(Animal):\n    def __init__(self, nom: str, age: int, race: str):\n        super().__init__(nom, age)  # Appel du parent\n        self.race = race\n    \n    def son(self) -> str:  # Override\n        return \"Woof!\"\n\n# Utilisation\nrex = Chien(\"Rex\", 3, \"Labrador\")\nprint(rex.presentation())\nprint(rex.son())"
+            "question": "Pourquoi Python utilise-t-il l'indentation (les espaces) à la place des accolades `{}` ?",
+            "choices": [
+              "C'est une limitation technique de l'interpréteur",
+              "Pour forcer la lisibilité et l'uniformité du code — c'est la philosophie Python",
+              "Pour être compatible avec les anciens systèmes",
+              "Pour réduire la taille des fichiers"
+            ],
+            "correctIndex": 1
           }
         ]
       }
@@ -409,853 +332,58 @@
   },
   {
     "id": "javascript-modern",
-    "title": "JavaScript Moderne (ES6+)",
-    "description": "JS est le seul langage du navigateur. Maitrisez ES6+, async/await et les patterns modernes.",
+    "title": "JavaScript Moderne : Maîtriser le Web",
+    "description": "Le seul langage du navigateur. ES6+, async/await, et les patterns qui font la différence entre junior et senior.",
     "icon": "Code",
     "level": "intermediate",
-    "duration": "2h",
+    "duration": "5h",
     "category": "javascript",
-    "keywords": [
-      "javascript",
-      "es6",
-      "async",
-      "promises",
-      "modules"
-    ],
-    "content": [
-      {
-        "id": "variables",
-        "title": "let, const, var",
-        "duration": "45min",
-        "content": "# Variables en JavaScript moderne\n\n## var vs let vs const\n\n| | `var` | `let` | `const` |\n|---|---|---|---|\n| Portee | Fonction | Bloc | Bloc |\n| Reassignable | Oui | Oui | Non |\n| Hissage (hoisting) | Oui | Non | Non |\n| Usage | Ancien | Courant | Prefere |\n\n> Regle d'or : utilisez `const` par defaut, `let` si vous devez reassigner. N'utilisez plus `var`.",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "Differentes declarations",
-            "code": "// const : valeur qui ne change pas\nconst API_URL = 'https://api.example.com';\nconst utilisateur = { nom: 'Alice', age: 25 };\nutilisateur.age = 26;  // OK : on modifie l'objet, pas la variable\n\n// let : valeur qui peut changer\nlet compteur = 0;\ncompteur++;  // OK\n\n// Portee de bloc\nif (true) {\n  let x = 10;  // existe seulement dans ce bloc\n  const y = 20;\n}\n// console.log(x); // ERREUR : x n'existe plus"
-          }
-        ]
-      },
-      {
-        "id": "async-await",
-        "title": "Async/Await -- Maitrisez l'asynchrone",
-        "duration": "1h30",
-        "content": "# L'asynchrone en JavaScript\n\nJavaScript est single-threaded mais supporte des operations asynchrones.\n\n## Evolution de la gestion asynchrone\n\n| Epoque | Methode | Probleme |\n|---|---|---|\n| Annees 2000 | Callbacks | Callback hell |\n| 2012+ | Promises | `.then().then().catch()` long |\n| 2017+ | Async/Await | Code lisible |\n\n## Regles d'or\n\n1. `await` ne fonctionne QUE dans une fonction `async`\n2. Toujours entourer d'un `try/catch`\n3. `Promise.all()` pour les appels paralleles",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "Async/Await en pratique",
-            "code": "// Avec async/await\nasync function getUserWithCourses(userId) {\n  try {\n    const userRes = await fetch(`/api/users/${userId}`);\n    if (!userRes.ok) throw new Error(`HTTP ${userRes.status}`);\n    const user = await userRes.json();\n    \n    const coursesRes = await fetch(`/api/courses?userId=${user.id}`);\n    const courses = await coursesRes.json();\n    \n    return { ...user, courses };\n  } catch (error) {\n    console.error('Erreur:', error.message);\n    throw error;\n  }\n}\n\n// Requetes PARALLELES (3x plus rapide)\nasync function getDashboardData(userId) {\n  const [user, courses, stats] = await Promise.all([\n    fetch(`/api/users/${userId}`).then(r => r.json()),\n    fetch(`/api/courses`).then(r => r.json()),\n    fetch(`/api/stats/${userId}`).then(r => r.json()),\n  ]);\n  return { user, courses, stats };\n}"
-          }
-        ]
-      },
-      {
-        "id": "array-methods",
-        "title": "map, filter, reduce",
-        "duration": "1h30",
-        "content": "# Les methodes fonctionnelles\n\n## Comparaison des methodes\n\n| Methode | Retourne | Utilisation |\n|---|---|---|\n| `map()` | Nouveau tableau (meme taille) | Transformer chaque element |\n| `filter()` | Nouveau tableau (filtre) | Garder certains elements |\n| `reduce()` | Une valeur | Agreger en une valeur |\n| `find()` | Un element ou undefined | Trouver le premier match |\n| `some()` | Boolean | Au moins un match |\n| `every()` | Boolean | Tous correspondent |",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "Transformation de donnees",
-            "code": "const users = [\n  { id: 1, nom: 'Alice', age: 28, role: 'admin', actif: true },\n  { id: 2, nom: 'Bob',   age: 17, role: 'user',  actif: true },\n  { id: 3, nom: 'Carol', age: 32, role: 'user',  actif: false },\n];\n\n// MAP : extraire les noms\nconst noms = users.map(u => u.nom);\n// ['Alice', 'Bob', 'Carol']\n\n// FILTER : admins actifs\nconst adminsActifs = users.filter(u => u.role === 'admin' && u.actif);\n\n// REDUCE : nombre par role\nconst parRole = users.reduce((acc, user) => {\n  acc[user.role] = (acc[user.role] || 0) + 1;\n  return acc;\n}, {});\n// { admin: 1, user: 2 }\n\n// CHAINAGES\nconst adultes = users\n  .filter(u => u.age >= 18 && u.actif)\n  .sort((a, b) => a.nom.localeCompare(b.nom))\n  .map(u => ({ id: u.id, nom: u.nom }));"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "security-basics",
-    "title": "Securite Web",
-    "description": "Les failles de securite coutent des millions. Apprenez a proteger vos apps contre les attaques les plus courantes.",
-    "icon": "Shield",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "securite",
-    "keywords": [
-      "security",
-      "https",
-      "sql injection",
-      "xss",
-      "csrf",
-      "owasp"
-    ],
+    "keywords": ["javascript", "es6", "async", "web", "frontend"],
     "content": [
       {
         "id": "intro",
-        "title": "Introduction Securite Web",
-        "duration": "1h",
-        "content": "# Securite Web : pourquoi c'est critique\n\nEn 2023, le cout moyen d'une violation de donnees est de **4.45 millions USD**.\n\n## OWASP Top 10 (les failles les plus courantes)\n\n| Rang | Faille | Exemple |\n|---|---|---|\n| 1 | Injection SQL/NoSQL/LDAP | `' OR 1=1 --` |\n| 2 | Broken Authentication | Mots de passe faibles |\n| 3 | Exposition de donnees sensibles | HTTP non chiffre |\n| 4 | XXE Injection | Fichiers XML malveillants |\n| 5 | Broken Access Control | Acces non autorise |\n| 6 | Mauvaise configuration | Ports ouverts inutiles |\n| 7 | XSS | Injection de scripts |\n| 8 | Deserialisation non securisee | Execution de code |\n| 9 | Composants vulnerables | Dependencies obsoletes |\n| 10 | Logging insuffisant | Attaques non detectees |",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Outils de test de securite",
-            "code": "# Scanner de vulnerabilites web\nnmap -sV --script=http-security-headers example.com\n\n# Audit des en-tetes HTTP\ncurl -I https://example.com\n\n# Tester SSL/TLS\nopenssl s_client -connect example.com:443\n\n# Audit des dependances Node.js\nnpm audit\nnpm audit fix\n\n# Audit Python\npip install safety\nsafety check"
-          }
-        ]
-      },
-      {
-        "id": "sql-injection",
-        "title": "Injections SQL",
-        "duration": "1h30",
-        "content": "# Les injections SQL : encore la faille #1\n\nL'injection SQL est la faille #1 de l'OWASP depuis des annees. Pourtant elle est 100% evitable.\n\n## Comment ca fonctionne\n\nCode vulnerable :\n```sql\nSELECT * FROM users WHERE email = '$email' AND password = '$password'\n```\n\nL'attaquant entre comme email : `admin@site.com' --`\n\nLa requete devient :\n```sql\nSELECT * FROM users WHERE email = 'admin@site.com' -- ' AND password = '...'\n```\nLa condition password est commentee ! Login sans mot de passe.\n\n## Impacts reels\n\n| Attaque | Consequence |\n|---|---|\n| `' OR 1=1 --` | Bypass authentification |\n| `'; DROP TABLE users; --` | Suppression de donnees |\n| `' UNION SELECT password FROM admins --` | Vol de donnees |",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "Vulnerable vs Securise",
-            "code": "// DANGEREUX : concatenation directe\nasync function loginDangereux(email, password) {\n  const query = `SELECT * FROM users WHERE email = '${email}'`;\n  return db.query(query);\n}\n\n// SECURISE : requetes preparees\nasync function loginSecurise(email, password) {\n  const query = 'SELECT * FROM users WHERE email = ? AND password_hash = ?';\n  const hashedPassword = await bcrypt.hash(password, 10);\n  return db.execute(query, [email, hashedPassword]);\n}\n\n// ENCORE MIEUX : avec un ORM\nasync function loginORM(email, password) {\n  const user = await User.findOne({ where: { email } });\n  if (!user) throw new Error('Utilisateur inconnu');\n  const valid = await bcrypt.compare(password, user.passwordHash);\n  if (!valid) throw new Error('Mot de passe incorrect');\n  return user;\n}"
-          }
-        ]
-      },
-      {
-        "id": "auth",
-        "title": "JWT et authentification moderne",
-        "duration": "1h30",
-        "content": "# Authentification securisee avec JWT\n\n## Structure d'un JWT\n\n```\neyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEyM30.abc123\nHeader (base64) . Payload (b64) . Signature\n```\n\n## Sessions vs JWT\n\n| | Sessions | JWT |\n|---|---|---|\n| Stockage serveur | En BDD/Redis | Stateless |\n| Scalabilite | Complexe | Excellent |\n| Revocation | Immediate | Difficile |\n| Mobile/API | Cookies requis | Header Authorization |\n\n## Bonnes pratiques JWT\n\n1. Expiration courte : `1h` pour l'access token\n2. Refresh token : `7-30j`, stocke en httpOnly cookie\n3. Algorithme : `RS256` (asymetrique) en production\n4. Ne jamais stocker dans localStorage (vulnerable XSS)",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "Implementation JWT avec Node.js",
-            "code": "const jwt = require('jsonwebtoken');\nconst bcrypt = require('bcrypt');\n\nconst SECRET = process.env.JWT_SECRET;\n\nfunction generateTokens(userId, role) {\n  const accessToken = jwt.sign(\n    { userId, role },\n    SECRET,\n    { expiresIn: '1h' }\n  );\n  const refreshToken = jwt.sign(\n    { userId },\n    process.env.REFRESH_SECRET,\n    { expiresIn: '7d' }\n  );\n  return { accessToken, refreshToken };\n}\n\nfunction requireAuth(req, res, next) {\n  const token = req.headers.authorization?.split(' ')[1];\n  if (!token) return res.status(401).json({ error: 'Token requis' });\n  try {\n    req.user = jwt.verify(token, SECRET);\n    next();\n  } catch (err) {\n    res.status(401).json({ error: 'Token invalide ou expire' });\n  }\n}"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "reseau-bases",
-    "title": "Reseaux Informatiques",
-    "description": "Comprenez Internet : TCP/IP, DNS, HTTP, pare-feux et Wireshark. Indispensable pour tout developpeur ou admin systeme.",
-    "icon": "Network",
-    "level": "beginner",
-    "duration": "1h",
-    "category": "reseau",
-    "keywords": [
-      "reseau",
-      "tcp",
-      "ip",
-      "dns",
-      "http",
-      "wireshark"
-    ],
-    "content": [
-      {
-        "id": "modeles",
-        "title": "Modeles OSI et TCP/IP",
-        "duration": "1h",
-        "content": "# Les modeles reseau\n\n## Modele OSI vs TCP/IP\n\n| N | OSI | TCP/IP | Protocoles |\n|---|---|---|---|\n| 7 | Application | Application | HTTP, FTP, DNS, SMTP |\n| 6 | Presentation | Application | TLS, JPEG, ASCII |\n| 5 | Session | Application | NetBIOS, RPC |\n| 4 | Transport | Transport | TCP, UDP |\n| 3 | Reseau | Internet | IP, ICMP, ARP |\n| 2 | Liaison | Acces reseau | Ethernet, WiFi |\n| 1 | Physique | Acces reseau | Cable, fibre, radio |\n\n## TCP vs UDP\n\n| | TCP | UDP |\n|---|---|---|\n| Connexion | Oui (3-way handshake) | Non |\n| Fiabilite | Garantie | Non garantie |\n| Ordre | Garanti | Non garanti |\n| Vitesse | Plus lent | Plus rapide |\n| Usage | Web, email, SSH | Video, DNS, jeux |\n\n> Le **3-way handshake TCP** : SYN → SYN-ACK → ACK. Comme frapper a une porte avant d'entrer.",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Outils de diagnostic reseau",
-            "code": "# Voir sa carte reseau\nip addr show eth0\n\n# Table de routage\nip route show\n\n# Connexions actives avec PID\nss -tulnp\n\n# Capturer du trafic reseau\nsudo tcpdump -i eth0 port 80 -nn\n\n# Statistiques reseau\nnetstat -s"
-          }
-        ]
-      },
-      {
-        "id": "ip-adressage",
-        "title": "Adressage IP et sous-reseaux",
-        "duration": "1h30",
-        "content": "# Adressage IPv4\n\n## Classes et plages IP\n\n| Classe | Plage | Masque defaut | Usage |\n|---|---|---|---|\n| A | 1.0.0.0 - 126.255.255.255 | /8 | Tres grands reseaux |\n| B | 128.0.0.0 - 191.255.255.255 | /16 | Reseaux moyens |\n| C | 192.0.0.0 - 223.255.255.255 | /24 | Petits reseaux |\n\n## Adresses privees (RFC 1918)\n\n| Plage | Masque | Nombre d'hotes |\n|---|---|---|\n| 10.0.0.0/8 | 255.0.0.0 | 16M |\n| 172.16.0.0/12 | 255.240.0.0 | 1M |\n| 192.168.0.0/16 | 255.255.0.0 | 65K |\n\n## Notation CIDR\n\n`192.168.1.0/24` signifie :\n- 24 bits reseau, 8 bits hotes\n- 254 hotes possibles (256 - 2)\n- Masque : 255.255.255.0",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Calcul de sous-reseaux",
-            "code": "# Installer ipcalc\napt install ipcalc\n\n# Calculer un sous-reseau\nipcalc 192.168.1.0/24\n\n# Voir l'IP publique\ncurl ifconfig.me\n\n# Scanner le reseau local\nnmap -sn 192.168.1.0/24\n\n# Ping avec TTL visible\nping -c 3 google.com"
-          }
-        ]
-      },
-      {
-        "id": "dns",
-        "title": "DNS : le bottin d'Internet",
-        "duration": "1h",
-        "content": "# DNS (Domain Name System)\n\nLe DNS traduit `google.com` → `142.250.74.14`.\n\n## Types d'enregistrements DNS\n\n| Type | Role | Exemple |\n|---|---|---|\n| A | Domaine → IPv4 | example.com → 1.2.3.4 |\n| AAAA | Domaine → IPv6 | example.com → ::1 |\n| CNAME | Alias | www → example.com |\n| MX | Serveur mail | mail.example.com |\n| TXT | Texte libre | SPF, DKIM, verification |\n| NS | Serveurs de noms | ns1.example.com |\n\n## Resolution DNS (etapes)\n\n1. Cache local (`/etc/hosts`)\n2. Resolveur FAI ou 8.8.8.8\n3. Serveur racine (13 dans le monde)\n4. Serveur TLD (.com, .fr...)\n5. Serveur autoritaire (reponse finale)",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Diagnostiquer le DNS",
-            "code": "# Resolution basique\nnslookup google.com\n\n# Requete detaillee\ndig google.com A\ndig google.com MX\ndig @8.8.8.8 google.com  # forcer un serveur DNS\n\n# Voir les DNS locaux\ncat /etc/resolv.conf\n\n# Flush cache DNS (Windows)\nipconfig /flushdns"
-          }
-        ]
-      },
-      {
-        "id": "http-https",
-        "title": "HTTP et HTTPS en profondeur",
-        "duration": "1h30",
-        "content": "# HTTP : le protocole du Web\n\n## Methodes HTTP\n\n| Methode | Usage | Idempotente |\n|---|---|---|\n| GET | Lire une ressource | Oui |\n| POST | Creer une ressource | Non |\n| PUT | Remplacer totalement | Oui |\n| PATCH | Modifier partiellement | Non |\n| DELETE | Supprimer | Oui |\n| HEAD | Headers seulement | Oui |\n\n## Codes de statut HTTP\n\n| Code | Signification | Exemple |\n|---|---|---|\n| 200 | OK | Succes |\n| 201 | Created | Ressource cree |\n| 301 | Moved Permanently | Redirection |\n| 400 | Bad Request | Requete invalide |\n| 401 | Unauthorized | Non authentifie |\n| 403 | Forbidden | Non autorise |\n| 404 | Not Found | Ressource absente |\n| 500 | Internal Server Error | Bug serveur |\n| 503 | Service Unavailable | Surcharge |",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Tester HTTP avec curl",
-            "code": "# GET simple\ncurl https://api.github.com/users/torvalds\n\n# Voir les headers\ncurl -I https://example.com\n\n# POST avec JSON\ncurl -X POST https://api.example.com/login \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"email\":\"a@b.com\",\"password\":\"secret\"}'\n\n# Avec token Auth\ncurl -H 'Authorization: Bearer TOKEN' https://api.example.com/me\n\n# Suivre les redirections\ncurl -L http://example.com"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "html-css",
-    "title": "HTML/CSS Moderne",
-    "description": "Construisez des interfaces web professionnelles. De la semantique HTML aux animations CSS et Flexbox/Grid.",
-    "icon": "Code",
-    "level": "beginner",
-    "duration": "1h",
-    "category": "web",
-    "keywords": [
-      "html",
-      "css",
-      "flexbox",
-      "grid",
-      "responsive",
-      "animations"
-    ],
-    "content": [
-      {
-        "id": "html-semantique",
-        "title": "HTML Semantique",
-        "duration": "1h",
-        "content": "# HTML Semantique\n\nLe HTML semantique donne du sens au contenu.\n\n## Elements semantiques HTML5\n\n| Tag | Signification | Usage |\n|---|---|---|\n| `<header>` | En-tete du document/section | Nom du site, nav |\n| `<nav>` | Navigation principale | Menu, liens |\n| `<main>` | Contenu principal (unique) | Corps de page |\n| `<article>` | Contenu autonome | Blog post, news |\n| `<section>` | Section thematique | Chapitres |\n| `<aside>` | Contenu secondaire | Sidebar, pub |\n| `<footer>` | Pied de page | Droits, liens |\n| `<figure>` | Media avec caption | Images, schemas |\n\n## Pourquoi la semantique\n\n- **SEO** : Google comprend mieux votre page\n- **Accessibilite** : lecteurs d'ecran (daltoniens, aveugles)\n- **Maintenabilite** : code comprehensible\n- **Performance** : moins de `<div>` = DOM plus leger",
-        "codeBlocks": [
-          {
-            "language": "html",
-            "title": "Structure HTML5 complete",
-            "code": "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta name=\"description\" content=\"Mon site de tutoriels\">\n  <title>TutoDeCode - Apprendre la programmation</title>\n  <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n  <header>\n    <nav aria-label=\"Navigation principale\">\n      <a href=\"/\">Accueil</a>\n      <a href=\"/cours\">Cours</a>\n    </nav>\n  </header>\n\n  <main>\n    <article>\n      <h1>Titre de l'article</h1>\n      <p>Contenu...</p>\n    </article>\n  </main>\n\n  <footer>\n    <p>&copy; 2024 TutoDeCode</p>\n  </footer>\n</body>\n</html>"
-          }
-        ]
-      },
-      {
-        "id": "flexbox",
-        "title": "Flexbox : mise en page 1D",
-        "duration": "1h30",
-        "content": "# Flexbox\n\nFlexbox gere la disposition sur un axe (ligne ou colonne).\n\n## Proprietes du conteneur\n\n| Propriete | Valeurs | Effet |\n|---|---|---|\n| `display` | `flex` | Active Flexbox |\n| `flex-direction` | `row`, `column`, `row-reverse` | Axe principal |\n| `justify-content` | `flex-start`, `center`, `space-between`, `space-around` | Axe principal |\n| `align-items` | `stretch`, `center`, `flex-start`, `flex-end` | Axe secondaire |\n| `flex-wrap` | `nowrap`, `wrap` | Retour a la ligne |\n| `gap` | `16px` | Espacement entre items |\n\n## Proprietes des items\n\n| Propriete | Usage |\n|---|---|\n| `flex: 1` | L'item prend tout l'espace disponible |\n| `flex-shrink: 0` | L'item ne retrecit pas |\n| `align-self` | Alignement individuel |\n| `order` | Ordre d'affichage |",
-        "codeBlocks": [
-          {
-            "language": "css",
-            "title": "Patterns Flexbox courants",
-            "code": "/* Centrer un element */\n.center {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n/* Navbar */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 0 24px;\n  height: 60px;\n}\n\n/* Cartes responsives */\n.cards {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 16px;\n}\n.card {\n  flex: 1 1 280px; /* min 280px, croît si espace */\n  max-width: 400px;\n}"
-          }
-        ]
-      },
-      {
-        "id": "css-grid",
-        "title": "CSS Grid : mise en page 2D",
-        "duration": "1h30",
-        "content": "# CSS Grid\n\nGrid gere la disposition sur 2 axes simultanément.\n\n## Comparatif Flexbox vs Grid\n\n| | Flexbox | Grid |\n|---|---|---|\n| Axes | 1 (ligne OU colonne) | 2 (ligne ET colonne) |\n| Usage ideal | Navigation, listes | Layouts de page entiers |\n| Taille items | Contenu | Definie par la grille |\n| Support | Universel | Universel |\n\n## Proprietes Grid essentielles\n\n| Propriete | Exemple | Effet |\n|---|---|---|\n| `grid-template-columns` | `repeat(3, 1fr)` | 3 colonnes egales |\n| `grid-template-rows` | `auto 1fr auto` | Header, contenu, footer |\n| `gap` | `16px` | Espace entre cellules |\n| `grid-column` | `1 / 3` | Span de colonne 1 a 3 |\n| `grid-template-areas` | Voir exemple | Zones nommees |",
-        "codeBlocks": [
-          {
-            "language": "css",
-            "title": "Layout de page avec Grid",
-            "code": "/* Layout complet avec zones nommees */\n.page {\n  display: grid;\n  grid-template-areas:\n    'header header'\n    'sidebar main'\n    'footer footer';\n  grid-template-columns: 250px 1fr;\n  grid-template-rows: 60px 1fr 40px;\n  min-height: 100vh;\n  gap: 0;\n}\n\nheader { grid-area: header; }\n.sidebar { grid-area: sidebar; }\nmain { grid-area: main; }\nfooter { grid-area: footer; }\n\n/* Grille auto-responsive sans media queries */\n.auto-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 20px;\n}"
-          }
-        ]
-      },
-      {
-        "id": "css-animations",
-        "title": "Animations et Transitions CSS",
-        "duration": "1h",
-        "content": "# Animations CSS\n\n## Transition vs Animation\n\n| | Transition | Animation |\n|---|---|---|\n| Declencheur | Etat (:hover, :focus...) | Automatique |\n| Boucle | Non | Oui |\n| Etapes | 2 (avant/apres) | Infini (keyframes) |\n| Complexite | Simple | Complexe |\n\n## Proprietes de transition\n\n```css\ntransition: propriete duree timing-function delai;\ntransition: all 0.3s ease;\ntransition: background-color 0.2s ease, transform 0.3s cubic-bezier(0.4,0,0.2,1);\n```\n\n## Fonctions d'easing\n\n| Valeur | Comportement |\n|---|---|\n| `linear` | Vitesse constante |\n| `ease` | Demar. rapide, fin douce |\n| `ease-in` | Commence lentement |\n| `ease-out` | Finit lentement |\n| `ease-in-out` | Doux au debut et a la fin |",
-        "codeBlocks": [
-          {
-            "language": "css",
-            "title": "Animations CSS complete",
-            "code": "/* Bouton avec hover */\n.btn {\n  background: #6366F1;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 8px;\n  border: none;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n.btn:hover {\n  background: #4F46E5;\n  transform: translateY(-2px);\n  box-shadow: 0 8px 25px rgba(99,102,241,0.4);\n}\n\n/* Spinner de chargement */\n@keyframes spin {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(360deg); }\n}\n.spinner {\n  width: 24px;\n  height: 24px;\n  border: 3px solid rgba(99,102,241,0.2);\n  border-top-color: #6366F1;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n}\n\n/* Fade in */\n@keyframes fadeIn {\n  from { opacity: 0; transform: translateY(10px); }\n  to   { opacity: 1; transform: translateY(0); }\n}\n.fade-in {\n  animation: fadeIn 0.4s ease forwards;\n}"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "nodejs-api",
-    "title": "Node.js - API REST",
-    "description": "Construisez des APIs REST robustes avec Node.js et Express. Auth JWT, validation, bases de donnees, deploiement.",
-    "icon": "Server",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "javascript",
-    "keywords": [
-      "nodejs",
-      "express",
-      "api",
-      "rest",
-      "jwt",
-      "backend"
-    ],
-    "content": [
-      {
-        "id": "intro-nodejs",
-        "title": "Node.js : JavaScript cote serveur",
-        "duration": "45min",
-        "content": "# Node.js\n\nNode.js execute JavaScript en dehors du navigateur, cote serveur.\n\n## Node.js vs les autres\n\n| | Node.js | PHP | Python | Java |\n|---|---|---|---|---|\n| Langage | JavaScript | PHP | Python | Java |\n| Vitesse | Tres rapide (V8) | Moyen | Moyen | Rapide |\n| I/O Async | Oui (natif) | Non | asyncio | Threads |\n| NPM packages | 2.1 millions | composer | pip | Maven |\n| Usage | API, temps reel | Web classique | Data, IA | Entreprise |\n\n## Event Loop : pourquoi Node est rapide\n\nNode.js est **mono-thread** mais traite des milliers de requetes en parallele grace a l'event loop. Les operations I/O (disque, reseau) ne bloquent jamais.",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Demarrer un projet Node.js",
-            "code": "# Verifier Node.js\nnode --version\nnpm --version\n\n# Creer un projet\nmkdir mon-api && cd mon-api\nnpm init -y\n\n# Installer Express\nnpm install express\nnpm install --save-dev nodemon\n\n# Ajouter dans package.json\n# \"scripts\": { \"dev\": \"nodemon index.js\" }"
-          }
-        ]
-      },
-      {
-        "id": "express-routes",
-        "title": "Express : Routes et Middleware",
-        "duration": "2h",
-        "content": "# Express.js\n\nExpress est le framework web minimal pour Node.js.\n\n## Middleware : le coeur d'Express\n\nUn middleware est une fonction qui s'execute entre la requete et la reponse.\n\n```\nREQUETE → [logger] → [auth] → [validation] → [handler] → REPONSE\n```\n\n## Types de middleware\n\n| Type | Usage | Exemple |\n|---|---|---|\n| Application | Toujours | logger, CORS |\n| Routeur | Par route | auth guard |\n| Erreur | catch-all | error handler |\n| Built-in | Express | express.json() |\n| Tiers | npm | morgan, helmet |",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "API REST complete avec Express",
-            "code": "const express = require('express');\nconst app = express();\n\n// Middlewares globaux\napp.use(express.json());\napp.use(require('cors')());\napp.use(require('morgan')('dev'));\n\n// Route simple\napp.get('/api/health', (req, res) => {\n  res.json({ status: 'ok', timestamp: new Date() });\n});\n\n// Routes CRUD\nconst users = [];\n\napp.get('/api/users', (req, res) => {\n  res.json(users);\n});\n\napp.post('/api/users', (req, res) => {\n  const { name, email } = req.body;\n  if (!name || !email) {\n    return res.status(400).json({ error: 'name et email requis' });\n  }\n  const user = { id: Date.now(), name, email };\n  users.push(user);\n  res.status(201).json(user);\n});\n\napp.get('/api/users/:id', (req, res) => {\n  const user = users.find(u => u.id === Number(req.params.id));\n  if (!user) return res.status(404).json({ error: 'Introuvable' });\n  res.json(user);\n});\n\n// Middleware d'erreur (4 params obligatoires)\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({ error: 'Erreur serveur' });\n});\n\napp.listen(3000, () => console.log('API sur http://localhost:3000'));"
-          }
-        ]
-      },
-      {
-        "id": "prisma-db",
-        "title": "Prisma ORM : base de donnees",
-        "duration": "2h",
-        "content": "# Prisma : l'ORM moderne pour Node.js\n\n## ORM vs SQL brut\n\n| | ORM (Prisma) | SQL brut |\n|---|---|---|\n| Securite | Auto anti-injection | Manuelle |\n| Typage | TypeScript natif | Aucun |\n| Migrations | Automatiques | Manuelles |\n| Performance | Tres bon | Optimal |\n| Courbe | Facile | Plus complexe |\n\n## Schema Prisma\n\nLe schema definit vos modeles de donnees en un seul endroit.",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Setup Prisma",
-            "code": "# Installer Prisma\nnpm install prisma @prisma/client\nnpx prisma init --datasource-provider postgresql\n\n# Apres avoir edite schema.prisma:\nnpx prisma migrate dev --name init\nnpx prisma generate\nnpx prisma studio  # UI pour voir les donnees"
-          }
-        ]
-      },
-      {
-        "id": "validation-errors",
-        "title": "Validation et gestion des erreurs",
-        "duration": "1h",
-        "content": "# Validation robuste avec Zod\n\nZod permet de valider les donnees d'entree avec des schemas TypeScript.\n\n## Pourquoi valider\n\n| Donnee invalide | Consequence |\n|---|---|\n| Email manquant | Erreur BDD silencieuse |\n| Age negatif | Logique metier cassee |\n| SQL injection | Violation de securite |\n| Payload enorme | Crash serveur |",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "Validation avec Zod",
-            "code": "const { z } = require('zod');\n\n// Definir le schema\nconst UserSchema = z.object({\n  name:  z.string().min(2).max(50),\n  email: z.email(),\n  age:   z.number().int().min(13).max(120).optional(),\n  role:  z.enum(['admin', 'user']).default('user'),\n});\n\n// Middleware de validation\nconst validate = (schema) => (req, res, next) => {\n  const result = schema.safeParse(req.body);\n  if (!result.success) {\n    return res.status(400).json({\n      error: 'Donnees invalides',\n      details: result.error.flatten().fieldErrors,\n    });\n  }\n  req.validated = result.data;\n  next();\n};\n\n// Utilisation\napp.post('/api/users', validate(UserSchema), (req, res) => {\n  const data = req.validated;  // donnees propres et typees\n  // ...\n});"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "typescript",
-    "title": "TypeScript Complet",
-    "description": "JavaScript avec des super-pouvoirs. Types, interfaces, generiques. Eliminez les bugs avant d'executer votre code.",
-    "icon": "Code",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "javascript",
-    "keywords": [
-      "typescript",
-      "types",
-      "interfaces",
-      "generiques",
-      "classes"
-    ],
-    "content": [
-      {
-        "id": "types-base",
-        "title": "Types de base TypeScript",
-        "duration": "1h",
-        "content": "# TypeScript : JavaScript typpe\n\nTypeScript detecte les erreurs a la compilation, avant l'execution.\n\n## Types primitifs\n\n| Type TS | Exemple | JavaScript equivalent |\n|---|---|---|\n| `string` | `'hello'` | string |\n| `number` | `42`, `3.14` | number |\n| `boolean` | `true`, `false` | boolean |\n| `null` | `null` | null |\n| `undefined` | `undefined` | undefined |\n| `any` | Tout | (pas de check) |\n| `unknown` | Tout (safer) | (check requis) |\n| `never` | Jamais retourne | - |\n| `void` | Pas de retour | - |\n\n## Types composites\n\n| Type | Syntaxe | Usage |\n|---|---|---|\n| Tableau | `string[]` ou `Array<string>` | Liste typee |\n| Tuple | `[string, number]` | Paire fixe |\n| Union | `string \\| number` | L'un ou l'autre |\n| Intersection | `A & B` | Les deux a la fois |\n| Literal | `'left' \\| 'right'` | Valeurs exactes |",
-        "codeBlocks": [
-          {
-            "language": "typescript",
-            "title": "Types TypeScript en pratique",
-            "code": "// Types de base\nconst nom: string = 'Alice';\nconst age: number = 25;\nconst actif: boolean = true;\n\n// Union type\nlet identifiant: string | number = 'abc';\nidentifiant = 42;  // OK\n\n// Type literal\ntype Direction = 'haut' | 'bas' | 'gauche' | 'droite';\nlet dir: Direction = 'haut';\n// dir = 'diagonale'; // ERREUR : Type 'diagonale' is not assignable\n\n// Tableau et tuple\nconst cours: string[] = ['Linux', 'Docker'];\nconst coord: [number, number] = [48.8566, 2.3522];\n\n// Type inference (pas besoin d'annoter)\nconst message = 'Hello';  // TS infere : string\nconst pi = 3.14159;       // TS infere : number"
-          }
-        ]
-      },
-      {
-        "id": "interfaces",
-        "title": "Interfaces et Types",
-        "duration": "1h30",
-        "content": "# Interfaces et Types personnalises\n\n## Interface vs Type\n\n| | `interface` | `type` |\n|---|---|---|\n| Extension | `extends` (facile) | `&` (intersection) |\n| Merging | Oui (declaration merging) | Non |\n| Unions | Non | Oui |\n| Tutples | Non | Oui |\n| Usage recommande | Objets, classes | Tout le reste |",
-        "codeBlocks": [
-          {
-            "language": "typescript",
-            "title": "Interfaces avec heritage",
-            "code": "// Interface de base\ninterface Personne {\n  readonly id: number;      // immuable\n  nom: string;\n  email: string;\n  telephone?: string;       // optionnel\n}\n\n// Heritage\ninterface Utilisateur extends Personne {\n  role: 'admin' | 'user';\n  createdAt: Date;\n  cours: string[];\n}\n\n// Type alias\ntype Coordonnees = {\n  lat: number;\n  lng: number;\n};\n\ntype Point = Coordonnees & { altitude?: number };\n\n// Utilisation\nconst user: Utilisateur = {\n  id: 1,\n  nom: 'Alice',\n  email: 'alice@example.com',\n  role: 'admin',\n  createdAt: new Date(),\n  cours: ['linux', 'docker'],\n};"
-          }
-        ]
-      },
-      {
-        "id": "generiques",
-        "title": "Generiques TypeScript",
-        "duration": "1h30",
-        "content": "# Generiques : code reutilisable et type-safe\n\nLes generiques permettent d'ecrire du code flexible qui fonctionne avec n'importe quel type.\n\n## Probleme sans generiques\n\n```typescript\n// Pas type-safe : retourne any\nfunction premier(arr: any[]): any { return arr[0]; }\n\n// Trop specifique : dupliquer pour chaque type\nfunction premierString(arr: string[]): string { return arr[0]; }\n```\n\n## Solution avec generiques\n\n```typescript\n// Une seule fonction, tous les types\nfunction premier<T>(arr: T[]): T { return arr[0]; }\n\nconst s = premier(['a', 'b']);  // s: string\nconst n = premier([1, 2, 3]);  // n: number\n```",
-        "codeBlocks": [
-          {
-            "language": "typescript",
-            "title": "Generiques avances",
-            "code": "// Reponse API generique\ninterface ApiResponse<T> {\n  data: T;\n  error: string | null;\n  loading: boolean;\n}\n\n// Fetch type-safe\nasync function fetchData<T>(url: string): Promise<ApiResponse<T>> {\n  try {\n    const res = await fetch(url);\n    const data: T = await res.json();\n    return { data, error: null, loading: false };\n  } catch (err) {\n    return { data: null as any, error: String(err), loading: false };\n  }\n}\n\n// Utilisation\ninterface User { id: number; name: string; }\nconst { data } = await fetchData<User>('/api/users/1');\nconsole.log(data.name);  // TypeScript sait que c'est un User\n\n// Contrainte generique\nfunction getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {\n  return obj[key];\n}\nconst nom = getProperty({ nom: 'Alice', age: 25 }, 'nom'); // string"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kubernetes",
-    "title": "Kubernetes (K8s)",
-    "description": "Orchestrez vos conteneurs Docker a grande echelle. K8s est le standard de deploiement moderne en production.",
-    "icon": "Cloud",
-    "level": "advanced",
-    "duration": "4h",
-    "category": "devops",
-    "keywords": [
-      "kubernetes",
-      "k8s",
-      "pods",
-      "deployment",
-      "service",
-      "helm"
-    ],
-    "content": [
-      {
-        "id": "intro-k8s",
-        "title": "Kubernetes : pourquoi et quand",
-        "duration": "45min",
-        "content": "# Kubernetes\n\nKubernetes orchestre des centaines de conteneurs Docker automatiquement.\n\n## Docker seul vs Kubernetes\n\n| Besoin | Docker seul | Kubernetes |\n|---|---|---|\n| 1 serveur | Parfait | Overkill |\n| Haute dispo | Manuel | Automatique |\n| Auto-scaling | Non | Oui |\n| Zero-downtime deploy | Manuel | Automatique |\n| Self-healing | Non | Oui |\n| Load balancing | Manuel | Automatique |\n\n## Les composants K8s\n\n| Composant | Role |\n|---|---|\n| **Node** | Machine physique ou VM |\n| **Pod** | Plus petite unite (1+ conteneurs) |\n| **Deployment** | Gere les Pods (replicas, updates) |\n| **Service** | Expose un Deployment sur le reseau |\n| **Ingress** | Router HTTP externe → Services |\n| **ConfigMap** | Configuration non sensible |\n| **Secret** | Donnees sensibles (chiffrees) |",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "kubectl : commandes essentielles",
-            "code": "# Voir l'etat du cluster\nkubectl cluster-info\nkubectl get nodes\n\n# Resources\nkubectl get pods\nkubectl get pods -n kube-system  # namespace systeme\nkubectl get deployments\nkubectl get services\n\n# Details\nkubectl describe pod mon-pod\nkubectl logs mon-pod -f\nkubectl exec -it mon-pod -- bash\n\n# Appliquer un fichier YAML\nkubectl apply -f deployment.yaml\nkubectl delete -f deployment.yaml"
-          }
-        ]
-      },
-      {
-        "id": "yaml-manifests",
-        "title": "YAML Manifests K8s",
-        "duration": "2h",
-        "content": "# Manifests Kubernetes en YAML\n\nK8s se configure via des fichiers YAML declaratifs.\n\n## Structure d'un manifest\n\n```yaml\napiVersion: apps/v1      # Version de l'API K8s\nkind: Deployment         # Type de ressource\nmetadata:                # Metadonnees\n  name: mon-app\nspec:                    # Specification desiree\n  ...\n```\n\n## Le pattern Deployment + Service\n\nToujours deployer en paire :\n1. **Deployment** → gere les Pods\n2. **Service** → expose les Pods",
-        "codeBlocks": [
-          {
-            "language": "yaml",
-            "title": "Deployment + Service complet",
-            "code": "# deployment.yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: mon-api\n  labels:\n    app: mon-api\nspec:\n  replicas: 3               # 3 copies du pod\n  selector:\n    matchLabels:\n      app: mon-api\n  strategy:\n    type: RollingUpdate      # Zero-downtime\n    rollingUpdate:\n      maxSurge: 1\n      maxUnavailable: 0\n  template:\n    metadata:\n      labels:\n        app: mon-api\n    spec:\n      containers:\n      - name: api\n        image: mon-api:1.2.0\n        ports:\n        - containerPort: 3000\n        env:\n        - name: DATABASE_URL\n          valueFrom:\n            secretKeyRef:\n              name: db-secret\n              key: url\n        resources:\n          requests:\n            memory: '64Mi'\n            cpu: '250m'\n          limits:\n            memory: '128Mi'\n            cpu: '500m'\n        livenessProbe:\n          httpGet:\n            path: /api/health\n            port: 3000\n          initialDelaySeconds: 10\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: mon-api-service\nspec:\n  selector:\n    app: mon-api\n  ports:\n  - port: 80\n    targetPort: 3000\n  type: ClusterIP"
-          }
-        ]
-      },
-      {
-        "id": "helm",
-        "title": "Helm : gestionnaire de packages K8s",
-        "duration": "1h30",
-        "content": "# Helm\n\nHelm est le gestionnaire de packages pour Kubernetes.\n\n## Concepts Helm\n\n| Terme | Definition |\n|---|---|\n| **Chart** | Package Helm (comme un apt package) |\n| **Release** | Instance installee d'un chart |\n| **Repository** | Depot de charts |\n| **Values** | Parametres de configuration |\n| **Template** | YAML avec variables Go |\n\n## Helm vs YAML brut\n\n| | YAML brut | Helm |\n|---|---|---|\n| Reutilisabilite | Nulle | Charts partages |\n| Versioning | Manuel | Automatique |\n| Rollback | Manuel | `helm rollback` |\n| Communaute | - | Artifact Hub |",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Utiliser Helm",
-            "code": "# Installer Helm\ncurl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash\n\n# Ajouter un depot\nhelm repo add bitnami https://charts.bitnami.com/bitnami\nhelm repo update\n\n# Chercher un chart\nhelm search repo nginx\n\n# Installer nginx\nhelm install mon-nginx bitnami/nginx\n\n# Avec custom values\nhelm install mon-nginx bitnami/nginx \\\n  --set replicaCount=3 \\\n  --set service.type=ClusterIP\n\n# Lister les releases\nhelm list\n\n# Upgrade\nhelm upgrade mon-nginx bitnami/nginx --set replicaCount=5\n\n# Rollback\nhelm rollback mon-nginx 1\n\n# Desinstaller\nhelm uninstall mon-nginx"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "cicd-github-actions",
-    "title": "CI/CD avec GitHub Actions",
-    "description": "Automatisez tests, build et deploiement. Chaque push declenche un pipeline complet : qualite garantie en permanence.",
-    "icon": "GitMerge",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "devops",
-    "keywords": [
-      "cicd",
-      "github actions",
-      "pipeline",
-      "automation",
-      "devops"
-    ],
-    "content": [
-      {
-        "id": "intro-cicd",
-        "title": "CI/CD : automatiser la qualite",
-        "duration": "30min",
-        "content": "# CI/CD\n\n**CI** (Continuous Integration) : tester automatiquement a chaque modification.\n**CD** (Continuous Delivery/Deployment) : livrer automatiquement en production.\n\n## Pipeline typique\n\n```\nPush code\n  → Lint (style)\n  → Tests unitaires\n  → Build\n  → Tests integration\n  → Scan securite\n  → Deploy staging\n  → Deploy production\n```\n\n## Outils CI/CD populaires\n\n| Outil | Hebergement | Forces |\n|---|---|---|\n| GitHub Actions | GitHub | Integre, facile |\n| GitLab CI | GitLab/Self | Puissant, self-hosted |\n| Jenkins | Self-hosted | Ultra-flexible |\n| CircleCI | Cloud | Rapide |\n| ArgoCD | K8s | GitOps native |",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Structure d'un depot avec CI",
-            "code": "mon-projet/\n  .github/\n    workflows/\n      ci.yml          # Tests auto\n      deploy.yml      # Deploiement\n  src/\n  tests/\n  Dockerfile\n  docker-compose.yml\n  package.json"
-          }
-        ]
-      },
-      {
-        "id": "github-actions-workflow",
-        "title": "GitHub Actions : premiers workflows",
-        "duration": "2h",
-        "content": "# GitHub Actions\n\n## Concepts cles\n\n| Terme | Definition |\n|---|---|\n| **Workflow** | Fichier YAML dans `.github/workflows/` |\n| **Event** | Declencheur (push, PR, schedule) |\n| **Job** | Groupe d'etapes qui s'execute sur un runner |\n| **Step** | Commande ou action individuelle |\n| **Action** | Bloc reutilisable (`actions/checkout`) |\n| **Runner** | Machine d'execution (ubuntu, windows, macos) |\n| **Secret** | Variable chiffree (API key, password) |\n\n## Syntaxe d'un workflow\n\n```yaml\nname: Nom du workflow\non: [push, pull_request]   # evenements\njobs:\n  mon-job:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: echo 'Bonjour'\n```",
-        "codeBlocks": [
-          {
-            "language": "yaml",
-            "title": "Pipeline CI complet Node.js",
-            "code": "# .github/workflows/ci.yml\nname: CI Pipeline\n\non:\n  push:\n    branches: [main, develop]\n  pull_request:\n    branches: [main]\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    \n    services:\n      postgres:\n        image: postgres:16-alpine\n        env:\n          POSTGRES_DB: testdb\n          POSTGRES_USER: test\n          POSTGRES_PASSWORD: test\n        options: >-\n          --health-cmd pg_isready\n          --health-interval 10s\n          --health-timeout 5s\n    \n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n      \n      - name: Setup Node.js\n        uses: actions/setup-node@v4\n        with:\n          node-version: '20'\n          cache: 'npm'\n      \n      - name: Install dependencies\n        run: npm ci\n      \n      - name: Run linter\n        run: npm run lint\n      \n      - name: Run tests\n        env:\n          DATABASE_URL: postgresql://test:test@localhost:5432/testdb\n        run: npm test\n      \n      - name: Build\n        run: npm run build\n      \n      - name: Build Docker image\n        run: docker build -t mon-app:${{ github.sha }} .\n  \n  deploy:\n    needs: test          # attend que test reussisse\n    runs-on: ubuntu-latest\n    if: github.ref == 'refs/heads/main'  # seulement sur main\n    \n    steps:\n      - uses: actions/checkout@v4\n      \n      - name: Deploy to production\n        env:\n          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}\n        run: |\n          echo \"$SSH_KEY\" > deploy_key\n          chmod 600 deploy_key\n          ssh -i deploy_key user@prod-server 'cd /app && git pull && npm ci && pm2 restart all'"
-          }
-        ]
-      },
-      {
-        "id": "secrets-environments",
-        "title": "Secrets et Environnements",
-        "duration": "1h",
-        "content": "# Secrets GitHub Actions\n\nNe jamais mettre de mots de passe en clair dans les YAML.\n\n## Types de secrets\n\n| Type | Portee | Usage |\n|---|---|---|\n| Repository secrets | 1 repo | Credentials specifiques |\n| Environment secrets | 1 environnement | Prod vs staging |\n| Organization secrets | Tous repos | Cles partagees |\n\n## Environnements\n\nLes environnements permettent des regles de protection :\n- **Approbation manuelle** avant deploy en prod\n- **Variables d'environnement** differentes\n- **Branches autorisees** (seulement `main`)",
-        "codeBlocks": [
-          {
-            "language": "yaml",
-            "title": "Utilisation des secrets et environnements",
-            "code": "# deploy-prod.yml\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    environment: production   # necessite approbation\n    \n    steps:\n      - name: Deploy\n        env:\n          # Secrets chiffres\n          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}\n          DB_URL: ${{ secrets.PROD_DATABASE_URL }}\n        run: |\n          # Login Docker Hub\n          echo $DOCKER_PASSWORD | docker login -u ${{ vars.DOCKER_USERNAME }} --password-stdin\n          \n          # Build et push\n          docker build -t myapp:${{ github.sha }} .\n          docker push myapp:${{ github.sha }}\n          \n          # Deploy K8s\n          kubectl set image deployment/mon-api api=myapp:${{ github.sha }}"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "bash-avance",
-    "title": "Bash Avance et Automatisation",
-    "description": "Automatisez tout avec Bash : cron jobs, monitoring, deploiements, backups. L'outil ultime de l'admin systeme.",
-    "icon": "Terminal",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "linux",
-    "keywords": [
-      "bash",
-      "scripting",
-      "cron",
-      "automatisation",
-      "sed",
-      "awk"
-    ],
-    "content": [
-      {
-        "id": "fonctions-bash",
-        "title": "Fonctions et structures avancees",
-        "duration": "1h30",
-        "content": "# Bash avance\n\n## Structures de controle\n\n| Structure | Quand |\n|---|---|\n| if/else | Test simple |\n| case | Multi-cas |\n| for | Liste connue |\n| while | Boucle conditionnelle |\n\n## Tests de conditions\n\n| Test | Signification |\n|---|---|\n| -f fichier | Fichier existe |\n| -d dossier | Dossier existe |\n| -z var | Variable vide |\n| -n var | Variable non-vide |\n| a -eq b | Egalite numerique |",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Script de monitoring",
-            "code": "#!/bin/bash\n# Monitoring systeme\n\nset -euo pipefail  # Exit on error, undefined var, pipe fail\n\nSEUIL_CPU=80\nSEUIL_RAM=90\nSEUIL_DISK=85\nEMAIL=\"admin@exemple.com\"\n\nalerte() {\n  local message=\"$1\"\n  echo \"[ALERTE] $message\" | mail -s \"Alerte Serveur\" \"$EMAIL\"\n  echo \"$(date '+%Y-%m-%d %H:%M:%S') ALERTE: $message\" >> /var/log/monitoring.log\n}\n\ncheck_cpu() {\n  local cpu=$(top -bn1 | grep 'Cpu(s)' | awk '{print $2}' | cut -d'%' -f1 | cut -d'.' -f1)\n  if [ \"$cpu\" -gt \"$SEUIL_CPU\" ]; then\n    alerte \"CPU a ${cpu}% (seuil ${SEUIL_CPU}%)\"\n  fi\n}\n\ncheck_disk() {\n  df -h | awk 'NR>1 {gsub(\"%\",\"\",$5); if($5>\"'$SEUIL_DISK'\") print $0}' | while read line; do\n    alerte \"Disque plein : $line\"\n  done\n}\n\ncheck_cpu\ncheck_disk\necho \"Monitoring OK - $(date)\""
-          }
-        ]
-      },
-      {
-        "id": "sed-awk",
-        "title": "sed et awk : manipulation de texte",
-        "duration": "2h",
-        "content": "# sed et awk : les couteaux suisses du texte\n\n## Quand utiliser quoi\n\n| Outil | Force | Usage |\n|---|---|---|\n| `grep` | Rechercher | Trouver des lignes |\n| `sed` | Remplacer | Substituer du texte |\n| `awk` | Traiter | Colonnes, calculs |\n| `cut` | Extraire | Colonnes simples |\n| `sort` | Trier | Alphabetique, numerique |\n| `uniq` | Dedupliquer | Doublons |\n\n## sed : le stream editor\n\n```bash\nsed 's/ancien/nouveau/g'       # Remplacer\nsed 's/^/PREFIX: /'            # Ajouter en debut\nsed '/pattern/d'               # Supprimer les lignes\nsed -n '5,10p'                 # Afficher lignes 5 a 10\nsed -i 's/dev/prod/g' config   # En-place (modifie le fichier)\n```",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "sed et awk en pratique",
-            "code": "# SED : remplacer dans un fichier de config\nsed -i 's/localhost/192.168.1.100/g' config.yml\n\n# SED : supprimer les lignes de commentaires\nsed '/^#/d' config.conf\n\n# SED : extraire entre deux patterns\nsed -n '/BEGIN/,/END/p' fichier.txt\n\n# AWK : afficher la 2eme colonne\nps aux | awk '{print $2}'  # PIDs\n\n# AWK : calculer la taille totale en MB\nls -la | awk '{sum += $5} END {print sum/1024/1024 \" MB\"}'\n\n# AWK : filtrer et reformater\ndf -h | awk '$5 > \"80%\" {print \"PLEIN: \" $6 \" a \" $5}'\n\n# Pipeline complet : top 5 IP dans les logs nginx\ncat /var/log/nginx/access.log | \\\n  awk '{print $1}' | \\\n  sort | \\\n  uniq -c | \\\n  sort -rn | \\\n  head -5"
-          }
-        ]
-      },
-      {
-        "id": "cron",
-        "title": "Cron : planifier des taches",
-        "duration": "45min",
-        "content": "# Cron : le planificateur Linux\n\nCron execute des commandes a des horaires precis.\n\n## Syntaxe crontab\n\n```\n*  *  *  *  *  commande\n|  |  |  |  |\n|  |  |  |  jour de semaine (0-7, 0 et 7 = dimanche)\n|  |  |  mois (1-12)\n|  |  jour du mois (1-31)\n|  heure (0-23)\nminute (0-59)\n```\n\n## Exemples courants\n\n| Crontab | Frequence |\n|---|---|\n| `* * * * *` | Chaque minute |\n| `0 * * * *` | Chaque heure |\n| `30 2 * * *` | 2h30 chaque jour |\n| `0 9 * * 1` | Lundi a 9h |\n| `0 0 1 * *` | 1er du mois |\n| `*/15 * * * *` | Toutes les 15 min |",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Configurer des cron jobs",
-            "code": "# Editer le crontab de l'utilisateur courant\ncrontab -e\n\n# Voir les crons en place\ncrontab -l\n\n# Exemples de cron jobs utiles :\n\n# Backup quotidien a 2h30\n30 2 * * * /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1\n\n# Monitoring toutes les 5 minutes\n*/5 * * * * /usr/local/bin/check_health.sh\n\n# Rotation des logs chaque semaine le dimanche a minuit\n0 0 * * 0 find /var/log/app -name '*.log' -mtime +7 -delete\n\n# Mise a jour automatique le samedi a 3h\n0 3 * * 6 apt-get update && apt-get upgrade -y >> /var/log/update.log 2>&1\n\n# Crontab systeme (/etc/cron.d/mon-service)\n# MIN  HEURE  JOUR  MOIS  SDAY  UTILISATEUR  COMMANDE\n30 2 * * * root /usr/local/bin/backup.sh"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "react-hooks",
-    "title": "React Moderne — Hooks & État",
-    "description": "Maîtrisez React 18 avec les Hooks, le Context, les patterns modernes et les performances. Le framework UI le plus demandé au monde.",
-    "icon": "Code",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "javascript",
-    "keywords": [
-      "react",
-      "hooks",
-      "usestate",
-      "useeffect",
-      "context",
-      "components"
-    ],
-    "content": [
-      {
-        "id": "hooks-intro",
-        "title": "Les Hooks : révolution React",
-        "duration": "1h",
-        "content": "# Les Hooks React — La révolution\n\nAvant React 16.8, la logique complexe ne pouvait vivre que dans les classes. Les Hooks ont tout changé.\n\n## Classe vs Hook : comparaison directe\n\n| Aspect | Composant Classe | Composant Fonction + Hooks |\n|---|---|---|\n| Syntaxe | `class MyComp extends Component` | `function MyComp()` |\n| État | `this.state`, `this.setState` | `useState` |\n| Cycle de vie | `componentDidMount`, etc. | `useEffect` |\n| Réutilisation logique | HOC, Render Props (verbeux) | Custom Hooks (élégant) |\n| Lisibilité | Dispersée dans le cycle de vie | Colocalisée par fonctionnalité |\n| Tests | Plus complexes | Simples avec React Testing Library |\n\n## Les Hooks fondamentaux\n\n| Hook | Rôle | Cas d'usage |\n|---|---|---|\n| `useState` | État local | Formulaires, toggles, compteurs |\n| `useEffect` | Effets de bord | API calls, subscriptions, DOM |\n| `useContext` | Consommer le contexte | Thème, auth, langue |\n| `useRef` | Référence stable | DOM, valeur sans re-render |\n| `useMemo` | Mémoïsation valeur | Calculs coûteux |\n| `useCallback` | Mémoïsation fonction | Callbacks stables pour enfants |\n| `useReducer` | État complexe | Logique à plusieurs actions |\n\n> **Règle d'or des Hooks :** Appelez-les uniquement au niveau supérieur d'un composant React — jamais dans des conditions, boucles ou fonctions imbriquées.",
-        "codeBlocks": [
-          {
-            "language": "jsx",
-            "title": "useState et useEffect en pratique",
-            "code": "import { useState, useEffect } from 'react';\n\nfunction GitHubProfile({ username }) {\n  const [user, setUser]       = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError]     = useState(null);\n\n  useEffect(() => {\n    let cancelled = false;\n    setLoading(true);\n    setError(null);\n\n    fetch(`https://api.github.com/users/${username}`)\n      .then(r => {\n        if (!r.ok) throw new Error(`Utilisateur introuvable (${r.status})`);\n        return r.json();\n      })\n      .then(data => {\n        if (!cancelled) { setUser(data); setLoading(false); }\n      })\n      .catch(err => {\n        if (!cancelled) { setError(err.message); setLoading(false); }\n      });\n\n    return () => { cancelled = true; };\n  }, [username]);\n\n  if (loading) return <div>Chargement...</div>;\n  if (error)   return <div>Erreur : {error}</div>;\n  return (\n    <div>\n      <img src={user.avatar_url} alt={user.login} width={80} />\n      <h2>{user.name}</h2>\n      <p>{user.bio}</p>\n      <p>Repos : {user.public_repos}</p>\n    </div>\n  );\n}"
-          }
-        ]
-      },
-      {
-        "id": "custom-hooks",
-        "title": "Custom Hooks — Réutiliser la logique",
-        "duration": "1h30",
-        "content": "# Custom Hooks : votre superpower React\n\nUn Custom Hook est une fonction JavaScript dont le nom commence par `use` et qui peut appeler d'autres hooks.\n\n## Pourquoi créer des Custom Hooks ?\n\n| Problème | Solution avec Custom Hook |\n|---|---|\n| Logique fetch copiée dans 10 composants | `useFetch(url)` |\n| Gestion localStorage répétée | `useLocalStorage(key, default)` |\n| Détection media query dupliquée | `useMediaQuery(query)` |\n| Debounce dans plusieurs inputs | `useDebounce(value, delay)` |\n| Abonnement WebSocket réutilisable | `useWebSocket(url)` |\n\n## Règles de nommage\n\n- **Commence par `use`** : obligatoire pour que React détecte le Hook\n- **Verbe + Sujet** : `useFetch`, `useAuth`, `useLocalStorage`\n- **Retourne un tableau ou un objet** selon ce qui est le plus lisible",
-        "codeBlocks": [
-          {
-            "language": "jsx",
-            "title": "Custom Hooks réutilisables",
-            "code": "import { useState, useEffect } from 'react';\n\n// useFetch : requête HTTP générique\nexport function useFetch(url) {\n  const [data, setData]       = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError]     = useState(null);\n\n  useEffect(() => {\n    if (!url) return;\n    let cancelled = false;\n    setLoading(true);\n    fetch(url)\n      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))\n      .then(d => { if (!cancelled) { setData(d); setLoading(false); } })\n      .catch(e => { if (!cancelled) { setError(e); setLoading(false); } });\n    return () => { cancelled = true; };\n  }, [url]);\n\n  return { data, loading, error };\n}\n\n// useLocalStorage\nexport function useLocalStorage(key, initialValue) {\n  const [value, setValue] = useState(() => {\n    try {\n      const item = localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch { return initialValue; }\n  });\n\n  const setAndStore = (newValue) => {\n    setValue(newValue);\n    localStorage.setItem(key, JSON.stringify(newValue));\n  };\n\n  return [value, setAndStore];\n}\n\n// Utilisation\nfunction CoursesPage() {\n  const { data: courses, loading, error } = useFetch('/api/courses');\n  const [theme, setTheme] = useLocalStorage('theme', 'dark');\n\n  if (loading) return <p>Chargement...</p>;\n  if (error)   return <p>Erreur : {error}</p>;\n  return (\n    <div className={`app theme-${theme}`}>\n      <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>\n        Basculer thème\n      </button>\n      {courses.map(c => <div key={c.id}>{c.title}</div>)}\n    </div>\n  );\n}"
-          }
-        ]
-      },
-      {
-        "id": "context-state",
-        "title": "Context API & Gestion d'état global",
-        "duration": "1h30",
-        "content": "# Gestion d'état global avec Context API\n\n## Quand utiliser Context ?\n\n| Situation | Solution |\n|---|---|\n| État local d'un composant | `useState` |\n| État partagé entre 2-3 composants proches | Lift state up |\n| État global (auth, thème, panier) | Context API |\n| État global complexe avec many actions | Context + useReducer OU Zustand |\n| Cache serveur, requêtes | React Query / TanStack Query |\n\n## Context : les pièges\n\n- **Re-render en cascade** : tout consommateur se re-rend à chaque update du contexte\n- **Splitter les contextes** : séparez ce qui change souvent de ce qui est stable\n- **Mémoïser la value** : utilisez `useMemo` pour éviter des recréations inutiles",
-        "codeBlocks": [
-          {
-            "language": "jsx",
-            "title": "Contexte Auth complet",
-            "code": "import { createContext, useContext, useState, useCallback } from 'react';\n\nconst AuthContext = createContext(null);\n\nexport function AuthProvider({ children }) {\n  const [user, setUser] = useState(() => {\n    const saved = localStorage.getItem('user');\n    return saved ? JSON.parse(saved) : null;\n  });\n\n  const login = useCallback(async (email, password) => {\n    const res = await fetch('/api/auth/login', {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ email, password }),\n    });\n    if (!res.ok) throw new Error('Identifiants invalides');\n    const userData = await res.json();\n    localStorage.setItem('user', JSON.stringify(userData));\n    setUser(userData);\n    return userData;\n  }, []);\n\n  const logout = useCallback(() => {\n    localStorage.removeItem('user');\n    setUser(null);\n  }, []);\n\n  return (\n    <AuthContext.Provider value={{ user, login, logout, isAuth: !!user }}>\n      {children}\n    </AuthContext.Provider>\n  );\n}\n\nexport function useAuth() {\n  const ctx = useContext(AuthContext);\n  if (!ctx) throw new Error('useAuth doit être utilisé dans AuthProvider');\n  return ctx;\n}"
-          }
-        ]
-      },
-      {
-        "id": "performance-react",
-        "title": "Performance React : memo, useMemo, useCallback",
-        "duration": "1h",
-        "content": "# Optimiser les performances React\n\n## Quand un composant se re-rend ?\n\n1. Son state change\n2. Son parent se re-rend\n3. Son context change\n\n## Outils d'optimisation\n\n| Outil | Mémoïse | Utiliser quand |\n|---|---|---|\n| `React.memo` | Un composant | L'enfant reçoit les mêmes props souvent |\n| `useMemo` | Une valeur calculée | Calcul coûteux (tri, filtre de gros tableaux) |\n| `useCallback` | Une fonction | La fonction est passée comme prop à un enfant mémoïsé |\n| `React.lazy` | Un import dynamique | Code splitting pour gros composants |\n\n> N'optimisez pas prématurément. Mesurez d'abord avec **React DevTools Profiler**.",
-        "codeBlocks": [
-          {
-            "language": "jsx",
-            "title": "Optimisations React en pratique",
-            "code": "import { useState, useMemo, useCallback, memo } from 'react';\n\n// memo : ne re-rend que si les props changent\nconst CourseCard = memo(function CourseCard({ course, onSelect }) {\n  return (\n    <div onClick={() => onSelect(course.id)}>\n      <h3>{course.title}</h3>\n    </div>\n  );\n});\n\nfunction CourseList({ courses, searchTerm }) {\n  const [selected, setSelected] = useState(null);\n\n  // useMemo : recalcule uniquement si courses ou searchTerm change\n  const filteredCourses = useMemo(() => {\n    return courses.filter(c =>\n      c.title.toLowerCase().includes(searchTerm.toLowerCase())\n    );\n  }, [courses, searchTerm]);\n\n  // useCallback : référence stable\n  const handleSelect = useCallback((id) => {\n    setSelected(id);\n  }, []);\n\n  return (\n    <div>\n      {filteredCourses.map(course => (\n        <CourseCard key={course.id} course={course} onSelect={handleSelect} />\n      ))}\n    </div>\n  );\n}"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "rust-debutant",
-    "title": "Rust — Programmation Système",
-    "description": "Le langage le plus aimé des développeurs 8 ans de suite (Stack Overflow). Sécurité mémoire, performance native, zéro garbage collector.",
-    "icon": "Code",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "rust",
-    "keywords": [
-      "rust",
-      "ownership",
-      "borrow",
-      "systeme",
-      "performance",
-      "securite-memoire"
-    ],
-    "content": [
-      {
-        "id": "rust-intro",
-        "title": "Pourquoi Rust existe et pourquoi l'apprendre",
-        "duration": "45min",
-        "content": "# Rust — Le langage qui réinvente la programmation système\n\nRust est élu langage le plus apprécié 8 années consécutives par les développeurs (Stack Overflow Survey).\n\n## Rust vs les autres\n\n| Critère | C/C++ | Python/Go | Rust |\n|---|---|---|---|\n| Performance | Native | Moyenne | Native |\n| Sécurité mémoire | Manuelle (bugs courants) | GC (overhead) | Garantie à la compilation |\n| Garbage Collector | Non | Oui | Non |\n| Concurrence | Difficile | Moyen | Sûre par conception |\n| Courbe d'apprentissage | Haute | Basse | Haute (vaut le coût) |\n\n## Qui utilise Rust ?\n\n- **Mozilla** : moteur CSS Firefox (Servo)\n- **AWS** : Firecracker (micro-VMs)\n- **Microsoft** : réécriture de composants Windows\n- **Linux Kernel** : 2ème langage officiel depuis 2022\n- **Discord** : remplacement de Go pour les services critiques\n\n## Les 3 piliers de Rust\n\n1. **Ownership** : chaque valeur a un unique propriétaire\n2. **Borrowing** : emprunter des références sans transférer la propriété\n3. **Lifetimes** : durée de vie des références vérifiée à la compilation",
-        "codeBlocks": [
-          {
-            "language": "bash",
-            "title": "Installer Rust et créer un projet",
-            "code": "# Installer Rust via rustup (gestionnaire officiel)\ncurl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh\n\n# Vérifier l'installation\nrustc --version\ncargo --version\n\n# Créer un nouveau projet\ncargo new mon-projet\ncd mon-projet\n\n# Compiler et exécuter\ncargo run\n\n# Mode release (optimisé)\ncargo build --release\n\n# Lancer les tests\ncargo test\n\n# Vérifier sans compiler (rapide)\ncargo check"
-          }
-        ]
-      },
-      {
-        "id": "ownership",
-        "title": "Ownership — La révolution Rust",
-        "duration": "2h",
-        "content": "# Ownership : pas de GC, pas de bugs mémoire\n\nL'ownership est le concept le plus unique et puissant de Rust.\n\n## Les 3 règles d'Ownership\n\n1. **Chaque valeur a un unique propriétaire** (une variable)\n2. **Une seule valeur peut exister à la fois** (pas de double free)\n3. **Quand le propriétaire sort de portée, la valeur est libérée**\n\n## Move vs Clone vs Copy\n\n| Opération | Effet | Exemples |\n|---|---|---|\n| Move | Transfère la propriété — original inaccessible | `String`, `Vec`, structs |\n| Clone | Copie profonde explicite | `.clone()` |\n| Copy | Copie automatique bit-à-bit | `i32`, `f64`, `bool` |\n\n## Borrowing : emprunter sans posséder\n\n| Type | Syntaxe | Accès | Simultanés |\n|---|---|---|---|\n| Référence immutable | `&T` | Lecture | Illimité |\n| Référence mutable | `&mut T` | Lecture + écriture | **1 seul** |",
-        "codeBlocks": [
-          {
-            "language": "rust",
-            "title": "Ownership et Borrowing",
-            "code": "fn main() {\n    // MOVE\n    let s1 = String::from(\"hello\");\n    let s2 = s1;  // propriété transférée\n    // println!(\"{}\", s1); // ERREUR : s1 invalide !\n    println!(\"{}\", s2); // OK\n\n    // CLONE\n    let s3 = String::from(\"monde\");\n    let s4 = s3.clone();\n    println!(\"{} et {}\", s3, s4);\n\n    // COPY (types primitifs)\n    let x = 42;\n    let y = x; // copie automatique\n    println!(\"{} et {}\", x, y);\n\n    // BORROWING immutable\n    let texte = String::from(\"TutoDeCode\");\n    let longueur = calculer_longueur(&texte);\n    println!(\"'{}' a {} chars\", texte, longueur);\n\n    // BORROWING mutable\n    let mut nom = String::from(\"Rust\");\n    ajouter_suffixe(&mut nom);\n    println!(\"{}\", nom);\n}\n\nfn calculer_longueur(s: &String) -> usize {\n    s.len()\n}\n\nfn ajouter_suffixe(s: &mut String) {\n    s.push_str(\" 2024\");\n}"
-          }
-        ]
-      },
-      {
-        "id": "structs-enums",
-        "title": "Structs, Enums et Pattern Matching",
-        "duration": "1h30",
-        "content": "# Le système de types Rust\n\n## Structs vs Enums\n\n| Type | Quand utiliser | Exemple |\n|---|---|---|\n| `struct` | Grouper des données liées | `User { nom, email, age }` |\n| `enum` | Représenter plusieurs états exclusifs | `Result<T, E>`, `Option<T>` |\n| `tuple struct` | Wrapping de type simple | `struct Euros(f64)` |\n\n## Option<T> — Adieu null pointer !\n\nRust n'a pas `null`. À la place, `Option<T>` force à gérer l'absence de valeur.\n\n## Result<T, E> — Gestion d'erreurs élégante\n\nTout retour d'erreur possible est exprimé dans le type de retour.\n\n## Pattern Matching : le `match` Rust\n\nLe `match` est exhaustif — Rust oblige à gérer **tous les cas**.",
-        "codeBlocks": [
-          {
-            "language": "rust",
-            "title": "Structs, Enums, Option et match",
-            "code": "#[derive(Debug)]\nstruct Utilisateur {\n    id:    u32,\n    nom:   String,\n    actif: bool,\n}\n\n#[derive(Debug)]\nenum StatutCommande {\n    EnAttente,\n    EnCours { debut: String },\n    Terminee { duree_min: u32 },\n    Annulee(String),\n}\n\nfn afficher_statut(statut: &StatutCommande) {\n    match statut {\n        StatutCommande::EnAttente => println!(\"En attente\"),\n        StatutCommande::EnCours { debut } => println!(\"En cours depuis {}\", debut),\n        StatutCommande::Terminee { duree_min } => println!(\"Terminee en {} min\", duree_min),\n        StatutCommande::Annulee(motif) => println!(\"Annulee : {}\", motif),\n    }\n}\n\nfn main() {\n    let statut = StatutCommande::Terminee { duree_min: 42 };\n    afficher_statut(&statut);\n\n    // Option\n    let valeur: Option<i32> = Some(42);\n    match valeur {\n        Some(n) => println!(\"Valeur : {}\", n),\n        None    => println!(\"Pas de valeur\"),\n    }\n\n    // Result\n    let resultat: Result<i32, &str> = Ok(100);\n    match resultat {\n        Ok(n)  => println!(\"Succès : {}\", n),\n        Err(e) => println!(\"Erreur : {}\", e),\n    }\n}"
-          }
-        ]
-      },
-      {
-        "id": "rust-iterators",
-        "title": "Iterators & Closures — La puissance fonctionnelle",
-        "duration": "1h30",
-        "content": "# Iterators et Closures : le Rust fonctionnel\n\nRust implémente la programmation fonctionnelle avec une **zero-cost abstraction** : les chaînes d'itérateurs sont compilées aussi efficacement qu'une boucle C.\n\n## Méthodes d'itérateur essentielles\n\n| Méthode | Retourne | Rôle |\n|---|---|---|\n| `.map(|x| ...)` | Iterator | Transformer chaque élément |\n| `.filter(|x| ...)` | Iterator | Garder les éléments |\n| `.fold(init, |acc, x| ...)` | Valeur | Agréger (= reduce) |\n| `.collect()` | Vec, HashMap... | Matérialiser l'itérateur |\n| `.enumerate()` | Iterator(index, valeur) | Index + valeur |\n| `.take(n)` | Iterator | Prendre n éléments |\n| `.chain(iter)` | Iterator | Concaténer deux itérateurs |",
-        "codeBlocks": [
-          {
-            "language": "rust",
-            "title": "Iterators et méthodes fonctionnelles",
-            "code": "fn main() {\n    let cours = vec![\n        (\"Linux\",   \"beginner\",     8u32),\n        (\"Docker\",  \"intermediate\", 10),\n        (\"K8s\",     \"advanced\",     15),\n        (\"Python\",  \"beginner\",     20),\n        (\"Rust\",    \"intermediate\", 16),\n        (\"SQL\",     \"beginner\",     12),\n    ];\n\n    // Filtrer les cours débutants\n    let debutants: Vec<&str> = cours\n        .iter()\n        .filter(|(_, niveau, _)| *niveau == \"beginner\")\n        .map(|(titre, _, _)| *titre)\n        .collect();\n    println!(\"Cours débutants : {:?}\", debutants);\n\n    // Durée totale\n    let total: u32 = cours.iter().map(|(_, _, h)| h).sum();\n    println!(\"Total : {} heures\", total);\n\n    // Closure avec capture\n    let seuil = 12u32;\n    let longs: Vec<_> = cours\n        .iter()\n        .filter(|(_, _, h)| *h > seuil)\n        .collect();\n    println!(\"Cours > {} heures : {}\", seuil, longs.len());\n}"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "api-rest-design",
-    "title": "Conception d'APIs REST Pro",
-    "description": "Concevez des APIs REST élégantes, versionnées, documentées et sécurisées. Les standards que les GAFA appliquent au quotidien.",
-    "icon": "Server",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "javascript",
-    "keywords": [
-      "api",
-      "rest",
-      "openapi",
-      "swagger",
-      "versioning",
-      "pagination",
-      "design"
-    ],
-    "content": [
-      {
-        "id": "rest-principles",
-        "title": "Principes REST — Les fondations",
-        "duration": "1h",
-        "content": "# REST — Representational State Transfer\n\nREST n'est pas un protocole, c'est un **style architectural** défini par Roy Fielding en 2000.\n\n## Les 6 contraintes REST\n\n| Contrainte | Description | Impact |\n|---|---|---|\n| Client-Serveur | Séparation claire UI / Données | Évolutivité indépendante |\n| Stateless | Chaque requête est autonome | Scalabilité horizontale |\n| Cacheable | Les réponses indiquent si elles sont cachables | Performance |\n| Interface uniforme | URLs, méthodes, formats standardisés | Interopérabilité |\n| Layered System | Proxies, load balancers transparents | Flexibilité infra |\n\n## Bonne conception d'URLs\n\n| Mauvais | Bon | Pourquoi |\n|---|---|---|\n| `/getUsers` | `GET /users` | Le verbe HTTP suffit |\n| `/deleteUser?id=5` | `DELETE /users/5` | ID dans le chemin |\n| `/users/getCoursesOfUser/3` | `GET /users/3/courses` | Ressources imbriquées |\n\n## Codes HTTP sémantiques\n\n| Opération | Succès | Erreur courante |\n|---|---|---|\n| GET | 200 OK | 404 Not Found |\n| POST | 201 Created | 400 Bad Request, 409 Conflict |\n| PUT/PATCH | 200 OK | 404 Not Found |\n| DELETE | 204 No Content | 404 Not Found |",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "API REST bien conçue avec Express",
-            "code": "const express = require('express');\nconst router  = express.Router();\n\n// GET /api/v1/courses — Lister avec filtres et pagination\nrouter.get('/', async (req, res) => {\n  const { page = 1, limit = 20, level, category } = req.query;\n\n  const where = {};\n  if (level)    where.level = level;\n  if (category) where.category = category;\n\n  const [courses, total] = await Promise.all([\n    db.course.findMany({ where, skip: (page-1)*limit, take: Number(limit) }),\n    db.course.count({ where }),\n  ]);\n\n  res.json({\n    data: courses,\n    meta: { page: Number(page), limit: Number(limit), total },\n  });\n});\n\n// POST /api/v1/courses — Créer\nrouter.post('/', requireAuth, async (req, res) => {\n  const course = await db.course.create({ data: req.body });\n  res.status(201).json({ data: course });\n});\n\n// GET /api/v1/courses/:id\nrouter.get('/:id', async (req, res) => {\n  const course = await db.course.findUnique({ where: { id: req.params.id } });\n  if (!course) return res.status(404).json({ error: 'Cours introuvable' });\n  res.json({ data: course });\n});\n\n// DELETE /api/v1/courses/:id\nrouter.delete('/:id', requireAuth, async (req, res) => {\n  await db.course.delete({ where: { id: req.params.id } });\n  res.status(204).send();\n});"
-          }
-        ]
-      },
-      {
-        "id": "api-errors",
-        "title": "Gestion d'erreurs standards",
-        "duration": "1h",
-        "content": "# Gestion d'erreurs API — Le standard industriel\n\n## Format d'erreur cohérent (RFC 7807)\n\nUn format d'erreur standardisé permet aux clients de parser les erreurs de manière uniforme.\n\n## Codes d'erreur sémantiques\n\n| Code HTTP | Utilisation correcte |\n|---|---|\n| 400 Bad Request | Données invalides côté client |\n| 401 Unauthorized | Non authentifié |\n| 403 Forbidden | Authentifié mais non autorisé |\n| 404 Not Found | Ressource inexistante |\n| 409 Conflict | Doublon (email déjà utilisé) |\n| 422 Unprocessable | Données syntaxiquement OK mais invalides |\n| 429 Too Many Requests | Rate limiting |\n| 500 Internal Server Error | Bug côté serveur |",
-        "codeBlocks": [
-          {
-            "language": "javascript",
-            "title": "Gestionnaire d'erreurs centralisé",
-            "code": "class AppError extends Error {\n  constructor(message, statusCode, code, details = null) {\n    super(message);\n    this.statusCode = statusCode;\n    this.code       = code;\n    this.details    = details;\n    this.isOperational = true;\n  }\n\n  static notFound(resource = 'Ressource') {\n    return new AppError(`${resource} introuvable`, 404, 'NOT_FOUND');\n  }\n  static unauthorized() {\n    return new AppError('Non authentifié', 401, 'UNAUTHORIZED');\n  }\n  static validation(details) {\n    return new AppError('Données invalides', 422, 'VALIDATION_ERROR', details);\n  }\n}\n\nfunction errorHandler(err, req, res, next) {\n  const requestId = req.headers['x-request-id'] || crypto.randomUUID();\n\n  if (err.isOperational) {\n    return res.status(err.statusCode).json({\n      error: {\n        code:    err.code,\n        message: err.message,\n        details: err.details,\n        requestId,\n      },\n    });\n  }\n\n  res.status(500).json({\n    error: { code: 'INTERNAL_ERROR', message: 'Erreur interne', requestId },\n  });\n}\n\nmodule.exports = { AppError, errorHandler };"
-          }
-        ]
-      },
-      {
-        "id": "api-versioning-docs",
-        "title": "Versioning & Documentation OpenAPI",
-        "duration": "1h30",
-        "content": "# Versioning et Documentation d'API\n\n## Strategies de versioning\n\n| Stratégie | Exemple | Avantages | Inconvénients |\n|---|---|---|---|\n| URL path | `/api/v1/users` | Simple, visible | URLs longues |\n| Header | `API-Version: 1` | URLs propres | Moins intuitif |\n| Query param | `/api/users?v=1` | Facile à tester | Moins RESTful |\n\n> **Recommandation :** Utilisez le **versioning par URL** pour sa simplicité universelle.\n\n## Quand créer une v2 ?\n\n- Suppression d'un champ dans la réponse\n- Changement du type d'un champ\n- Modification du comportement d'un endpoint\n\n## OpenAPI (Swagger) : la documentation vivante\n\nOpenAPI Specification (OAS) est le standard pour décrire des APIs REST.",
-        "codeBlocks": [
-          {
-            "language": "yaml",
-            "title": "Spec OpenAPI 3.1",
-            "code": "openapi: 3.1.0\ninfo:\n  title: TutoDeCode API\n  version: 1.0.0\n  description: API REST pour la plateforme TutoDeCode\n\nservers:\n  - url: https://api.tutodecode.com/v1\n    description: Production\n\npaths:\n  /courses:\n    get:\n      summary: Lister les cours\n      parameters:\n        - in: query\n          name: page\n          schema: { type: integer, default: 1 }\n        - in: query\n          name: level\n          schema:\n            type: string\n            enum: [beginner, intermediate, advanced]\n      responses:\n        '200':\n          description: Liste des cours\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  data:\n                    type: array\n                    items: { type: object }\n                  meta:\n                    type: object\n\ncomponents:\n  securitySchemes:\n    bearerAuth:\n      type: http\n      scheme: bearer\n      bearerFormat: JWT\n\nsecurity:\n  - bearerAuth: []"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "switch-l3",
-    "title": "Switch L3 & Routage Avancé",
-    "description": "Configurez des infrastructures d'entreprise : VLAN, Routage Inter-VLAN, OSPF et Securité Portuaire.",
-    "icon": "SettingsEthernet",
-    "level": "advanced",
-    "duration": "4h",
-    "category": "reseau",
-    "keywords": [
-      "switch",
-      "l3",
-      "cisco",
-      "vlan",
-      "ospf",
-      "routing"
-    ],
-    "content": [
-      {
-        "id": "l3-intro",
-        "title": "Introduction au Switch L3",
-        "duration": "1h",
-        "content": "# Qu'est-ce qu'un Switch de Niveau 3 ?\n\nUn switch L3 combine la vitesse d'un switch (commutation matérielle) avec l'intelligence d'un routeur.\n\n## Commandes de Base (Cisco IOS)\n\n| Action | Commande |\n|---|---|\n| Activer le routage | `ip routing` |\n| Créer un VLAN | `vlan 10` |\n| Interface VLAN | `interface vlan 10` |\n| Assigner IP | `ip address 192.168.10.1 255.255.255.0` |\n| Activer port L3 | `no switchport` |\n\n[Documentation officielle Cisco](https://www.cisco.com/c/fr_ca/support/switches/index.html)\n\n## Insights Professionnels\n- Un switch L3 est le cerveau de votre LAN. Apprenez à segmenter votre réseau avec des VLANs pour isoler les invités des serveurs critiques. Maîtrisez le routage inter-VLAN (SVI) pour permettre une communication contrôlée et sécurisée."
-      }
-    ]
-  },
-  {
-    "id": "excel-master",
-    "title": "Excel : Puissance de Calcul",
-    "description": "Devenez un magicien des données avec les fonctions avancées et les tableaux croisés dynamiques.",
-    "icon": "TableChart",
-    "level": "intermediate",
-    "duration": "2h",
-    "category": "bureautique",
-    "keywords": [
-      "excel",
-      "data",
-      "fonctions",
-      "vlookup"
-    ],
-    "content": [
-      {
-        "id": "excel-funcs",
-        "title": "Fonctions de Recherche",
-        "duration": "30min",
-        "content": "# Fonctions de Recherche Avancées\n\n### XLOOKUP (RECHERCHEX)\nLa fonction universelle pour remplacer VLOOKUP et HLOOKUP.\n`=XLOOKUP(valeur_recherchée; tableau_recherche; tableau_résultat)`\n\n### INDEX & MATCH\nLe combo ultime pour les recherches bidimensionnelles.\n`=INDEX(tableau; EQUIV(ligne); EQUIV(colonne))`\n\n---\n\n## Insights Professionnels\n- Excel est le tableur le plus puissant de la planète. Maîtrisez les Tableaux Croisés Dynamiques pour analyser 100 000 lignes en 5 secondes. Apprenez Power Query pour automatiser le nettoyage de vos données sales sans jamais écrire une ligne de code."
-      }
-    ]
-  },
-  {
-    "id": "word-expert",
-    "title": "Word : Productivité Maximale",
-    "description": "Écrivez plus vite, plus proprement. Styles, automatisation et mise en page pro.",
-    "icon": "Article",
-    "level": "beginner",
-    "duration": "1h",
-    "category": "bureautique",
-    "keywords": [
-      "word",
-      "productivity",
-      "shortcuts"
-    ],
-    "content": [
-      {
-        "id": "word-speed",
-        "title": "Écrire plus rapidement",
+        "title": "Le Bug Asynchrone qui m'a Rendu Fou",
         "duration": "15min",
-        "content": "# Productivité Word\n\n## Raccourcis Indispensables\n- `Ctrl + Shift + N` : Appliquer le style Standard\n- `Ctrl + Enter` : Saut de page instantané\n- `Ctrl + F` : Recherche rapide\n\n## Gestion des Styles\nUtilisez toujours les **Styles** (Titre 1, Titre 2) pour générer des tables des matières automatiques en 1 clic.\n\n## Insights Professionnels\n- Ne perdez plus de temps à formater manuellement. Maîtrisez les Sections pour avoir des orientations différentes (Portrait/Paysage) dans le même document. Utilisez les Références croisées pour que vos numéros de figures se mettent à jour tout seuls."
-      }
-    ]
-  },
-  {
-    "id": "infra-nsa",
-    "title": "Infrastructure Cyber-Défense (Style NSA)",
-    "description": "Plongez dans le monde de la haute sécurité : SIEM, SOC, et architectures Zero Trust.",
-    "icon": "Shield",
-    "level": "advanced",
-    "duration": "4h",
-    "category": "securite",
-    "keywords": [
-      "nsa",
-      "cyberdefense",
-      "siem",
-      "trust"
-    ],
-    "content": [
-      {
-        "id": "zero-trust",
-        "title": "Architecture Zero Trust",
-        "duration": "2h",
-        "content": "# Zero Trust : Ne jamais faire confiance, toujours vérifier\n\nL'architecture Zero Trust repose sur le principe qu'aucune ressource (interne ou externe) n'est sécurisée par défaut.\n\n## Les 3 Piliers\n1. **Vérifier explicitement** : Toujours authentifier et autoriser sur la base de tous les points de données disponibles.\n2. **Privilège minimum** : Limiter l'accès des utilisateurs avec un accès juste à temps et juste suffisant.\n3. **Supposer la violation** : Minimiser le rayon d'action et segmenter l'accès.\n\n## Insights Professionnels\n- Dans un monde Zero Trust, le périmètre n'existe plus. Chaque requête doit être authentifiée, autorisée et chiffrée. Apprenez à déployer des PKI internes et à superviser chaque battement de coeur de votre réseau avec un SIEM."
+        "content": "# 😵 3 Jours de Debug pour un `await` Manquant\n\n**Juin 2022. Je développe une app React.** Fonctionnalité : afficher le nom de l'utilisateur connecté dans le header. Simple. 30 minutes max.\n\n**Mon code :**\n```javascript\nfunction Header() {\n  const user = fetchUserFromAPI();  // Récupère l'utilisateur\n  return <h1>Bonjour {user.name}</h1>;\n}\n```\n\n**Résultat dans le navigateur :** `Bonjour` — suivi de rien. Puis une erreur console : `Cannot read properties of undefined (reading 'name')`.\n\n**Mon raisonnement initial :** L'API retourne les données, j'y accède, j'affiche. Logique non ?\n\n**La réalité :** JavaScript est **non-bloquant par nature**. Quand vous appelez `fetchUserFromAPI()`, JavaScript n'attend pas la réponse. Il continue immédiatement à la ligne suivante avec... une `Promise` non résolue. C'est comme commander un café et essayer de le boire avant que le barista ait commencé à le préparer.\n\n**3 jours plus tard**, en lisant la documentation sur les Promesses, je comprends enfin. La correction : 5 lettres et un mot-clé.\n\n```javascript\nconst user = await fetchUserFromAPI();  // ← await. Voilà tout.\n```\n\n> **\"JavaScript est conçu pour ne jamais bloquer. Cette décision de design est le fondement des apps web rapides — mais elle exige de comprendre l'asynchronicité, sinon elle vous rend fou.\"**\n\n---\n\n## 🧵 Comment JavaScript Gère le Temps : L'Event Loop\n\nJavaScript est **mono-thread** : il ne fait qu'une seule chose à la fois. Alors comment peut-il sembler tout faire en parallèle ?\n\n```\n┌─────────────────────────────────────────────────────┐\n│                    CALL STACK                        │\n│  Le code qui s'exécute maintenant (1 seul à la fois) │\n│  [console.log] → [fetchUser] → [renderHeader]        │\n└─────────────────────────────────────────────────────┘\n           ↕ (tâches finies sont poussées ici)\n┌─────────────────────────────────────────────────────┐\n│                  CALLBACK QUEUE                      │\n│  Les résultats des opérations async en attente       │\n│  [réponse API], [timeout 3s], [event click]          │\n└─────────────────────────────────────────────────────┘\n           ↑ L'Event Loop surveille et déplace\n```\n\nQuand vous appelez `fetch('/api/user')`, JavaScript confie la requête HTTP au navigateur et **continue son exécution**. Quand la réponse arrive, le navigateur met le callback dans la queue. L'Event Loop le pousse dans la Call Stack quand elle est vide.\n\n---\n\n## 🎯 ES6+ : La Révolution de 2015\n\nJavaScript avant 2015 était... utilisable. Après ES6, il est devenu élégant.\n\n### Variables : la fin de `var`\n\n```javascript\n// ❌ var : hoisted, function-scoped, source de bugs subtils\nvar x = 1;\nif (true) {\n  var x = 2;  // Écrase le x extérieur ! Bug silencieux.\n}\nconsole.log(x); // 2 (surprise !)\n\n// ✅ let/const : block-scoped, prévisibles\nconst y = 1;   // Constante — ne peut pas être réassignée\nif (true) {\n  let y = 2;   // Nouveau y local au bloc if\n}\nconsole.log(y); // 1 (correct, prévisible)\n```\n\n**Règle à retenir :** `const` par défaut. `let` si vous devez réassigner. `var` = jamais.",
+        "codeBlocks": [
+          {
+            "language": "javascript",
+            "title": "🚀 JavaScript Moderne : Les Patterns Essentiels",
+            "code": "// ============================================================\n// 1. DESTRUCTURING — Extraire proprement\n// ============================================================\n\n// Objet\nconst utilisateur = { nom: 'Alice', age: 28, ville: 'Paris', role: 'admin' };\nconst { nom, age, role = 'user' } = utilisateur;  // role par défaut : 'user'\nconsole.log(nom, age, role);  // Alice 28 admin\n\n// Renommer à la volée\nconst { nom: username, age: annees } = utilisateur;\nconsole.log(username, annees);  // Alice 28\n\n// Tableau\nconst [premier, deuxième, ...reste] = [1, 2, 3, 4, 5];\nconsole.log(premier);  // 1\nconsole.log(reste);    // [3, 4, 5]\n\n// Dans les paramètres de fonction (très utilisé avec React)\nfunction afficherUser({ nom, age }) {\n  console.log(`${nom} a ${age} ans`);\n}\nafficherUser(utilisateur);\n\n\n// ============================================================\n// 2. SPREAD & REST OPERATOR\n// ============================================================\n\n// Spread : déployer\nconst base = { theme: 'dark', lang: 'fr' };\nconst config = { ...base, lang: 'en', debug: true };  // Surcharge lang\n// { theme: 'dark', lang: 'en', debug: true }\n\n// Cloner sans référence (erreur classique des débutants)\nconst original = [1, 2, 3];\nconst copieRef = original;       // ❌ Même référence ! Modifier l'un modifie l'autre.\nconst copiePropre = [...original]; // ✅ Nouvelle copie indépendante\n\n\n// ============================================================\n// 3. ASYNC/AWAIT — Maîtriser l'asynchrone\n// ============================================================\n\n// Le problème du callback hell (ce qu'on évite)\n// getData(function(result) {\n//   processData(result, function(processed) {\n//     saveData(processed, function(saved) {\n//       console.log(saved); // Le \"Christmas Tree\" de l'enfer\n//     });\n//   });\n// });\n\n// La solution moderne : async/await\nasync function chargerProfilUtilisateur(userId) {\n  try {\n    // await suspend l'exécution jusqu'à la résolution\n    const response = await fetch(`/api/users/${userId}`);\n    \n    // Vérifier que la requête a réussi\n    if (!response.ok) {\n      throw new Error(`HTTP ${response.status}: ${response.statusText}`);\n    }\n    \n    const user = await response.json();\n    const orders = await fetch(`/api/orders?userId=${userId}`);\n    const ordersData = await orders.json();\n    \n    return { user, orders: ordersData };\n  } catch (error) {\n    console.error('Erreur de chargement:', error.message);\n    return null;\n  }\n}\n\n// Exécution en parallèle (plus performant quand les requêtes sont indépendantes)\nasync function chargerDashboard(userId) {\n  const [user, orders, notifications] = await Promise.all([\n    fetch(`/api/users/${userId}`).then(r => r.json()),\n    fetch(`/api/orders?userId=${userId}`).then(r => r.json()),\n    fetch(`/api/notifications?userId=${userId}`).then(r => r.json())\n  ]);\n  // Les 3 requêtes partent en même temps !\n  return { user, orders, notifications };\n}\n\n\n// ============================================================\n// 4. MÉTHODES DE TABLEAU MODERNES\n// ============================================================\n\nconst produits = [\n  { id: 1, nom: 'Laptop', prix: 999, stock: 5 },\n  { id: 2, nom: 'Souris', prix: 29,  stock: 0 },\n  { id: 3, nom: 'Écran',  prix: 399, stock: 3 },\n];\n\n// filter → Garder les produits en stock\nconst disponibles = produits.filter(p => p.stock > 0);\n// [Laptop, Écran]\n\n// map → Transformer (ici, ajouter le prix TTC)\nconst avecTTC = produits.map(p => ({ ...p, prixTTC: p.prix * 1.20 }));\n\n// reduce → Agréger (total du panier)\nconst total = produits.reduce((acc, p) => acc + p.prix, 0);\n// 1427\n\n// find → Premier résultat qui correspond\nconst laptop = produits.find(p => p.nom === 'Laptop');\n\n// Chaîner les opérations (style fonctionnel)\nconst totalDisponibles = produits\n  .filter(p => p.stock > 0)\n  .map(p => p.prix)\n  .reduce((acc, prix) => acc + prix, 0);\n// 1398 (999 + 399)\n\nconsole.log('Total des produits disponibles:', totalDisponibles, '€');"
+          }
+        ],
+        "quiz": [
+          {
+            "question": "Pourquoi `const user = fetchUserFromAPI()` ne retourne-t-il pas les données utilisateur directement ?",
+            "choices": [
+              "fetchUserFromAPI est une fonction mal écrite",
+              "JavaScript est asynchrone : sans await, la fonction retourne une Promise non résolue immédiatement",
+              "const empêche les fonctions async de fonctionner",
+              "Il manque des parenthèses dans l'appel"
+            ],
+            "correctIndex": 1
+          },
+          {
+            "question": "Quelle est la différence entre ces deux approches ?\n`await fetch(A); await fetch(B);`\nvs\n`await Promise.all([fetch(A), fetch(B)])`",
+            "choices": [
+              "Aucune différence en termes de performance",
+              "Promise.all lance les deux requêtes en parallèle — c'est potentiellement deux fois plus rapide",
+              "Promise.all est moins fiable car il peut échouer",
+              "await séquentiel est recommandé pour éviter les erreurs"
+            ],
+            "correctIndex": 1
+          },
+          {
+            "question": "Que fait cette ligne : `const config = { ...base, lang: 'en' }` si base contient déjà `lang: 'fr'` ?",
+            "choices": [
+              "Crée un tableau avec base et lang",
+              "Lance une erreur car lang est défini deux fois",
+              "Crée un nouvel objet copiant base, où lang est surchargé à 'en'",
+              "Concatène les deux valeurs : 'fr-en'"
+            ],
+            "correctIndex": 2
+          }
+        ]
       }
     ]
   }

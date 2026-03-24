@@ -8,11 +8,13 @@ class QuizQuestion {
   final String question;
   final List<String> choices;
   final int correctIndex;
+  final String? explanation;
 
   const QuizQuestion({
     required this.question,
     required this.choices,
     required this.correctIndex,
+    this.explanation,
   });
 
   factory QuizQuestion.fromMap(Map<String, dynamic> m) {
@@ -20,6 +22,7 @@ class QuizQuestion {
       question: m['question'] ?? '',
       choices: List<String>.from(m['choices'] ?? []),
       correctIndex: m['correctIndex'] ?? 0,
+      explanation: m['explanation'],
     );
   }
 }

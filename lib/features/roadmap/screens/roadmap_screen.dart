@@ -14,8 +14,9 @@ class _Path {
 }
 
 const _kPaths = [
-  _Path(id: 'sysadmin', title: 'Sysadmin & DevOps', subtitle: 'Linux, Git, Docker', icon: Icons.terminal, color: Color(0xFFF59E0B), courseIds: ['linux-basics', 'git-github', 'docker-intro']),
-  _Path(id: 'dev', title: 'Full-Stack', subtitle: 'JS, Python, SQL', icon: Icons.code, color: Color(0xFF6366F1), courseIds: ['javascript-modern', 'python-basics', 'sql-basics']),
+  _Path(id: 'beginner', title: 'Débutant Cybersécurité', subtitle: 'Fondations, Réseau, Linux', icon: Icons.school, color: Color(0xFF10B981), courseIds: ['linux-basics', 'network-101', 'security-intro']),
+  _Path(id: 'pentester', title: 'Pentester (Red Team)', subtitle: 'Audit, Exploitation, Web', icon: Icons.bug_report, color: Color(0xFFEF4444), courseIds: ['web-hacking', 'network-pentest', 'privilege-escalation']),
+  _Path(id: 'forensic', title: 'Expert Forensic (Blue Team)', subtitle: 'Analyse, Réponse, SIEM', icon: Icons.search, color: Color(0xFF3B82F6), courseIds: ['incident-response', 'memory-forensics', 'malware-analysis']),
 ];
 
 class RoadmapScreen extends StatefulWidget {
@@ -55,6 +56,8 @@ class _RoadmapScreenState extends State<RoadmapScreen> with SingleTickerProvider
       color: TdcColors.surface,
       child: TabBar(
         controller: _tab,
+        isScrollable: true,
+        tabAlignment: TabAlignment.start,
         indicatorColor: _kPaths[_selected].color,
         tabs: _kPaths.map((p) => Tab(text: p.title)).toList(),
       ),
@@ -108,14 +111,20 @@ class _RoadmapScreenState extends State<RoadmapScreen> with SingleTickerProvider
           const SizedBox(height: 4),
           Text(course.description, style: const TextStyle(color: TdcColors.textSecondary, fontSize: 12), maxLines: 2),
           const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: () {
-              if (course.chapters.isNotEmpty) {
-                prov.selectChapter(course.id, course.chapters.first.id);
-                Navigator.pushNamed(context, '/chapter');
-              }
-            }, 
-            child: Text(done ? 'Revoir' : 'Commencer'),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                if (course.chapters.isNotEmpty) {
+                  prov.selectChapter(course.id, course.chapters.first.id);
+                  Navigator.pushNamed(context, '/chapter');
+                }
+              }, 
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+              ),
+              child: Text(done ? 'Revoir' : 'Commencer'),
+            ),
           ),
         ])),
       )),

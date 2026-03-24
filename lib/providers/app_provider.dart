@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../features/courses/data/course_repository.dart';
-import '../services/storage_service.dart';
+import '../core/services/storage_service.dart';
 
 // completed keys stored as "courseId:chapterId"
 
@@ -30,7 +30,9 @@ class AppProvider with ChangeNotifier {
   double get overallProgress => totalChaptersCount == 0 ? 0.0 : completedCount / totalChaptersCount;
 
   int courseChaptersCount(String courseId) {
-    for (var c in _courses) if (c.id == courseId) return c.chapters.length;
+    for (final c in _courses) {
+      if (c.id == courseId) return c.chapters.length;
+    }
     return 0;
   }
 

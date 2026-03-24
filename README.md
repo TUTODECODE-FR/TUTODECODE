@@ -19,9 +19,9 @@ TUTODECODE est une plateforme d'apprentissage technique et d'outils cybersécuri
 | Plateforme | Binaire | Statut |
 | :--- | :--- | :--- |
 | ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | [**Fichier APK**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Android.apk) | `Disponible` |
-| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | [**Archive ZIP**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Windows.zip) | `Stabilité OK` |
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | [**Pack APP**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-macOS.zip) | `Intel & Apple` |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**Tarball Binaire**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Linux.tar.gz) | `Universel` |
+| ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | [**Installeur EXE**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Setup.exe) | `Signé` |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | [**Installateur DMG**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-macOS.dmg) | `Signé + Notarizé` |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**Paquet DEB**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Linux.deb) | `Signé (signature detachée)` |
 
 ---
 
@@ -58,8 +58,22 @@ TUTODECODE n'est pas qu'un simple lecteur de cours, c'est un laboratoire d'expé
   <img src="https://img.shields.io/badge/GPLv3-gray?style=for-the-badge" alt="GPLv3">
 </p>
 
-## 🤝 Contribution & Éthique
-TUTODECODE est un projet soutenu par l'**Association TUTODECODE** (Loi 1901, France). Nous imposons un audit de sécurité strict sur tout commit pour garantir l'absence de tracking et de collecte de données.
+## 🤝 Soutenu par l'Association TUTODECODE (ESS)
+
+TUTODECODE est le projet phare de l'Association TUTODECODE (Organisme d'intérêt général, SIREN : 102 763 133).
+
+En tant qu'entité de l'Économie Sociale et Solidaire (ESS), notre mission est la diffusion gratuite du savoir technique. Nous garantissons une application :
+
+🚫 Sans Tracking : Aucun analytics, aucune collecte de données.
+
+🔒 Souveraine : Vos données restent sur votre machine.
+
+🌍 Accessible : Conçue pour fonctionner là où le réseau ne va pas.
+
+
+## 🔐 Signature des binaires
+La release CI signe maintenant les binaires Android, Windows, macOS, iOS et Linux.
+Pour configurer les certificats/secrets GitHub Actions, voir [SIGNING.md](./SIGNING.md).
 
 ---
 *Fait avec ❤️ par l'Association TUTODECODE — [www.tutodecode.org](https://www.tutodecode.org)*

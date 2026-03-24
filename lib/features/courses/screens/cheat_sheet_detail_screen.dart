@@ -75,8 +75,8 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: TdcColors.accent.withOpacity(0.1), borderRadius: TdcRadius.md),
-          child: Icon(_getIcon(e.category), color: TdcColors.accent, size: 24),
+          decoration: BoxDecoration(color: _getColor(e).withOpacity(0.1), borderRadius: TdcRadius.md),
+          child: Icon(_getIcon(e), color: _getColor(e), size: 24),
         ),
         const SizedBox(width: 20),
         Expanded(
@@ -205,8 +205,42 @@ class _CheatSheetDetailScreenState extends State<CheatSheetDetailScreen> {
     );
   }
 
-  IconData _getIcon(String cat) {
-    switch (cat) {
+  Color _getColor(CheatSheetEntry e) {
+    if (e.colorHex != null && e.colorHex!.isNotEmpty) {
+      final hex = e.colorHex!.replaceAll('#', '');
+      try {
+        return Color(int.parse('FF$hex', radix: 16));
+      } catch (_) {}
+    }
+    switch (e.category) {
+      case 'WINDOWS': return const Color(0xFF00A4EF);
+      case 'MAC': return const Color(0xFF999999);
+      case 'LINUX': return const Color(0xFFFCC624);
+      case 'DOCKER': return const Color(0xFF2496ED);
+      case 'RÉSEAU': return const Color(0xFF10B981);
+      case 'GIT': return const Color(0xFFF05032);
+      case 'SÉCURITÉ': return const Color(0xFFEF4444);
+      default: return TdcColors.accent;
+    }
+  }
+
+  IconData _getIcon(CheatSheetEntry e) {
+    if (e.iconName != null && e.iconName!.isNotEmpty) {
+      switch (e.iconName) {
+        case 'security': return Icons.security;
+        case 'terminal': return Icons.terminal;
+        case 'cloud': return Icons.cloud;
+        case 'dns': return Icons.dns;
+        case 'lock': return Icons.lock;
+        case 'api': return Icons.api;
+        case 'bug_report': return Icons.bug_report;
+        case 'admin_panel_settings': return Icons.admin_panel_settings;
+        case 'storage': return Icons.storage;
+        case 'network': return Icons.network_check;
+        case 'search': return Icons.search;
+      }
+    }
+    switch (e.category) {
       case 'WINDOWS': return Icons.window;
       case 'MAC': return Icons.apple;
       case 'LINUX': return Icons.terminal;

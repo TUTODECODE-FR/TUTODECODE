@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:tutodecode/features/courses/providers/courses_provider.dart';
@@ -88,10 +88,55 @@ class _ChapterScreenState extends State<ChapterScreen> {
   Widget _markdown(String content) {
     return MarkdownBody(
       data: content,
+      // Sécurité : Désactiver les images distantes et les liens non-contrôlés
+      imageBuilder: (uri, title, alt) => Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: TdcColors.surfaceAlt, borderRadius: BorderRadius.circular(8)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.image_not_supported, size: 16, color: TdcColors.textMuted),
+            const SizedBox(width: 8),
+            Text('Image bloquée par sécurité: $alt', style: const TextStyle(fontSize: 11, color: TdcColors.textMuted)),
+          ],
+        ),
+      ),
+      onTapLink: (text, href, title) {
+        if (href != null) {
+          final uri = Uri.tryParse(href);
+          if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Lien externe'),
+                content: Text('Voulez-vous ouvrir ce lien externe ?\n\n$href'),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+                  TextButton(
+                    onPressed: () { 
+                      Navigator.pop(ctx);
+                      // On pourrait utiliser launchUrl ici si on veut autoriser
+                    }, 
+                    child: const Text('Ouvrir', style: TextStyle(color: TdcColors.danger))
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      },
       styleSheet: MarkdownStyleSheet(
         p: const TextStyle(color: TdcColors.textSecondary, fontSize: 15, height: 1.6),
         h1: const TextStyle(color: TdcColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold),
-        code: const TextStyle(color: TdcColors.warning, backgroundColor: TdcColors.surfaceAlt),
+        h2: const TextStyle(color: TdcColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w600),
+        h3: const TextStyle(color: TdcColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600),
+        code: const TextStyle(color: TdcColors.warning, backgroundColor: TdcColors.surfaceAlt, fontFamily: 'monospace'),
+        a: const TextStyle(color: TdcColors.accent, decoration: TextDecoration.underline),
+        strong: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold),
+        em: const TextStyle(color: TdcColors.textSecondary, fontStyle: FontStyle.italic),
+        blockquote: const TextStyle(color: TdcColors.textMuted, fontStyle: FontStyle.italic),
+        tableHead: const TextStyle(color: TdcColors.textPrimary, fontWeight: FontWeight.bold),
+        tableBody: const TextStyle(color: TdcColors.textSecondary),
       ),
     );
   }
@@ -105,10 +150,35 @@ class _ChapterScreenState extends State<ChapterScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (idx > 0) TextButton(onPressed: () => prov.selectChapter(course.id, course.chapters[idx-1].id), child: const Text('Précédent')),
-          const Spacer(),
-          if (hasNext) ElevatedButton(onPressed: () => prov.selectChapter(course.id, course.chapters[idx+1].id), child: const Text('Suivant'))
-          else ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: TdcColors.success), child: const Text('Terminer')),
+          if (idx > 0) 
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () { prov.selectChapter(course.id, course.chapters[idx-1].id); _scroll.jumpTo(0); },
+                icon: const Icon(Icons.chevron_left, size: 18),
+                label: const Text('Précédent'),
+              ),
+            )
+          else 
+            const Spacer(),
+          const SizedBox(width: 16),
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: () { 
+                if (hasNext) {
+                  prov.selectChapter(course.id, course.chapters[idx+1].id);
+                  _scroll.jumpTo(0);
+                } else {
+                  Navigator.pop(context);
+                }
+              }, 
+              icon: Icon(hasNext ? Icons.chevron_right : Icons.check, size: 18),
+              label: Text(hasNext ? 'Suivant' : 'Terminer'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: hasNext ? TdcColors.accent : TdcColors.success,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
         ],
       ),
     );

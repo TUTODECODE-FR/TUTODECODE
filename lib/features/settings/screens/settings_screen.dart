@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:tutodecode/core/providers/settings_provider.dart';
 import 'package:tutodecode/features/courses/providers/courses_provider.dart';
 import 'package:tutodecode/core/theme/app_theme.dart';
 import 'package:tutodecode/core/responsive/responsive.dart';
 import 'package:tutodecode/features/ghost_ai/service/ollama_service.dart';
+import 'package:tutodecode/core/services/backup_service.dart';
+import './security_diagnostic_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -17,6 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   OllamaStatus? _status;
   bool _checking = false;
   final TextEditingController _hostController = TextEditingController();
+  final BackupService _backup = BackupService();
 
   @override
   void initState() {
@@ -54,6 +58,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _buildSecurityDiagnosticLink(),
+                const SizedBox(height: TdcSpacing.lg),
                 _buildNetworkSection(settings, courses),
                 const SizedBox(height: TdcSpacing.lg),
                 _buildAISection(settings),
@@ -104,35 +110,142 @@ class _SettingsScreenState extends State<SettingsScreen> {
       icon: Icons.lan,
       children: [
         _buildSwitchTile(
+          title: 'Mode Zéro Réseau (Ultra Sécurité)',
+          subtitle: 'Bloque toute requête HTTP (GitHub + Ollama inclus) sur toutes les plateformes',
+          value: settings.zeroNetworkMode,
+          onChanged: settings.setZeroNetworkMode,
+        ),
+        const SizedBox(height: 12),
+        _buildSwitchTile(
           title: 'Mode Hors-ligne Global',
           subtitle: 'Coupe toute tentative de connexion (màj incluses)',
           value: settings.offlineMode,
-          onChanged: settings.setOfflineMode,
+          onChanged: settings.zeroNetworkMode ? null : settings.setOfflineMode,
         ),
         const SizedBox(height: 12),
         _buildSwitchTile(
           title: 'Mises à jour de sécurité',
           subtitle: 'Autoriser la vérification des correctifs critiques',
           value: settings.securityUpdates,
-          onChanged: settings.offlineMode ? null : settings.setSecurityUpdates,
+          onChanged: (settings.offlineMode || settings.zeroNetworkMode) ? null : settings.setSecurityUpdates,
         ),
         const SizedBox(height: 12),
         _buildSwitchTile(
           title: 'Annonce de nouveaux cours',
-          subtitle: 'Être informé des nouvelles fonctionnalités',
+          subtitle: 'Vérifie le dépôt officiel au démarrage et propose de télécharger les modules de cours (aucune donnée personnelle envoyée)',
           value: settings.contentUpdates,
-          onChanged: settings.offlineMode ? null : settings.setContentUpdates,
+          onChanged: (settings.offlineMode || settings.zeroNetworkMode) ? null : settings.setContentUpdates,
         ),
+        if (!settings.contentUpdates) ...[
+          const SizedBox(height: 8),
+          const Text(
+            'Note : désactiver cette option peut être contre-productif (vous risquez de manquer des corrections ou du contenu). '
+            'La vérification est en lecture seule et ne transmet aucune donnée personnelle.',
+            style: TextStyle(color: TdcColors.warning, fontSize: 12, height: 1.3),
+          ),
+        ],
+        if (settings.zeroNetworkMode) ...[
+          const SizedBox(height: 8),
+          const Text(
+            'Réseau désactivé : aucune synchronisation et aucune IA distante/locale via HTTP ne pourra fonctionner.',
+            style: TextStyle(color: TdcColors.warning, fontSize: 12, height: 1.3),
+          ),
+        ],
         const SizedBox(height: 20),
         ElevatedButton.icon(
-          onPressed: (settings.offlineMode || courses.isUpdating) ? null : () async {
+          onPressed: (settings.offlineMode || settings.zeroNetworkMode || courses.isUpdating) ? null : () async {
             final scaffold = ScaffoldMessenger.of(context);
             scaffold.showSnackBar(const SnackBar(content: Text('Vérification des mises à jour...')));
+            final updates = await courses.listAvailableUpdates();
+            scaffold.hideCurrentSnackBar();
+
+            if (!mounted) return;
+            if (updates.isEmpty) {
+              scaffold.showSnackBar(const SnackBar(content: Text('Déjà à jour.')));
+              return;
+            }
+
+            final shouldDownload = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: TdcColors.surface,
+                title: const Text('Mises à jour disponibles', style: TextStyle(color: TdcColors.textPrimary)),
+                content: SizedBox(
+                  width: 560,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Aperçu des modules détectés. Aucune donnée personnelle n’est envoyée (lecture seule GitHub).',
+                        style: TextStyle(color: TdcColors.textSecondary),
+                      ),
+                      const SizedBox(height: 12),
+                      Flexible(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: updates.length,
+                          separatorBuilder: (_, __) => const Divider(height: 1),
+                          itemBuilder: (context, i) {
+                            final u = updates[i];
+                            final isNew = (u.localSha == null || u.localSha!.isEmpty);
+                            final sizeLabel = u.remoteSize != null ? '${(u.remoteSize! / 1024).toStringAsFixed(1)} KB' : '—';
+                            return ListTile(
+                              dense: true,
+                              title: Text(u.fileName, style: const TextStyle(color: TdcColors.textPrimary, fontSize: 13)),
+                              subtitle: Text('${isNew ? 'Nouveau' : 'Màj'} • Taille: $sizeLabel', style: const TextStyle(color: TdcColors.textMuted, fontSize: 11)),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.compare_arrows, size: 18),
+                                tooltip: 'Voir les changements (Diff)',
+                                onPressed: () async {
+                                  final diff = await courses.diffUpdate(u.fileName);
+                                  if (diff != null && mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Changements: ${u.fileName}'),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(
+                                            children: [
+                                              _diffRow('ID', diff.localId, diff.remoteId),
+                                              _diffRow('Titre', diff.localTitle, diff.remoteTitle),
+                                              _diffRow('Chapitres', diff.localChapters?.toString(), diff.remoteChapters?.toString()),
+                                              const SizedBox(height: 12),
+                                              const Text('Voulez-vous accepter ces changements ?', style: TextStyle(fontWeight: FontWeight.bold)),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Fermer'))],
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+                  ElevatedButton.icon(
+                    onPressed: () => Navigator.pop(context, true),
+                    icon: const Icon(Icons.download, size: 18),
+                    label: const Text('Télécharger'),
+                  ),
+                ],
+              ),
+            );
+
+            if (shouldDownload != true) return;
+            scaffold.showSnackBar(const SnackBar(content: Text('Téléchargement des modules...')));
             final count = await courses.checkForUpdates();
             scaffold.hideCurrentSnackBar();
             if (count > 0) {
               scaffold.showSnackBar(SnackBar(
-                content: Text('$count nouveaux modules téléchargés !'),
+                content: Text('$count module(s) téléchargé(s) !'),
                 backgroundColor: TdcColors.success,
               ));
             } else if (courses.errorMessage != null) {
@@ -141,7 +254,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 backgroundColor: TdcColors.danger,
               ));
             } else {
-              scaffold.showSnackBar(const SnackBar(content: Text('Déjà à jour.')));
+              scaffold.showSnackBar(const SnackBar(content: Text('Aucune mise à jour téléchargée.')));
             }
           },
           icon: courses.isUpdating 
@@ -149,6 +262,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : const Icon(Icons.sync, size: 18),
           label: Text(courses.isUpdating ? 'Synchronisation...' : 'Vérifier maintenant'),
         ),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: (settings.zeroNetworkMode) ? null : () async {
+            final candidates = await courses.listRollbackCandidates();
+            if (!mounted) return;
+            if (candidates.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Aucun module à restaurer (pas de backup).')),
+              );
+              return;
+            }
+            final selected = await showDialog<String?>(
+              context: context,
+              builder: (context) {
+                var selected = candidates.first;
+                return StatefulBuilder(
+                  builder: (context, setState) => AlertDialog(
+                    backgroundColor: TdcColors.surface,
+                    title: const Text('Restaurer un module', style: TextStyle(color: TdcColors.textPrimary)),
+                    content: DropdownButtonFormField<String>(
+                      value: selected,
+                      decoration: const InputDecoration(labelText: 'Module'),
+                      items: candidates.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                      onChanged: (v) => setState(() => selected = v ?? selected),
+                    ),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context, null), child: const Text('Annuler')),
+                      ElevatedButton(onPressed: () => Navigator.pop(context, selected), child: const Text('Restaurer')),
+                    ],
+                  ),
+                );
+              },
+            );
+            if (selected == null) return;
+            final ok = await courses.rollbackModule(selected);
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(ok ? 'Module restauré: $selected' : 'Restauration impossible'),
+                backgroundColor: ok ? TdcColors.success : TdcColors.danger,
+              ),
+            );
+          },
+          icon: const Icon(Icons.history, size: 18),
+          label: const Text('Revenir à une version précédente'),
+        ),
+        const SizedBox(height: 12),
+        _buildModuleManagementSection(courses),
       ],
     );
   }
@@ -240,13 +401,128 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 12),
         _buildActionTile(
           title: 'Export des données',
-          subtitle: 'Sauvegarder votre progression en .json',
+          subtitle: 'Exporter progression + réglages en fichier chiffré (AES) avec mot de passe',
           icon: Icons.file_download,
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Exportation en cours...')));
-          },
+          onTap: _exportEncryptedBackup,
+        ),
+        const SizedBox(height: 12),
+        _buildActionTile(
+          title: 'Import des données',
+          subtitle: 'Restaurer progression + réglages depuis une sauvegarde chiffrée',
+          icon: Icons.file_upload,
+          onTap: _importEncryptedBackup,
         ),
       ],
+    );
+  }
+
+  Future<void> _exportEncryptedBackup() async {
+    final password = await _promptPassword(
+      title: 'Mot de passe de sauvegarde',
+      confirm: true,
+    );
+    if (password == null || password.isEmpty) return;
+
+    final now = DateTime.now();
+    final stamp = '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+    final location = await getSaveLocation(suggestedName: 'TUTODECODE-backup-$stamp.tdc');
+    if (location == null) return;
+
+    final bytes = await _backup.exportEncrypted(password: password);
+    final xfile = XFile.fromData(
+      bytes,
+      mimeType: 'application/octet-stream',
+      name: location.path.split('/').last,
+    );
+    await xfile.saveTo(location.path);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Sauvegarde exportée (chiffrée).')),
+    );
+  }
+
+  Future<void> _importEncryptedBackup() async {
+    final file = await openFile(acceptedTypeGroups: [
+      const XTypeGroup(label: 'TutoDeCode Backup', extensions: ['tdc']),
+    ]);
+    if (file == null) return;
+
+    const maxBackupBytes = 10 * 1024 * 1024;
+    final fileSize = await file.length();
+    if (fileSize <= 0 || fileSize > maxBackupBytes) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fichier de sauvegarde invalide (taille).'), backgroundColor: TdcColors.danger),
+      );
+      return;
+    }
+
+    final password = await _promptPassword(
+      title: 'Mot de passe de sauvegarde',
+      confirm: false,
+    );
+    if (password == null || password.isEmpty) return;
+
+    try {
+      final bytes = await file.readAsBytes();
+      await _backup.importEncrypted(bytes: bytes, password: password);
+
+      if (!mounted) return;
+      final settings = context.read<SettingsProvider>();
+      final courses = context.read<CoursesProvider>();
+      await settings.reload();
+      await courses.reload();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sauvegarde restaurée.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Import impossible: $e'), backgroundColor: TdcColors.danger),
+      );
+    }
+  }
+
+  Future<String?> _promptPassword({required String title, required bool confirm}) async {
+    final c1 = TextEditingController();
+    final c2 = TextEditingController();
+    return showDialog<String?>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: TdcColors.surface,
+        title: Text(title, style: const TextStyle(color: TdcColors.textPrimary)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: c1,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Mot de passe'),
+            ),
+            if (confirm)
+              TextField(
+                controller: c2,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'Confirmer'),
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, null), child: const Text('Annuler')),
+          ElevatedButton(
+            onPressed: () {
+              final p1 = c1.text;
+              final p2 = c2.text;
+              if (confirm && p1 != p2) return;
+              Navigator.pop(context, p1);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -357,5 +633,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ) ??
         false;
+  }
+
+  Widget _buildSecurityDiagnosticLink() {
+    return _buildActionTile(
+      title: 'Diagnostic de Sécurité',
+      subtitle: 'Journaux locaux, état des hôtes et validation des modules',
+      icon: Icons.shield,
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SecurityDiagnosticScreen())),
+    );
+  }
+
+  Widget _buildModuleManagementSection(CoursesProvider courses) {
+    final external = courses.courses.where((c) => c.keywords.contains('EXTERNAL')).toList();
+    if (external.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        const Text('Modules Installés', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: TdcColors.textMuted)),
+        const SizedBox(height: 8),
+        ...external.map((c) {
+          final fileName = '${c.id}.json';
+          return ListTile(
+            dense: true,
+            title: Text(c.title, style: const TextStyle(fontSize: 13)),
+            subtitle: Text('ID: ${c.id}', style: const TextStyle(fontSize: 11)),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete_outline, size: 20, color: TdcColors.danger),
+              onPressed: () async {
+                final ok = await _showConfirmDialog('Supprimer le module ${c.title} ?');
+                if (ok) await courses.deleteModule(fileName);
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _diffRow(String label, String? oldVal, String? newVal) {
+    final changed = oldVal != newVal;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 10, color: TdcColors.textMuted)),
+          Row(
+            children: [
+              Expanded(child: Text(oldVal ?? '(néant)', style: const TextStyle(fontSize: 12, decoration: TextDecoration.lineThrough))),
+              const Icon(Icons.arrow_forward, size: 12),
+              Expanded(child: Text(newVal ?? '(supprimé)', style: TextStyle(fontSize: 12, color: changed ? Colors.green : null, fontWeight: changed ? FontWeight.bold : null))),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
