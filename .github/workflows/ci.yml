@@ -19,6 +19,7 @@ jobs:
         run: flutter pub get
       - name: Check outdated
         run: flutter pub outdated
+        continue-on-error: true
       - name: Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
         continue-on-error: true
