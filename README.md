@@ -21,7 +21,7 @@ TUTODECODE est une plateforme d'apprentissage technique et d'outils cybersécuri
 | ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white) | [**Fichier APK**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Android.apk) | `Disponible` |
 | ![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white) | [**Installeur EXE**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Setup.exe) | `Signé` |
 | ![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white) | [**Installateur DMG**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-macOS.dmg) | `Signé + Notarizé` |
-| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**Paquet DEB**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest/download/TUTODECODE-Linux.deb) | `Signé (signature detachée)` |
+| ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) | [**Paquet DEB** / **AppImage**](https://github.com/TUTODECODE-FR/TUTODECODE/releases/latest) | `Disponible` |
 
 ---
 
@@ -57,6 +57,33 @@ TUTODECODE n'est pas qu'un simple lecteur de cours, c'est un laboratoire d'expé
   <img src="https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white" alt="Markdown">
   <img src="https://img.shields.io/badge/GPLv3-gray?style=for-the-badge" alt="GPLv3">
 </p>
+
+---
+
+## 👨‍💻 Pour les Développeurs (Quick Start)
+
+Si vous souhaitez contribuer ou compiler le projet localement :
+
+1. **Configuration de l'environnement** :
+   ```bash
+   make setup
+   ```
+2. **Installation des dépendances** :
+   ```bash
+   make get
+   ```
+3. **Lancer en mode debug** :
+   ```bash
+   flutter run
+   ```
+4. **Compilation multi-plateforme** :
+   ```bash
+   make build-all
+   ```
+
+Pour plus de détails sur la signature des binaires, consultez [SIGNING.md](./SIGNING.md).
+
+---
 
 ## 🤝 Soutenu par l'Association TUTODECODE (ESS)
 

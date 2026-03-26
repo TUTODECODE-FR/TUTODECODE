@@ -98,7 +98,9 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
           // Header avec métriques en temps réel
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: SizedBox(
+              height: 100,
+              child: Row(
               children: [
                 Expanded(
                   child: LabMetricCard(
@@ -138,6 +140,7 @@ class _NetworkSimulatorState extends State<NetworkSimulator>
               ],
             ),
           ),
+        ),
           
           // Custom TabBar inside Lab
           Container(

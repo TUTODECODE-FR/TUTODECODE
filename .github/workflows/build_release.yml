@@ -36,11 +36,13 @@ jobs:
             artifact_glob: |
               TUTODECODE-macOS.zip
               TUTODECODE-macOS.dmg
+              TUTODECODE-macOS.pkg
           - platform: linux
             os: ubuntu-latest
             artifact_glob: |
               TUTODECODE-Linux.tar.gz
               TUTODECODE-Linux.deb
+              TUTODECODE-Linux.AppImage
               TUTODECODE-Linux.tar.gz.sig
               TUTODECODE-Linux.deb.sig
           - platform: ios
@@ -67,6 +69,9 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
 
       - name: Require Android signing secrets
         if: matrix.platform == 'android'
@@ -127,34 +132,8 @@ jobs:
           & $signtool sign /f $pfxPath /p "${{ secrets.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v $exePath
           & $signtool verify /pa /v $exePath
 
-          $issPath = Join-Path $env:RUNNER_TEMP "tutodecode.iss"
-          @"
-          [Setup]
-          AppName=TUTODECODE
-          AppVersion=${{ github.ref_name }}
-          AppPublisher=TUTODECODE
-          DefaultDirName={autopf}\TUTODECODE
-          DefaultGroupName=TUTODECODE
-          OutputDir=.
-          OutputBaseFilename=TUTODECODE-Setup
-          Compression=lzma
-          SolidCompression=yes
-          WizardStyle=modern
-
-          [Files]
-          Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion
-
-          [Icons]
-          Name: "{group}\TUTODECODE"; Filename: "{app}\tutodecode_flutter.exe"
-          Name: "{group}\Uninstall TUTODECODE"; Filename: "{uninstallexe}"
-          Name: "{autodesktop}\TUTODECODE"; Filename: "{app}\tutodecode_flutter.exe"; Tasks: desktopicon
-
-          [Tasks]
-          Name: "desktopicon"; Description: "Create desktop icon"; GroupDescription: "Additional icons:"
-          "@ | Set-Content -Path $issPath -Encoding ASCII
-
           $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          & $iscc $issPath
+          & $iscc /DMyAppVersion=${{ github.ref_name }} windows\installer\tutodecode.iss
 
           & $signtool sign /f $pfxPath /p "${{ secrets.WINDOWS_PFX_PASSWORD }}" /fd SHA256 /tr "https://timestamp.digicert.com" /td SHA256 /v TUTODECODE-Setup.exe
           & $signtool verify /pa /v TUTODECODE-Setup.exe
@@ -206,14 +185,24 @@ jobs:
           rm -f TUTODECODE-macOS.zip
           ditto -c -k --keepParent "$APP_PATH" TUTODECODE-macOS.zip
 
-          rm -f TUTODECODE-macOS.dmg
-          hdiutil create -volname "TUTODECODE" -srcfolder "$APP_PATH" -ov -format UDZO TUTODECODE-macOS.dmg
-          xcrun notarytool submit TUTODECODE-macOS.dmg \
+          xcrun stapler staple TUTODECODE-macOS.dmg
+          
+          # Build Premium PKG
+          chmod +x scripts/build_pkg.sh
+          ./scripts/build_pkg.sh
+          
+          # Renommer pour correspondre aux attentes du glob d'artefact si nécessaire
+          mv build/macos/Build/Products/Release/TUTODECODE_Installer.pkg TUTODECODE-macOS-Installer.pkg
+          
+          # Sign/Notarize PKG
+          productsign --sign "${{ secrets.MACOS_CERT_IDENTITY }}" TUTODECODE-macOS-Installer.pkg TUTODECODE-macOS-Installer-Signed.pkg
+          xcrun notarytool submit TUTODECODE-macOS-Installer-Signed.pkg \
             --apple-id "${{ secrets.APPLE_ID }}" \
             --password "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" \
             --team-id "${{ secrets.APPLE_TEAM_ID }}" \
             --wait
-          xcrun stapler staple TUTODECODE-macOS.dmg
+          xcrun stapler staple TUTODECODE-macOS-Installer-Signed.pkg
+          mv TUTODECODE-macOS-Installer-Signed.pkg TUTODECODE-macOS.pkg
 
       - name: Build Linux artifact
         if: matrix.platform == 'linux'
@@ -264,6 +253,17 @@ jobs:
             -C "$STAGE" \
             -p TUTODECODE-Linux.deb \
             .
+
+          # Build AppImage
+          curl -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          STAGE_APPIMAGE="$RUNNER_TEMP/AppDir"
+          mkdir -p "$STAGE_APPIMAGE"
+          cp -R build/linux/x64/release/bundle/* "$STAGE_APPIMAGE/"
+          cp "$STAGE/usr/share/applications/tutodecode.desktop" "$STAGE_APPIMAGE/"
+          cp "assets/logo.png" "$STAGE_APPIMAGE/tutodecode.png"
+          ln -s tutodecode_flutter "$STAGE_APPIMAGE/AppRun"
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage "$STAGE_APPIMAGE" TUTODECODE-Linux.AppImage
 
       - name: Require Linux signing secrets
         if: matrix.platform == 'linux'
@@ -359,8 +359,10 @@ jobs:
           cp -f artifacts/TUTODECODE-Setup.exe release_assets/TUTODECODE-Setup.exe || true
           cp -f artifacts/TUTODECODE-macOS.zip release_assets/TUTODECODE-macOS.zip || true
           cp -f artifacts/TUTODECODE-macOS.dmg release_assets/TUTODECODE-macOS.dmg || true
+          cp -f artifacts/TUTODECODE-macOS.pkg release_assets/TUTODECODE-macOS.pkg || true
           cp -f artifacts/TUTODECODE-Linux.tar.gz release_assets/TUTODECODE-Linux.tar.gz || true
           cp -f artifacts/TUTODECODE-Linux.deb release_assets/TUTODECODE-Linux.deb || true
+          cp -f artifacts/TUTODECODE-Linux.AppImage release_assets/TUTODECODE-Linux.AppImage || true
           cp -f artifacts/TUTODECODE-Linux.tar.gz.sig release_assets/TUTODECODE-Linux.tar.gz.sig || true
           cp -f artifacts/TUTODECODE-Linux.deb.sig release_assets/TUTODECODE-Linux.deb.sig || true
           cp -f artifacts/*.ipa release_assets/TUTODECODE-iOS.ipa || true
