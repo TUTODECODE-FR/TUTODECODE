@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../security/ollama_host.dart';
+import '../../features/courses/models/gamification_models.dart';
 
 // IMPORTANT : SharedPreferences est utilisé ici pour des préférences non-sensibles.
 // Pour des secrets (mots de passe, clés d'API), utilisez flutter_secure_storage.
@@ -244,4 +245,29 @@ class StorageService {
   Future<List<dynamic>> loadTutorSessions() async { return []; }
   Future<void> saveTutorSessions(List<dynamic> sessions) async {}
   Future<void> saveUserProgress(Map<String, dynamic> progress) async {}
+
+  // Gamification Profile
+  Future<UserProfile> loadUserProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('user_profile_v1');
+    if (raw == null || raw.isEmpty) {
+      return UserProfile(
+        username: 'Utilisateur',
+        lastActivityDate: DateTime.now(),
+      );
+    }
+    try {
+      return UserProfile.fromJson(jsonDecode(raw));
+    } catch (_) {
+      return UserProfile(
+        username: 'Utilisateur',
+        lastActivityDate: DateTime.now(),
+      );
+    }
+  }
+
+  Future<void> saveUserProfile(UserProfile profile) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_profile_v1', jsonEncode(profile.toJson()));
+  }
 }

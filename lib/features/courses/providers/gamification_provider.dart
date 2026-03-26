@@ -9,9 +9,9 @@ import 'package:tutodecode/features/courses/providers/courses_provider.dart';
 class GamificationProvider with ChangeNotifier {
   final StorageService _storage = StorageService();
   
-  UserProfile _profile = const UserProfile(
+  UserProfile _profile = UserProfile(
     username: 'Utilisateur',
-    lastActivityDate: null,
+    lastActivityDate: DateTime.now(),
   );
   
   List<Achievement> _allAchievements = [];
@@ -544,7 +544,7 @@ class GamificationProvider with ChangeNotifier {
   }
 
   Future<void> resetProgress() async {
-    _profile = const UserProfile(
+    _profile = UserProfile(
       username: 'Utilisateur',
       lastActivityDate: DateTime.now(),
     );

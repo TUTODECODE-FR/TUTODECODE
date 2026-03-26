@@ -116,7 +116,7 @@ class AntiTamperingSystem {
     // Calculer les hashes de tous les fichiers
     for (final filePath in OFFICIAL_HASHES.keys) {
       if (await File(filePath).exists()) {
-        integrityData['files'][filePath] = await _calculateFileHash(filePath);
+        (integrityData['files'] as Map<String, String>)[filePath] = await _calculateFileHash(filePath);
       }
     }
     

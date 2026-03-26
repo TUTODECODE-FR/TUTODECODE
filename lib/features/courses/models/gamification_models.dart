@@ -26,7 +26,7 @@ class Achievement {
     required this.color,
     required this.points,
     required this.category,
-    required this.requirements,
+    this.requirements = const [],
     this.isSecret = false,
     this.unlockedAt,
     this.progress = 0,
@@ -66,6 +66,42 @@ class Achievement {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'icon': icon.codePoint,
+      'color': color.value,
+      'points': points,
+      'category': category,
+      'requirements': requirements,
+      'isSecret': isSecret,
+      'unlockedAt': unlockedAt?.toIso8601String(),
+      'progress': progress,
+      'currentStep': currentStep,
+      'totalSteps': totalSteps,
+    };
+  }
+
+  factory Achievement.fromJson(Map<String, dynamic> json) {
+    return Achievement(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
+      color: Color(json['color']),
+      points: json['points'],
+      category: json['category'],
+      requirements: List<String>.from(json['requirements']),
+      isSecret: json['isSecret'],
+      unlockedAt: json['unlockedAt'] != null ? DateTime.parse(json['unlockedAt']) : null,
+      progress: json['progress'],
+      currentStep: json['currentStep'],
+      totalSteps: json['totalSteps'],
+    );
+  }
+
   bool get isUnlocked => unlockedAt != null;
   bool get isInProgress => progress > 0 && !isUnlocked;
 }
@@ -88,6 +124,30 @@ class SkillTree {
     required this.nodes,
     this.prerequisites = const [],
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'icon': icon.codePoint,
+      'color': color.value,
+      'nodes': nodes.map((n) => n.toJson()).toList(),
+      'prerequisites': prerequisites,
+    };
+  }
+
+  factory SkillTree.fromJson(Map<String, dynamic> json) {
+    return SkillTree(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
+      color: Color(json['color']),
+      nodes: (json['nodes'] as List).map((n) => SkillNode.fromJson(n)).toList(),
+      prerequisites: List<String>.from(json['prerequisites']),
+    );
+  }
 }
 
 class SkillNode {
@@ -112,6 +172,34 @@ class SkillNode {
     this.isCompleted = false,
     this.level = 1,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'chapterId': chapterId,
+      'position': position,
+      'connections': connections,
+      'isUnlocked': isUnlocked,
+      'isCompleted': isCompleted,
+      'level': level,
+    };
+  }
+
+  factory SkillNode.fromJson(Map<String, dynamic> json) {
+    return SkillNode(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      chapterId: json['chapterId'],
+      position: json['position'],
+      connections: List<String>.from(json['connections']),
+      isUnlocked: json['isUnlocked'],
+      isCompleted: json['isCompleted'],
+      level: json['level'],
+    );
+  }
 }
 
 class UserProfile {
@@ -142,6 +230,44 @@ class UserProfile {
     this.activeChallenges = const [],
     this.statistics = const {},
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'totalPoints': totalPoints,
+      'currentLevel': currentLevel,
+      'experiencePoints': experiencePoints,
+      'rank': rank,
+      'unlockedAchievements': unlockedAchievements.map((a) => a.toJson()).toList(),
+      'completedChapters': completedChapters,
+      'skillProgress': skillProgress,
+      'streakDays': streakDays,
+      'lastActivityDate': lastActivityDate.toIso8601String(),
+      'activeChallenges': activeChallenges.map((c) => c.toJson()).toList(),
+      'statistics': statistics,
+    };
+  }
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      username: json['username'],
+      totalPoints: json['totalPoints'],
+      currentLevel: json['currentLevel'],
+      experiencePoints: json['experiencePoints'],
+      rank: json['rank'],
+      unlockedAchievements: (json['unlockedAchievements'] as List)
+          .map((a) => Achievement.fromJson(a))
+          .toList(),
+      completedChapters: List<String>.from(json['completedChapters']),
+      skillProgress: Map<String, int>.from(json['skillProgress']),
+      streakDays: json['streakDays'],
+      lastActivityDate: DateTime.parse(json['lastActivityDate']),
+      activeChallenges: (json['activeChallenges'] as List)
+          .map((c) => Challenge.fromJson(c))
+          .toList(),
+      statistics: Map<String, dynamic>.from(json['statistics']),
+    );
+  }
 
   UserProfile copyWith({
     String? username,
@@ -209,6 +335,62 @@ class Challenge {
     required this.category,
   });
 
+  Challenge copyWith({
+    String? id,
+    String? title,
+    String? description,
+    int? pointsReward,
+    DateTime? deadline,
+    List<String>? requiredChapters,
+    bool? isCompleted,
+    DateTime? completedAt,
+    int? difficulty,
+    String? category,
+  }) {
+    return Challenge(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      pointsReward: pointsReward ?? this.pointsReward,
+      deadline: deadline ?? this.deadline,
+      requiredChapters: requiredChapters ?? this.requiredChapters,
+      isCompleted: isCompleted ?? this.isCompleted,
+      completedAt: completedAt ?? this.completedAt,
+      difficulty: difficulty ?? this.difficulty,
+      category: category ?? this.category,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'pointsReward': pointsReward,
+      'deadline': deadline.toIso8601String(),
+      'requiredChapters': requiredChapters,
+      'isCompleted': isCompleted,
+      'completedAt': completedAt?.toIso8601String(),
+      'difficulty': difficulty,
+      'category': category,
+    };
+  }
+
+  factory Challenge.fromJson(Map<String, dynamic> json) {
+    return Challenge(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      pointsReward: json['pointsReward'],
+      deadline: DateTime.parse(json['deadline']),
+      requiredChapters: List<String>.from(json['requiredChapters']),
+      isCompleted: json['isCompleted'],
+      completedAt: json['completedAt'] != null ? DateTime.parse(json['completedAt']) : null,
+      difficulty: json['difficulty'],
+      category: json['category'],
+    );
+  }
+
   bool get isExpired => DateTime.now().isAfter(deadline);
   bool get isActive => !isCompleted && !isExpired;
 }
@@ -239,6 +421,66 @@ class LearningPath {
     this.completedAt,
     this.progress = 0.0,
   });
+
+  LearningPath copyWith({
+    String? id,
+    String? title,
+    String? description,
+    List<String>? courseIds,
+    int? estimatedHours,
+    String? difficulty,
+    List<String>? prerequisites,
+    String? certificate,
+    bool? isCompleted,
+    DateTime? completedAt,
+    double? progress,
+  }) {
+    return LearningPath(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      courseIds: courseIds ?? this.courseIds,
+      estimatedHours: estimatedHours ?? this.estimatedHours,
+      difficulty: difficulty ?? this.difficulty,
+      prerequisites: prerequisites ?? this.prerequisites,
+      certificate: certificate ?? this.certificate,
+      isCompleted: isCompleted ?? this.isCompleted,
+      completedAt: completedAt ?? this.completedAt,
+      progress: progress ?? this.progress,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'courseIds': courseIds,
+      'estimatedHours': estimatedHours,
+      'difficulty': difficulty,
+      'prerequisites': prerequisites,
+      'certificate': certificate,
+      'isCompleted': isCompleted,
+      'completedAt': completedAt?.toIso8601String(),
+      'progress': progress,
+    };
+  }
+
+  factory LearningPath.fromJson(Map<String, dynamic> json) {
+    return LearningPath(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      courseIds: List<String>.from(json['courseIds']),
+      estimatedHours: json['estimatedHours'],
+      difficulty: json['difficulty'],
+      prerequisites: List<String>.from(json['prerequisites'] ?? []),
+      certificate: json['certificate'],
+      isCompleted: json['isCompleted'],
+      completedAt: json['completedAt'] != null ? DateTime.parse(json['completedAt']) : null,
+      progress: json['progress'],
+    );
+  }
 }
 
 class LeaderboardEntry {

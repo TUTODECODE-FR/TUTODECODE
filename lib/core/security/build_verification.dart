@@ -4,6 +4,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
+import 'anti_tampering.dart';
 
 /// Système de vérification des builds officiels TUTODECODE
 class BuildVerification {
@@ -55,6 +56,13 @@ class BuildVerification {
           verificationDate: DateTime.now(),
           reasons: ['Version non trouvée dans les builds officiels'],
           riskLevel: RiskLevel.high,
+          checks: {
+            'signature': false,
+            'checksum': false,
+            'environment': false,
+            'manifest': false,
+            'metadata': false,
+          },
         );
       }
       
@@ -109,6 +117,13 @@ class BuildVerification {
         verificationDate: DateTime.now(),
         error: 'Erreur lors de la vérification du build: $e',
         riskLevel: RiskLevel.critical,
+        checks: {
+          'signature': false,
+          'checksum': false,
+          'environment': false,
+          'manifest': false,
+          'metadata': false,
+        },
       );
     }
   }

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
+import 'source_authentication.dart';
 
 /// Système de protection contre le plagiat et l'usurpation d'identité
 /// Protège TUTODECODE contre la copie, la modification et le plagiat
@@ -304,7 +305,7 @@ class PlagiarismProtection {
     for (final count in charFrequency.values) {
       if (count > 0) {
         final probability = count / totalChars;
-        entropy -= probability * (log(probability) / ln(2));
+        entropy -= probability * (log(probability) / log(2));
       }
     }
     

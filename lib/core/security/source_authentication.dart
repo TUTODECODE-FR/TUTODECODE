@@ -55,7 +55,7 @@ class SourceAuthentication {
     try {
       final results = <String, bool>{};
       final modifiedFiles = <String>[];
-      final suspiciousFiles = <String>[];
+      var suspiciousFiles = <String>[];
       final missingSignatures = <String>[];
       final plagiarizedFiles = <String>[];
       
